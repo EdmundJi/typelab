@@ -48,7 +48,7 @@ git push origin feature/你的模块名
 
 ## 开 PR
 
-1. 推送后去 CNB 仓库页面
+1. 推送后去 github 仓库页面
 2. 点击「新建合并请求」
 3. 源分支：`feature/你的模块名`，目标分支：`dev`
 4. 填写 PR 描述（见下方模板）
