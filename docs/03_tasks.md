@@ -55,6 +55,7 @@
 - [x] 失败时在表单下方显示错误信息（不用 alert）
 - [x] 退出登录调用 `supabase.auth.signOut()`
 - [x] 启动时读取当前 session，刷新页面后恢复 Pinia user store
+- [x] 监听 Supabase auth state change，同步更新 Pinia user store
 
 验收：
 ```

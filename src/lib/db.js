@@ -19,6 +19,22 @@ export async function getCurrentSession() {
   return supabase.auth.getSession()
 }
 
+export function onAuthStateChange(callback) {
+  if (isUsingMockData()) {
+    return {
+      data: {
+        subscription: {
+          unsubscribe() {},
+        },
+      },
+    }
+  }
+
+  return supabase.auth.onAuthStateChange((_event, session) => {
+    callback(session)
+  })
+}
+
 export async function signInWithPassword(credentials) {
   if (isUsingMockData()) {
     mockSession = {

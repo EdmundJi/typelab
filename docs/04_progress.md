@@ -11,7 +11,7 @@
 ## 已完成
 
 - [x] T01 项目骨架 — Vue 3 + Vite + Router + Pinia + Tailwind + Supabase 基础结构已完成并通过构建验证
-- [x] T03 用户认证 — 登录/注册/退出、Pinia session 更新、刷新后 session 恢复已完成，并通过 `npm run build` 验证
+- [x] T03 用户认证 — 登录/注册/退出、Pinia session 更新、刷新后 session 恢复和 Supabase auth state change 同步已完成，并通过 `npm run check` 验证
 
 ---
 

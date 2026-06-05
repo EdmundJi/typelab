@@ -5,7 +5,7 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
-import { getCurrentSession } from './lib/db'
+import { getCurrentSession, onAuthStateChange } from './lib/db'
 import { useUserStore } from './stores/user'
 
 const app = createApp(App)
@@ -20,6 +20,10 @@ async function bootstrap() {
   if (!error) {
     userStore.setSession(data.session)
   }
+
+  onAuthStateChange((session) => {
+    userStore.setSession(session)
+  })
 
   app.use(router)
   app.mount('#app')
