@@ -73,11 +73,11 @@
 **分支**：`feature/lesson-select`  
 **文件范围**：`src/components/LessonSelect/`、`src/views/HomeView.vue`、`src/lessons/index.js`
 
-- [ ] 从 `src/lessons/index.js` 读取所有课程元数据（id、title、category、difficulty）
-- [ ] 网格布局展示课程卡片
-- [ ] 按类别筛选（warmup / 排序 / 树 / DP / 图 / JS / 概念）
-- [ ] 每张卡片显示标题、类别标签、难度星级
-- [ ] 点击卡片跳转 `/lesson/:id`
+- [x] 从 `src/lessons/index.js` 读取所有课程元数据（id、title、category、difficulty）
+- [x] 网格布局展示课程卡片
+- [x] 按类别筛选（warmup / 排序 / 树 / DP / 图 / JS / 概念）
+- [x] 每张卡片显示标题、类别标签、难度星级
+- [x] 点击卡片跳转 `/lesson/:id`
 
 验收：
 ```
