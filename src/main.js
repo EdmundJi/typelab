@@ -5,10 +5,24 @@ import { createPinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import { getCurrentSession } from './lib/db'
+import { useUserStore } from './stores/user'
 
 const app = createApp(App)
+const pinia = createPinia()
 
-app.use(createPinia())
-app.use(router)
+app.use(pinia)
 
-app.mount('#app')
+async function bootstrap() {
+  const userStore = useUserStore()
+  const { data, error } = await getCurrentSession()
+
+  if (!error) {
+    userStore.setSession(data.session)
+  }
+
+  app.use(router)
+  app.mount('#app')
+}
+
+bootstrap()
