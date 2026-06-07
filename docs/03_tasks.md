@@ -46,14 +46,16 @@
 
 **负责人**：Yang 
 **分支**：`feature/auth`  
-**文件范围**：`src/components/Auth/`、`src/views/LoginView.vue`
+**文件范围**：`src/components/Auth/`、`src/views/LoginView.vue`、`src/main.js`
 
-- [ ] 登录表单（邮箱 + 密码）
-- [ ] 注册表单（邮箱 + 密码 + 确认密码）
-- [ ] 调用 `src/lib/db.js` 封装的登录和注册函数（开发阶段走 mock，上线阶段走 Supabase）
-- [ ] 成功后更新 Pinia user store，跳转首页
-- [ ] 失败时在表单下方显示错误信息（不用 alert）
-- [ ] 退出登录调用 `src/lib/db.js` 封装的退出函数
+- [x] 登录表单（邮箱 + 密码）
+- [x] 注册表单（邮箱 + 密码 + 确认密码）
+- [x] 通过 `src/lib/db.js` 调用 `supabase.auth.signInWithPassword()` 和 `supabase.auth.signUp()`
+- [x] 成功后更新 Pinia user store，跳转首页
+- [x] 失败时在表单下方显示错误信息（不用 alert）
+- [x] 退出登录调用 `supabase.auth.signOut()`
+- [x] 启动时读取当前 session，刷新页面后恢复 Pinia user store
+- [x] 监听 Supabase auth state change，同步更新 Pinia user store
 
 验收：
 ```
@@ -71,11 +73,11 @@
 **分支**：`feature/lesson-select`  
 **文件范围**：`src/components/LessonSelect/`、`src/views/HomeView.vue`、`src/lessons/index.js`
 
-- [ ] 从 `src/lessons/index.js` 读取所有课程元数据（id、title、category、difficulty）
-- [ ] 网格布局展示课程卡片
-- [ ] 按类别筛选（warmup / 排序 / 树 / DP / 图 / JS / 概念）
-- [ ] 每张卡片显示标题、类别标签、难度星级
-- [ ] 点击卡片跳转 `/lesson/:id`
+- [x] 从 `src/lessons/index.js` 读取所有课程元数据（id、title、category、difficulty）
+- [x] 网格布局展示课程卡片
+- [x] 按类别筛选（warmup / 排序 / 树 / DP / 图 / JS / 概念）
+- [x] 每张卡片显示标题、类别标签、难度星级
+- [x] 点击卡片跳转 `/lesson/:id`
 
 验收：
 ```

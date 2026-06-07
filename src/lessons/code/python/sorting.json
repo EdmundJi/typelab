@@ -1,0 +1,18 @@
+[
+  {
+    "id": "py-quicksort-01",
+    "title": "快速排序（Python）",
+    "category": "sorting",
+    "difficulty": 3,
+    "text": "def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    middle = [x for x in arr if x == pivot]\n    right = [x for x in arr if x > pivot]\n    return quicksort(left) + middle + quicksort(right)",
+    "note": "平均时间复杂度 O(n log n)，此实现非原地排序，空间复杂度 O(n)。"
+  },
+  {
+    "id": "py-mergesort-01",
+    "title": "归并排序（Python）",
+    "category": "sorting",
+    "difficulty": 3,
+    "text": "def mergesort(arr):\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    left = mergesort(arr[:mid])\n    right = mergesort(arr[mid:])\n    return merge(left, right)\n\ndef merge(left, right):\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:\n            result.append(left[i])\n            i += 1\n        else:\n            result.append(right[j])\n            j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result",
+    "note": "归并排序稳定，时间复杂度始终为 O(n log n)，空间复杂度 O(n)。"
+  }
+]
