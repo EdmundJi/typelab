@@ -78,3 +78,26 @@ npm run build
 - `AGENT.md`：Agent / AI 助手操作规范
 - `docs/03_tasks.md`：任务拆分和文件范围
 - `SPEC.md`：产品和技术规格，修改前需要 Tech Lead 审批
+
+## 贡献排行榜
+
+[![Contributors](https://contrib.rocks/image?repo=AsherDe/typelab)](https://github.com/AsherDe/typelab/graphs/contributors)
+
+<!-- LEADERBOARD:START -->
+
+> 贡献指数 = 提交数 × 10 + 新增行数 + 删除行数 × 0.5 &nbsp;·&nbsp; 最后更新：2026-06-07
+
+| 排名 | 贡献者 | 提交数 | 新增行 | 删除行 | 贡献指数 |
+|:----:|--------|-------:|-------:|-------:|-------:|
+| 🥇 | [Asher Ji](https://github.com/AsherDe) | 19 | 4,711 | 503 | **5,152** |
+| 🥈 | [Edmund Ji](https://github.com/EdmundJi) | 5 | 723 | 56 | **801** |
+| 🥉 | Kalin | 2 | 522 | 34 | **559** |
+| 4 | Frank | 8 | 345 | 221 | **535** |
+| 5 | Yang | 4 | 390 | 35 | **447** |
+| 6 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
+| 7 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
+| 8 | [Frank-StarsChild](https://github.com/Frank-StarsChild) | 1 | 0 | 0 | **10** |
+
+_由 GitHub Actions 在每次推送到 main 分支时自动更新_
+
+<!-- LEADERBOARD:END -->
