@@ -8,8 +8,10 @@ const props = defineProps({
   },
 })
 
-function handleComplete() {
-  console.log('恭喜你输入完成！')
+const emit = defineEmits(['complete'])
+
+function handleComplete(payload) {
+  emit('complete', payload)
 }
 </script>
 

@@ -32,35 +32,25 @@ watch(
 )
 
 function handleKeyDown(e) {
-  if (isCompleted) return
-
   if (e.key === 'Backspace') {
     if (currentIndex.value > 0) {
       currentIndex.value--
       chars.value[currentIndex.value].status = 'pending'
+      isCompleted = false
     }
     return
   }
 
+  if (isCompleted) return
   if (e.isComposing) return
-
   if (currentIndex.value >= chars.value.length) return
-
-  if (currentIndex.value >= chars.value.length) {
-    isCompleted = true
-    emit('complete')
-  }
 
   const expected = chars.value[currentIndex.value].char
 
   switch (e.key) {
     case 'Tab':
       e.preventDefault()
-      if (expected === '\t' && (e.key === 'Tab' || e.key === ' ')) {
-        chars.value[currentIndex.value].status = 'correct'
-      } else {
-        chars.value[currentIndex.value].status = 'wrong'
-      }
+      chars.value[currentIndex.value].status = expected === '\t' ? 'correct' : 'wrong'
       currentIndex.value++
       break
     case 'Enter':
@@ -68,11 +58,8 @@ function handleKeyDown(e) {
       currentIndex.value++
       break
     case ' ':
-      if (expected === '\t') {
-        chars.value[currentIndex.value].status = 'correct'
-      } else {
-        chars.value[currentIndex.value].status = e.key === expected ? 'correct' : 'wrong'
-      }
+      chars.value[currentIndex.value].status =
+        expected === '\t' || expected === ' ' ? 'correct' : 'wrong'
       currentIndex.value++
       break
     default:
@@ -80,6 +67,11 @@ function handleKeyDown(e) {
         chars.value[currentIndex.value].status = e.key === expected ? 'correct' : 'wrong'
         currentIndex.value++
       }
+  }
+
+  if (currentIndex.value >= chars.value.length) {
+    isCompleted = true
+    emit('complete')
   }
 }
 </script>
