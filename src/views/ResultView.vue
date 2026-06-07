@@ -1,9 +1,9 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { getBestLessonWpm, saveResult } from '@/lib/db'
 import ResultSummary from '@/components/Result/ResultSummary.vue'
+import { getBestLessonWpm, saveResult } from '@/lib/db'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const route = useRoute()
