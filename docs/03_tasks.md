@@ -46,14 +46,16 @@
 
 **负责人**：Yang 
 **分支**：`feature/auth`  
-**文件范围**：`src/components/Auth/`、`src/views/LoginView.vue`
+**文件范围**：`src/components/Auth/`、`src/views/LoginView.vue`、`src/main.js`
 
-- [ ] 登录表单（邮箱 + 密码）
-- [ ] 注册表单（邮箱 + 密码 + 确认密码）
-- [ ] 调用 `src/lib/db.js` 封装的登录和注册函数（开发阶段走 mock，上线阶段走 Supabase）
-- [ ] 成功后更新 Pinia user store，跳转首页
-- [ ] 失败时在表单下方显示错误信息（不用 alert）
-- [ ] 退出登录调用 `src/lib/db.js` 封装的退出函数
+- [x] 登录表单（邮箱 + 密码）
+- [x] 注册表单（邮箱 + 密码 + 确认密码）
+- [x] 通过 `src/lib/db.js` 调用 `supabase.auth.signInWithPassword()` 和 `supabase.auth.signUp()`
+- [x] 成功后更新 Pinia user store，跳转首页
+- [x] 失败时在表单下方显示错误信息（不用 alert）
+- [x] 退出登录调用 `supabase.auth.signOut()`
+- [x] 启动时读取当前 session，刷新页面后恢复 Pinia user store
+- [x] 监听 Supabase auth state change，同步更新 Pinia user store
 
 验收：
 ```

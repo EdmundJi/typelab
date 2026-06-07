@@ -11,6 +11,7 @@
 ## 已完成
 
 - [x] T01 项目骨架 — Vue 3 + Vite + Router + Pinia + Tailwind + Supabase 基础结构已完成并通过构建验证
+- [x] T03 用户认证 — 登录/注册/退出、Pinia session 更新、刷新后 session 恢复和 Supabase auth state change 同步已完成，并通过 `npm run check` 验证
 
 ---
 
@@ -20,7 +21,7 @@
 |---|---|---|---|
 | T01 骨架 | Tech Lead | main | 已完成 |
 | T02 Layout | | feature/layout | 未开始 |
-| T03 Auth | | feature/auth | 未开始 |
+| T03 Auth | | feature/auth | 已完成 |
 | T04 课程选择 | | feature/lesson-select | 未开始 |
 | T05 打字引擎 | | feature/typing-engine | 未开始 |
 | T06 结果页 | | feature/result | 未开始 |
@@ -44,6 +45,6 @@
 
 ## 下一步
 
-1. 开会分配 T02-T09 负责人
+1. 开会分配 T02、T04-T09 负责人
 2. 所有人 clone 仓库，checkout 自己的分支
 3. T05 打字引擎优先，其他模块可以先用假数据
