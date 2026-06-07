@@ -61,11 +61,18 @@ function buildOption(results) {
 }
 
 function render() {
-  if (!chartInstance) return
   if (props.results.length === 0) {
-    chartInstance.clear()
+    chartInstance?.dispose()
+    chartInstance = null
     return
   }
+
+  if (!chartEl.value) return
+
+  if (!chartInstance) {
+    chartInstance = echarts.init(chartEl.value)
+  }
+
   chartInstance.setOption(buildOption(props.results), true)
 }
 
@@ -74,12 +81,11 @@ function handleResize() {
 }
 
 onMounted(() => {
-  chartInstance = echarts.init(chartEl.value)
   render()
   window.addEventListener('resize', handleResize)
 })
 
-watch(() => props.results, render, { deep: true })
+watch(() => props.results, render, { deep: true, flush: 'post' })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
