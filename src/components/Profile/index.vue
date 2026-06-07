@@ -1,5 +1,37 @@
+<script setup>
+import { onMounted, ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { listUserResults } from '@/lib/db'
+import ProfileHistory from './ProfileHistory.vue'
+import ProgressChart from './ProgressChart.vue'
+
+const userStore = useUserStore()
+const results = ref([])
+const loading = ref(true)
+const error = ref(null)
+
+onMounted(async () => {
+  if (!userStore.user) return
+  const { data, error: err } = await listUserResults(userStore.user.id)
+  if (err) {
+    error.value = '加载失败'
+  } else {
+    results.value = data ?? []
+  }
+  loading.value = false
+})
+</script>
+
 <template>
   <div>
-    <!-- Profile 模块入口占位；个人历史和进步曲线由后续 T08 实现。 -->
+    <div v-if="loading" class="py-16 text-center text-sm text-mt-sub">加载中...</div>
+    <div v-else-if="error" class="py-16 text-center text-sm text-mt-wrong">{{ error }}</div>
+    <div v-else-if="results.length === 0" class="py-16 text-center text-sm text-mt-sub">
+      还没有练习记录，<RouterLink :to="{ name: 'home' }" class="text-mt-accent hover:opacity-80">去练习</RouterLink>
+    </div>
+    <div v-else class="space-y-10">
+      <ProgressChart :results="results" />
+      <ProfileHistory :results="results" />
+    </div>
   </div>
 </template>

@@ -1,6 +1,16 @@
+<script setup>
+import Profile from '@/components/Profile/index.vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+</script>
+
 <template>
-  <section class="mx-auto max-w-5xl px-4 py-8">
-    <h1 class="text-2xl font-semibold text-slate-900">个人主页</h1>
-    <!-- TODO: 需登录页面；后续读取当前用户历史成绩和进步曲线。 -->
-  </section>
+  <div>
+    <div class="mb-8">
+      <h1 class="text-2xl font-bold text-mt-text mb-1">个人主页</h1>
+      <p class="text-sm text-mt-sub">{{ userStore.user?.email }}</p>
+    </div>
+    <Profile />
+  </div>
 </template>
