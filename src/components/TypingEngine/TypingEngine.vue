@@ -8,9 +8,8 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['complete'])
+const emit = defineEmits(['complete', 'update'])
 
-/* ==================== 状态初始化 ==================== */
 const chars = ref([])
 const currentIndex = ref(0)
 const container = ref(null)
@@ -18,14 +17,10 @@ let isCompleted = false
 let startTime = null
 let totalErrors = 0
 
-/* ==================== 监听 text 变化，重置状态 ==================== */
 watch(
   () => props.text,
   async (newText) => {
-    chars.value = newText.split('').map((char) => ({
-      char,
-      status: 'pending',
-    }))
+    chars.value = newText.split('').map((char) => ({ char, status: 'pending' }))
     currentIndex.value = 0
     isCompleted = false
     startTime = null
@@ -37,7 +32,6 @@ watch(
   { immediate: true },
 )
 
-/* ==================== WPM 计算 ==================== */
 function calculateWpm() {
   if (!startTime) return 0
   const elapsedMinutes = (Date.now() - startTime) / 60000
@@ -45,17 +39,30 @@ function calculateWpm() {
   return Math.round(chars.value.length / 5 / elapsedMinutes)
 }
 
-/* ==================== 准确率计算 ==================== */
 function calculateAccuracy() {
   if (chars.value.length === 0) return 100
   const correctCount = chars.value.filter((c) => c.status === 'correct').length
   return parseFloat(((correctCount / chars.value.length) * 100).toFixed(1))
 }
 
-/* ==================== 键盘事件处理 ==================== */
+function emitUpdate() {
+  const typed = currentIndex.value
+  const total = chars.value.length
+  const correctCount = chars.value.filter((c) => c.status === 'correct').length
+  let liveWpm = 0
+  if (startTime) {
+    const mins = (Date.now() - startTime) / 60000
+    liveWpm = mins > 0 ? Math.round(correctCount / 5 / mins) : 0
+  }
+  emit('update', {
+    progress: total > 0 ? typed / total : 0,
+    liveWpm,
+    liveAccuracy: typed > 0 ? parseFloat(((correctCount / typed) * 100).toFixed(1)) : 100,
+  })
+}
+
 function handleKeyDown(e) {
   if (isCompleted) return
-
   if (e.ctrlKey || e.metaKey || e.altKey) return
 
   if (e.key === 'Backspace') {
@@ -63,11 +70,11 @@ function handleKeyDown(e) {
       currentIndex.value--
       chars.value[currentIndex.value].status = 'pending'
     }
+    emitUpdate()
     return
   }
 
   if (e.isComposing) return
-
   if (currentIndex.value >= chars.value.length) return
 
   if (!startTime) {
@@ -106,6 +113,8 @@ function handleKeyDown(e) {
       }
   }
 
+  emitUpdate()
+
   if (currentIndex.value >= chars.value.length) {
     isCompleted = true
     const duration = Math.max(1, Math.floor((Date.now() - startTime) / 1000))
@@ -122,7 +131,7 @@ function handleKeyDown(e) {
 <template>
   <div
     ref="container"
-    class="font-mono text-lg leading-relaxed whitespace-pre-wrap break-words"
+    class="typing-area font-mono text-lg leading-relaxed whitespace-pre-wrap break-words outline-none"
     tabindex="0"
     @keydown="handleKeyDown"
     @click="container?.focus()"
@@ -132,33 +141,45 @@ function handleKeyDown(e) {
       :key="index"
       class="relative"
       :class="{
-        'text-slate-400': item.status === 'pending',
-        'text-green-600': item.status === 'correct',
-        'text-red-500': item.status === 'wrong',
+        'char-pending': item.status === 'pending',
+        'char-correct': item.status === 'correct',
+        'char-wrong': item.status === 'wrong',
+        'char-wrong-space': item.status === 'wrong' && item.char === ' ',
         'caret': index === currentIndex,
       }"
     >{{ item.char }}</span>
-    <span
-      v-if="currentIndex >= chars.length && chars.length > 0"
-      class="caret"
-    ></span>
+    <span v-if="currentIndex >= chars.length && chars.length > 0" class="caret" />
   </div>
 </template>
 
 <style scoped>
-.caret::after {
+.typing-area {
+  cursor: text;
+  user-select: none;
+}
+
+.char-pending { color: #646669; }
+.char-correct { color: #d1d0c5; }
+.char-wrong   { color: #ca4754; }
+
+.char-wrong-space {
+  background-color: #ca475440;
+  border-radius: 2px;
+}
+
+.caret::before {
   content: '';
-  display: inline-block;
+  position: absolute;
+  left: 0;
+  top: 0.1em;
   width: 2px;
-  height: 1em;
-  background: #3b82f6;
-  margin-left: 1px;
-  animation: blink 1s infinite;
+  height: 0.85em;
+  background: #e2b714;
+  border-radius: 1px;
+  animation: blink 1.1s step-start infinite;
 }
 
 @keyframes blink {
-  50% {
-    opacity: 0;
-  }
+  50% { opacity: 0; }
 }
 </style>
