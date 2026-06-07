@@ -1,5 +1,5 @@
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { getLessonById, lessonMetas } from '@/lessons'
+import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 
 // 数据访问统一入口：组件应通过 '@/lib/db' 访问数据，不直接调用 supabase。
 // 未配置 VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY 时，自动使用 mock 数据，方便本地无后端启动。
