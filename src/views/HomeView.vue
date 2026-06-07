@@ -3,8 +3,11 @@ import LessonSelect from '@/components/LessonSelect/index.vue'
 </script>
 
 <template>
-  <section class="mx-auto max-w-5xl px-4 py-8">
-    <h1 class="mb-6 text-2xl font-semibold text-slate-900">课程列表</h1>
+  <div>
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-mt-accent tracking-tight mb-2">keylab</h1>
+      <p class="text-mt-sub text-sm">为程序员设计的打字练习 — 代码、算法、概念</p>
+    </div>
     <LessonSelect />
-  </section>
+  </div>
 </template>
