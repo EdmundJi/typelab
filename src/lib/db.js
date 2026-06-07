@@ -158,12 +158,6 @@ export async function listLeaderboard() {
     }
   }
 
-  // 具体聚合 SQL / RPC 可在排行榜任务中按 Supabase 项目策略完善。
-  const { data, error } = await supabase
-    .from('results')
-    .select('user_id, wpm, accuracy')
-    .order('wpm', { ascending: false })
-    .limit(20)
-
+  const { data, error } = await supabase.rpc('get_leaderboard')
   return { data, error }
 }
