@@ -11,40 +11,41 @@ const props = defineProps({
 
 const formattedDuration = computed(() => {
   const secs = props.duration
-  if (secs < 60) return `${secs}秒`
+  if (secs < 60) return `${secs}s`
   const m = Math.floor(secs / 60)
   const s = secs % 60
-  return s > 0 ? `${m}分${s}秒` : `${m}分钟`
+  return s > 0 ? `${m}m ${s}s` : `${m}m`
 })
+
+const isNewRecord = computed(() => props.bestWpm !== null && props.wpm > props.bestWpm)
 </script>
 
 <template>
-  <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-    <div class="rounded-xl bg-white p-4 shadow-sm">
-      <p class="text-sm text-slate-500">打字速度</p>
-      <p class="mt-1 text-2xl font-bold text-slate-900">{{ wpm }}<span class="text-base font-medium">WPM</span></p>
+  <div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-mt-surface border border-mt-border rounded-lg p-5">
+        <p class="text-xs text-mt-sub mb-1">wpm</p>
+        <p class="text-3xl font-bold text-mt-accent">{{ wpm }}</p>
+      </div>
+      <div class="bg-mt-surface border border-mt-border rounded-lg p-5">
+        <p class="text-xs text-mt-sub mb-1">accuracy</p>
+        <p class="text-3xl font-bold text-mt-text">{{ accuracy }}<span class="text-lg text-mt-sub">%</span></p>
+      </div>
+      <div class="bg-mt-surface border border-mt-border rounded-lg p-5">
+        <p class="text-xs text-mt-sub mb-1">time</p>
+        <p class="text-3xl font-bold text-mt-text">{{ formattedDuration }}</p>
+      </div>
+      <div class="bg-mt-surface border border-mt-border rounded-lg p-5">
+        <p class="text-xs text-mt-sub mb-1">errors</p>
+        <p class="text-3xl font-bold" :class="errors > 0 ? 'text-mt-wrong' : 'text-mt-text'">{{ errors }}</p>
+      </div>
     </div>
-    <div class="rounded-xl bg-white p-4 shadow-sm">
-      <p class="text-sm text-slate-500">准确率</p>
-      <p class="mt-1 text-2xl font-bold text-slate-900">{{ accuracy }}<span class="text-base font-medium">%</span></p>
-    </div>
-    <div class="rounded-xl bg-white p-4 shadow-sm">
-      <p class="text-sm text-slate-500">用时</p>
-      <p class="mt-1 text-2xl font-bold text-slate-900">{{ formattedDuration }}</p>
-    </div>
-    <div class="rounded-xl bg-white p-4 shadow-sm">
-      <p class="text-sm text-slate-500">错误数</p>
-      <p class="mt-1 text-2xl font-bold text-slate-900">{{ errors }}</p>
-    </div>
-  </div>
 
-  <div v-if="bestWpm !== null" class="mt-4 rounded-xl bg-amber-50 p-4">
-    <p class="text-sm text-amber-700">
-      本课程历史最佳：
-      <span class="font-bold">{{ bestWpm }} WPM</span>
-      <span v-if="wpm > bestWpm" class="ml-2 text-green-600">新纪录!</span>
-      <span v-else-if="wpm === bestWpm" class="ml-2 text-slate-500">持平</span>
-      <span v-else class="ml-2 text-slate-500">还需努力</span>
-    </p>
+    <div v-if="bestWpm !== null" class="mt-4 flex items-center gap-3 px-1">
+      <span class="text-xs text-mt-sub">历史最佳 {{ bestWpm }} wpm</span>
+      <span v-if="isNewRecord" class="text-xs text-mt-accent font-semibold">新纪录 ↑</span>
+      <span v-else-if="wpm === bestWpm" class="text-xs text-mt-sub">持平</span>
+      <span v-else class="text-xs text-mt-sub">差 {{ bestWpm - wpm }} wpm</span>
+    </div>
   </div>
 </template>
