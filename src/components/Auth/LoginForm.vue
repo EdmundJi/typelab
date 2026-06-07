@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-
 import { signInWithPassword } from '@/lib/db'
 
 const emit = defineEmits(['success'])
@@ -38,33 +37,34 @@ async function handleSubmit() {
 <template>
   <form class="space-y-4" @submit.prevent="handleSubmit">
     <div>
-      <label class="block text-sm font-medium text-slate-700" for="login-email">邮箱</label>
+      <label class="block text-xs text-mt-sub mb-1.5" for="login-email">邮箱</label>
       <input
         id="login-email"
         v-model.trim="email"
-        class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+        class="w-full bg-mt-bg border border-mt-border rounded px-3 py-2 text-sm text-mt-text outline-none transition focus:border-mt-accent placeholder:text-mt-sub"
         type="email"
         autocomplete="email"
+        placeholder="you@example.com"
         required
       />
     </div>
 
     <div>
-      <label class="block text-sm font-medium text-slate-700" for="login-password">密码</label>
+      <label class="block text-xs text-mt-sub mb-1.5" for="login-password">密码</label>
       <input
         id="login-password"
         v-model="password"
-        class="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-slate-900 focus:ring-2 focus:ring-slate-200"
+        class="w-full bg-mt-bg border border-mt-border rounded px-3 py-2 text-sm text-mt-text outline-none transition focus:border-mt-accent"
         type="password"
         autocomplete="current-password"
         required
       />
     </div>
 
-    <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
+    <p v-if="errorMessage" class="text-xs text-mt-wrong">{{ errorMessage }}</p>
 
     <button
-      class="w-full rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-400"
+      class="w-full rounded px-4 py-2 text-sm font-semibold transition-opacity bg-mt-accent text-mt-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
       type="submit"
       :disabled="isSubmitting"
     >

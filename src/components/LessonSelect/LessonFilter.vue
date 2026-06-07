@@ -33,11 +33,11 @@ function categoryLabel(cat) {
       v-for="cat in categories"
       :key="cat"
       type="button"
-      class="rounded-full px-4 py-1.5 text-sm font-medium transition"
+      class="px-3 py-1 text-xs font-medium rounded transition-colors"
       :class="
         activeCategory === cat
-          ? 'bg-blue-600 text-white shadow-sm'
-          : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800'
+          ? 'bg-mt-accent text-mt-bg'
+          : 'bg-mt-surface text-mt-sub hover:text-mt-text border border-mt-border'
       "
       @click="$emit('update:activeCategory', cat)"
     >

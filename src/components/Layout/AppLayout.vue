@@ -3,9 +3,9 @@ import AppNavbar from './AppNavbar.vue'
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-50 text-slate-900">
+  <div class="min-h-screen bg-mt-bg text-mt-text font-mono">
     <AppNavbar />
-    <main class="mx-auto w-full max-w-5xl px-4 py-8">
+    <main class="mx-auto w-full max-w-5xl px-6 py-8">
       <slot />
     </main>
   </div>
