@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -17,33 +16,32 @@ function handleLogout() {
 </script>
 
 <template>
-  <nav class="border-b border-slate-200 bg-white">
-    <div class="mx-auto flex min-h-16 w-full max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-3">
+  <nav class="border-b border-mt-border bg-mt-bg">
+    <div class="mx-auto flex min-h-14 w-full max-w-5xl items-center justify-between gap-4 px-6">
       <RouterLink
-        class="inline-flex items-center gap-2 text-lg font-bold text-blue-600 transition hover:text-blue-700"
+        class="flex items-center gap-2 text-mt-accent hover:opacity-80 transition-opacity"
         :to="{ name: 'home' }"
-        aria-label="TypeLab 首页"
+        aria-label="KeyLab 首页"
       >
-        <span class="rounded-md bg-blue-50 px-2 py-1 font-mono text-xl leading-none text-blue-600">&lt;/&gt;</span>
-        <span class="text-slate-900">TypeLab</span>
+        <span class="text-lg font-bold tracking-tight">keylab</span>
       </RouterLink>
 
-      <div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-2 text-sm">
-        <RouterLink class="nav-link" :to="{ name: 'home' }">首页</RouterLink>
+      <div class="flex items-center gap-6 text-sm">
+        <RouterLink class="nav-link" :to="{ name: 'home' }">练习</RouterLink>
         <RouterLink class="nav-link" :to="{ name: 'leaderboard' }">排行榜</RouterLink>
-        <RouterLink v-if="isLoggedIn" class="nav-link" :to="{ name: 'profile' }">个人主页</RouterLink>
+        <RouterLink v-if="isLoggedIn" class="nav-link" :to="{ name: 'profile' }">我的</RouterLink>
 
         <template v-if="isLoggedIn">
-          <span class="max-w-48 truncate text-slate-500" :title="userEmail">{{ userEmail }}</span>
+          <span class="max-w-40 truncate text-mt-sub text-xs" :title="userEmail">{{ userEmail }}</span>
           <button
-            class="rounded-md border border-slate-300 px-3 py-1.5 font-medium text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
+            class="text-mt-sub hover:text-mt-text transition-colors text-sm"
             type="button"
             @click="handleLogout"
           >
             退出
           </button>
         </template>
-        <RouterLink v-else class="rounded-md bg-blue-600 px-3 py-1.5 font-medium text-white transition hover:bg-blue-700" :to="{ name: 'login' }">
+        <RouterLink v-else class="text-mt-sub hover:text-mt-text transition-colors" :to="{ name: 'login' }">
           登录
         </RouterLink>
       </div>
@@ -53,10 +51,16 @@ function handleLogout() {
 
 <style scoped>
 .nav-link {
-  @apply font-medium text-slate-600 transition hover:text-blue-700;
+  color: #646669;
+  transition: color 0.15s;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #d1d0c5;
 }
 
 .router-link-active.nav-link {
-  @apply text-blue-700;
+  color: #e2b714;
 }
 </style>
