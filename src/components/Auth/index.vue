@@ -52,15 +52,15 @@ async function handleSignOut() {
 </script>
 
 <template>
-  <div class="mx-auto max-w-md">
-    <div v-if="isLoggedIn" class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <p class="text-sm text-slate-600">当前登录账号</p>
-      <p class="mt-1 font-medium text-slate-900">{{ userStore.user?.email }}</p>
+  <div class="mx-auto max-w-sm">
+    <div v-if="isLoggedIn" class="bg-mt-surface border border-mt-border rounded-lg p-6">
+      <p class="text-xs text-mt-sub mb-1">当前登录</p>
+      <p class="text-sm text-mt-text font-medium">{{ userStore.user?.email }}</p>
 
-      <p v-if="errorMessage" class="mt-4 text-sm text-red-600">{{ errorMessage }}</p>
+      <p v-if="errorMessage" class="mt-3 text-xs text-mt-wrong">{{ errorMessage }}</p>
 
       <button
-        class="mt-6 w-full rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-900 hover:text-slate-900 disabled:cursor-not-allowed disabled:text-slate-400"
+        class="mt-6 w-full rounded px-4 py-2 text-sm border border-mt-border text-mt-sub font-medium transition-colors hover:text-mt-text hover:border-mt-text disabled:opacity-40 disabled:cursor-not-allowed"
         type="button"
         :disabled="isSigningOut"
         @click="handleSignOut"
@@ -69,27 +69,19 @@ async function handleSignOut() {
       </button>
     </div>
 
-    <div v-else class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
-      <div class="mb-6 grid grid-cols-2 rounded-md bg-slate-100 p-1">
+    <div v-else class="bg-mt-surface border border-mt-border rounded-lg p-6">
+      <div class="flex mb-6 border-b border-mt-border">
         <button
-          class="rounded px-3 py-2 text-sm font-medium transition"
-          :class="
-            activeTab === 'login'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
-          "
+          class="flex-1 pb-3 text-sm font-medium transition-colors"
+          :class="activeTab === 'login' ? 'text-mt-accent border-b-2 border-mt-accent -mb-px' : 'text-mt-sub hover:text-mt-text'"
           type="button"
           @click="selectTab('login')"
         >
           登录
         </button>
         <button
-          class="rounded px-3 py-2 text-sm font-medium transition"
-          :class="
-            activeTab === 'register'
-              ? 'bg-white text-slate-900 shadow-sm'
-              : 'text-slate-600 hover:text-slate-900'
-          "
+          class="flex-1 pb-3 text-sm font-medium transition-colors"
+          :class="activeTab === 'register' ? 'text-mt-accent border-b-2 border-mt-accent -mb-px' : 'text-mt-sub hover:text-mt-text'"
           type="button"
           @click="selectTab('register')"
         >
@@ -97,7 +89,7 @@ async function handleSignOut() {
         </button>
       </div>
 
-      <p v-if="successMessage" class="mb-4 text-sm text-emerald-700">{{ successMessage }}</p>
+      <p v-if="successMessage" class="mb-4 text-xs text-mt-accent">{{ successMessage }}</p>
       <LoginForm v-if="activeTab === 'login'" @success="handleAuthSuccess" />
       <RegisterForm v-else @success="handleAuthSuccess" @registered="handleRegistered" />
     </div>
