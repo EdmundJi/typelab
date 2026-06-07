@@ -29,7 +29,13 @@ async function handleSubmit() {
   isSubmitting.value = false
 
   if (error) {
-    errorMessage.value = error.message || '注册失败，请稍后重试'
+    if (error.message?.toLowerCase().includes('already registered')) {
+      errorMessage.value = '该邮箱已注册，请直接登录'
+    } else if (error.message?.toLowerCase().includes('password')) {
+      errorMessage.value = '密码不符合要求（至少 6 位）'
+    } else {
+      errorMessage.value = '注册失败，请稍后重试'
+    }
     return
   }
 
