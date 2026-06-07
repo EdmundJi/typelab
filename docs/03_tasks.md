@@ -103,9 +103,9 @@ text: String  // 必传，要打的完整文本
 complete: { wpm: Number, accuracy: Number, duration: Number, errors: Number }
 ```
 
-- [ ] 将 `text` 拆分为字符数组，每个字符有状态：`pending` / `correct` / `wrong`
-- [ ] 键盘输入实时对比当前字符，更新状态
-- [ ] 正确字符绿色，错误字符红色，未到达字符灰色，当前光标位置下划线
+- [x] 将 `text` 拆分为字符数组，每个字符有状态：`pending` / `correct` / `wrong`
+- [x] 键盘输入实时对比当前字符，更新状态
+- [x] 正确字符绿色，错误字符红色，未到达字符灰色，当前光标位置下划线
 - [ ] Tab 键输入制表符（阻止默认的焦点切换行为）
 - [ ] 第一次按键时记录开始时间
 - [ ] 每 5 秒更新并显示实时 WPM

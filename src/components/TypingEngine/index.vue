@@ -1,17 +1,32 @@
 <script setup>
-// TypingEngine 组件接口遵循 SPEC.md；内部逻辑由后续 T05 实现。
-defineProps({
+import TypingEngine from './TypingEngine.vue'
+
+const props = defineProps({
   text: {
     type: String,
     required: true,
   },
 })
 
-defineEmits(['complete'])
+const emit = defineEmits(['complete'])
+
+function handleComplete(payload) {
+  emit('complete', payload)
+}
 </script>
 
 <template>
-  <div>
-    <!-- TypingEngine 模块入口占位。 -->
+  <div class="typing-engine">
+    <TypingEngine :text="text" @complete="handleComplete" />
   </div>
 </template>
+
+<style scoped>
+.typing-engine {
+  font-family: 'Fira Code', 'Consolas', monospace;
+  background: #1e1e1e;
+  padding: 2rem;
+  border-radius: 8px;
+  min-height: 200px;
+}
+</style>
