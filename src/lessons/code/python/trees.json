@@ -1,0 +1,18 @@
+[
+  {
+    "id": "py-bfs-01",
+    "title": "BFS 广度优先遍历（Python）",
+    "category": "trees",
+    "difficulty": 2,
+    "text": "from collections import deque\n\ndef bfs(root):\n    if not root:\n        return []\n    queue = deque([root])\n    result = []\n    while queue:\n        node = queue.popleft()\n        result.append(node.val)\n        if node.left:\n            queue.append(node.left)\n        if node.right:\n            queue.append(node.right)\n    return result",
+    "note": "BFS 使用队列逐层遍历树节点，时间复杂度 O(n)，空间复杂度 O(n)。"
+  },
+  {
+    "id": "py-dfs-01",
+    "title": "DFS 深度优先遍历（Python）",
+    "category": "trees",
+    "difficulty": 2,
+    "text": "def dfs_preorder(root):\n    if not root:\n        return []\n    result = []\n    stack = [root]\n    while stack:\n        node = stack.pop()\n        result.append(node.val)\n        if node.right:\n            stack.append(node.right)\n        if node.left:\n            stack.append(node.left)\n    return result",
+    "note": "DFS 前序遍历使用栈，也可以递归实现。时间复杂度 O(n)，空间复杂度 O(h)。"
+  }
+]

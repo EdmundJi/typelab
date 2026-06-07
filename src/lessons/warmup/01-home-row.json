@@ -1,0 +1,18 @@
+[
+  {
+    "id": "warmup-home-row-01",
+    "title": "Home Row 基础练习",
+    "category": "warmup",
+    "difficulty": 1,
+    "text": "asdf jkl; asdf jkl; fjdk sla; dkfj a;sl",
+    "note": "Home Row 是键盘打字的起点，熟练掌握能大幅提升打字速度。"
+  },
+  {
+    "id": "warmup-home-row-02",
+    "title": "Home Row 进阶练习",
+    "category": "warmup",
+    "difficulty": 1,
+    "text": "ask dad; fall lad; sad jak; all fads",
+    "note": "尝试不看键盘，凭肌肉记忆打出这些单词。"
+  }
+]

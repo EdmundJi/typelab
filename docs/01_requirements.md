@@ -17,7 +17,7 @@
 ### F01 — 用户认证
 - 用户可以用邮箱+密码注册账号
 - 用户可以登录和退出
-- 登录状态在刷新后保持（Supabase session 自动处理）
+- 登录状态在刷新后保持（开发阶段由 mock session 模拟；上线阶段由 Supabase session 自动处理）
 - 未登录用户可以使用打字功能，但成绩不保存
 
 ### F02 — 课程选择
@@ -69,10 +69,12 @@
 | 用户键盘输入 | 实时字符状态（正确/错误/未到达） |
 | 课程 JSON 文件 | 渲染的打字文本 |
 | 完成信号 | WPM、准确率、错误数 |
-| 已登录用户完成 | 写入 Supabase results 表 |
-| 排行榜请求 | 读取 Supabase 聚合查询结果 |
+| 已登录用户完成 | 通过 `src/lib/db.js` 保存成绩（开发阶段写入 mock 数据，上线阶段写入 Supabase results 表） |
+| 排行榜请求 | 通过 `src/lib/db.js` 读取排行榜数据（开发阶段 mock 聚合，上线阶段 Supabase 聚合） |
 
 ## 数据模型草稿
+
+开发阶段使用 `src/lib/db.js` 中的 mock 数据结构模拟；上线阶段使用 Supabase Auth 和 results 表。
 
 ```
 users        由 Supabase Auth 管理，无需手动建表

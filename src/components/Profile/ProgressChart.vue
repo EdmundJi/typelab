@@ -1,6 +1,11 @@
 <script setup>
-import * as echarts from 'echarts'
+import { LineChart } from 'echarts/charts'
+import { GridComponent, TooltipComponent } from 'echarts/components'
+import * as echarts from 'echarts/core'
+import { CanvasRenderer } from 'echarts/renderers'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+echarts.use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
 
 const props = defineProps({
   results: {
@@ -10,50 +15,51 @@ const props = defineProps({
 })
 
 const chartEl = ref(null)
-let chartInstance = null
+let chart = null
 
 function buildOption(results) {
-  const points = [...results]
-    .sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
-    .map((result) => [result.created_at, result.wpm])
+  const sorted = [...results].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+  const dates = sorted.map((r) =>
+    new Date(r.created_at).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }),
+  )
+  const wpms = sorted.map((r) => r.wpm)
 
   return {
-    grid: { left: 50, right: 20, top: 40, bottom: 50 },
+    backgroundColor: 'transparent',
+    grid: { top: 16, right: 16, bottom: 32, left: 40 },
     tooltip: {
       trigger: 'axis',
-      formatter: (params) => {
-        const point = params[0]
-        if (!point) return ''
-        const date = new Date(point.value[0])
-        return `${date.toLocaleString()}<br/>WPM: <strong>${point.value[1]}</strong>`
-      },
+      backgroundColor: '#1e1e1e',
+      borderColor: '#2a2a2a',
+      textStyle: { color: '#d1d0c5', fontFamily: 'JetBrains Mono', fontSize: 12 },
+      formatter: (params) => `${params[0].name}<br/><b>${params[0].value} wpm</b>`,
     },
     xAxis: {
-      type: 'time',
-      axisLabel: {
-        formatter: (value) => {
-          const date = new Date(value)
-          return `${date.getMonth() + 1}/${date.getDate()} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
-        },
-      },
+      type: 'category',
+      data: dates,
+      axisLine: { lineStyle: { color: '#2a2a2a' } },
+      axisTick: { show: false },
+      axisLabel: { color: '#646669', fontSize: 11, fontFamily: 'JetBrains Mono' },
     },
     yAxis: {
       type: 'value',
-      name: 'WPM',
-      nameLocation: 'end',
+      splitLine: { lineStyle: { color: '#2a2a2a' } },
+      axisLabel: { color: '#646669', fontSize: 11, fontFamily: 'JetBrains Mono' },
     },
     series: [
       {
         type: 'line',
-        name: 'WPM',
-        data: points,
+        data: wpms,
         smooth: true,
-        showSymbol: points.length <= 1 ? false : true,
-        symbolSize: 6,
-        lineStyle: { width: 2 },
-        itemStyle: { color: '#0ea5e9' },
+        symbol: 'circle',
+        symbolSize: 5,
+        lineStyle: { color: '#e2b714', width: 2 },
+        itemStyle: { color: '#e2b714' },
         areaStyle: {
-          color: 'rgba(14, 165, 233, 0.15)',
+          color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+            { offset: 0, color: '#e2b71430' },
+            { offset: 1, color: '#e2b71400' },
+          ]),
         },
       },
     ],
@@ -61,45 +67,37 @@ function buildOption(results) {
 }
 
 function render() {
-  if (props.results.length === 0) {
-    chartInstance?.dispose()
-    chartInstance = null
+  if (props.results.length < 2) {
+    chart?.dispose()
+    chart = null
     return
   }
 
   if (!chartEl.value) return
 
-  if (!chartInstance) {
-    chartInstance = echarts.init(chartEl.value)
+  if (!chart) {
+    chart = echarts.init(chartEl.value)
   }
 
-  chartInstance.setOption(buildOption(props.results), true)
+  chart.setOption(buildOption(props.results))
 }
 
-function handleResize() {
-  chartInstance?.resize()
-}
+onMounted(render)
 
-onMounted(() => {
-  render()
-  window.addEventListener('resize', handleResize)
-})
-
-watch(() => props.results, render, { deep: true, flush: 'post' })
+watch(() => props.results, render, { flush: 'post' })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('resize', handleResize)
-  chartInstance?.dispose()
-  chartInstance = null
+  chart?.dispose()
+  chart = null
 })
 </script>
 
 <template>
-  <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-    <h2 class="mb-3 text-lg font-semibold text-slate-900">进步趋势</h2>
-    <div v-if="results.length === 0" class="flex h-64 items-center justify-center text-sm text-slate-500">
-      暂无练习记录，完成一次练习后会在这里看到趋势曲线。
+  <div>
+    <p class="text-xs text-mt-sub mb-3">WPM 趋势</p>
+    <div v-if="results.length < 2" class="py-8 text-center text-sm text-mt-sub">
+      完成至少 2 次练习后显示趋势图
     </div>
-    <div v-else ref="chartEl" class="h-64 w-full"></div>
+    <div v-else ref="chartEl" class="w-full h-48" />
   </div>
 </template>

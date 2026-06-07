@@ -1,60 +1,41 @@
 <script setup>
-import { computed } from 'vue'
+import { onMounted, ref } from 'vue'
+import { listUserResults } from '@/lib/db'
+import { useUserStore } from '@/stores/user'
 import ProfileHistory from './ProfileHistory.vue'
 import ProgressChart from './ProgressChart.vue'
 
-const props = defineProps({
-  results: {
-    type: Array,
-    required: true,
-  },
-  getLessonTitle: {
-    type: Function,
-    required: true,
-  },
-})
+const userStore = useUserStore()
+const results = ref([])
+const loading = ref(true)
+const error = ref(null)
 
-const stats = computed(() => {
-  const count = props.results.length
-  if (count === 0) {
-    return { count: 0, avgWpm: 0, maxWpm: 0 }
+onMounted(async () => {
+  if (!userStore.user) {
+    loading.value = false
+    return
   }
 
-  let wpmSum = 0
-  let maxWpm = 0
-  for (const result of props.results) {
-    wpmSum += Number(result.wpm) || 0
-    const wpm = Number(result.wpm) || 0
-    if (wpm > maxWpm) maxWpm = wpm
+  const { data, error: err } = await listUserResults(userStore.user.id)
+  if (err) {
+    error.value = '加载失败'
+  } else {
+    results.value = data ?? []
   }
-
-  return {
-    count,
-    avgWpm: Math.round(wpmSum / count),
-    maxWpm,
-  }
+  loading.value = false
 })
 </script>
 
 <template>
-  <div class="space-y-6">
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-      <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <div class="text-sm text-slate-500">总练习次数</div>
-        <div class="mt-2 text-3xl font-semibold text-slate-900 tabular-nums">{{ stats.count }}</div>
-      </div>
-      <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <div class="text-sm text-slate-500">平均 WPM</div>
-        <div class="mt-2 text-3xl font-semibold text-slate-900 tabular-nums">{{ stats.avgWpm }}</div>
-      </div>
-      <div class="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
-        <div class="text-sm text-slate-500">最高 WPM</div>
-        <div class="mt-2 text-3xl font-semibold text-slate-900 tabular-nums">{{ stats.maxWpm }}</div>
-      </div>
+  <div>
+    <div v-if="loading" class="py-16 text-center text-sm text-mt-sub">加载中...</div>
+    <div v-else-if="error" class="py-16 text-center text-sm text-mt-wrong">{{ error }}</div>
+    <div v-else-if="results.length === 0" class="py-16 text-center text-sm text-mt-sub">
+      还没有练习记录，<RouterLink :to="{ name: 'home' }" class="text-mt-accent hover:opacity-80">去练习</RouterLink>
     </div>
-
-    <ProgressChart :results="results" />
-
-    <ProfileHistory :results="results" :get-lesson-title="getLessonTitle" />
+    <div v-else class="space-y-10">
+      <ProgressChart :results="results" />
+      <ProfileHistory :results="results" />
+    </div>
   </div>
 </template>

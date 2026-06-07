@@ -1,0 +1,10 @@
+[
+  {
+    "id": "py-dijkstra-01",
+    "title": "Dijkstra 最短路径（Python）",
+    "category": "graph",
+    "difficulty": 4,
+    "text": "import heapq\n\ndef dijkstra(graph, start):\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        cur_dist, cur = heapq.heappop(pq)\n        if cur_dist > distances[cur]:\n            continue\n        for neighbor, weight in graph[cur]:\n            dist = cur_dist + weight\n            if dist < distances[neighbor]:\n                distances[neighbor] = dist\n                heapq.heappush(pq, (dist, neighbor))\n    return distances",
+    "note": "Dijkstra 算法使用优先队列，时间复杂度 O((V+E) log V)，适用于非负权图。"
+  }
+]

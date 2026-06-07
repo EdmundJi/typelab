@@ -1,12 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-import HomeView from '@/views/HomeView.vue'
-import TypingView from '@/views/TypingView.vue'
-import ResultView from '@/views/ResultView.vue'
-import LeaderboardView from '@/views/LeaderboardView.vue'
-import ProfileView from '@/views/ProfileView.vue'
-import LoginView from '@/views/LoginView.vue'
 import { useUserStore } from '@/stores/user'
+import HomeView from '@/views/HomeView.vue'
+import LeaderboardView from '@/views/LeaderboardView.vue'
+import LoginView from '@/views/LoginView.vue'
+import ProfileView from '@/views/ProfileView.vue'
+import ResultView from '@/views/ResultView.vue'
+import TypingView from '@/views/TypingView.vue'
 
 const routes = [
   { path: '/', name: 'home', component: HomeView },

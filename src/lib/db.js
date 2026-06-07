@@ -1,5 +1,5 @@
-import { supabase, isSupabaseConfigured } from '@/lib/supabase'
 import { getLessonById, lessonMetas } from '@/lessons'
+import { isSupabaseConfigured, supabase } from '@/lib/supabase'
 
 // 数据访问统一入口：组件应通过 '@/lib/db' 访问数据，不直接调用 supabase。
 // 未配置 VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY 时，自动使用 mock 数据，方便本地无后端启动。
@@ -17,6 +17,22 @@ export async function getCurrentSession() {
   }
 
   return supabase.auth.getSession()
+}
+
+export function onAuthStateChange(callback) {
+  if (isUsingMockData()) {
+    return {
+      data: {
+        subscription: {
+          unsubscribe() {},
+        },
+      },
+    }
+  }
+
+  return supabase.auth.onAuthStateChange((_event, session) => {
+    callback(session)
+  })
 }
 
 export async function signInWithPassword(credentials) {
@@ -100,9 +116,10 @@ export async function listUserResults(userId) {
 
 export async function getBestLessonWpm(userId, lessonId) {
   if (isUsingMockData()) {
-    const bestWpm = mockResults
-      .filter((result) => result.user_id === userId && result.lesson_id === lessonId)
-      .reduce((best, result) => Math.max(best, result.wpm), 0)
+    const matches = mockResults.filter(
+      (result) => result.user_id === userId && result.lesson_id === lessonId,
+    )
+    const bestWpm = matches.length > 0 ? Math.max(...matches.map((r) => r.wpm)) : null
 
     return { data: bestWpm, error: null }
   }
@@ -116,7 +133,7 @@ export async function getBestLessonWpm(userId, lessonId) {
     .limit(1)
     .maybeSingle()
 
-  return { data: data?.wpm ?? 0, error }
+  return { data: data?.wpm ?? null, error }
 }
 
 export async function listLeaderboard() {
@@ -141,12 +158,6 @@ export async function listLeaderboard() {
     }
   }
 
-  // 具体聚合 SQL / RPC 可在排行榜任务中按 Supabase 项目策略完善。
-  const { data, error } = await supabase
-    .from('results')
-    .select('user_id, wpm, accuracy')
-    .order('wpm', { ascending: false })
-    .limit(20)
-
+  const { data, error } = await supabase.rpc('get_leaderboard')
   return { data, error }
 }

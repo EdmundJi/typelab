@@ -153,21 +153,18 @@ userStore.session       // 判断是否登录
 
 ---
 
-## Supabase 客户端使用
-
-```javascript
-// 统一从这里导入，不要自己创建客户端
-import { supabase } from '@/lib/supabase'
-
-// 查询示例
-const { data, error } = await supabase
-  .from('results')
-  .select('*')
-  .eq('user_id', userId)
-  .order('created_at', { ascending: false })
-```
-
 ## 数据访问规范
 
-所有组件通过 `@/lib/db` 访问数据，不直接调用 supabase。
-未配置 VITE_SUPABASE_URL 时自动使用 mock 数据。
+所有组件、页面和 store 都通过 `@/lib/db` 访问数据，不直接调用 Supabase。
+
+```javascript
+// 推荐：从统一数据访问入口导入
+import { listUserResults } from '@/lib/db'
+
+const { data, error } = await listUserResults(userId)
+```
+
+`@/lib/supabase` 只负责创建 Supabase client，原则上只供 `@/lib/db` 使用。
+
+开发阶段不需要配置 Supabase 环境变量；未配置 `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` 时，`@/lib/db` 自动使用 mock 数据。
+上线部署或真实后端联调时，再配置 Supabase 环境变量接入真实数据。

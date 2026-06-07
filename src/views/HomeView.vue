@@ -1,6 +1,13 @@
+<script setup>
+import LessonSelect from '@/components/LessonSelect/index.vue'
+</script>
+
 <template>
-  <section class="mx-auto max-w-5xl px-4 py-8">
-    <h1 class="text-2xl font-semibold text-slate-900">课程列表</h1>
-    <!-- TODO: 页面级入口；后续组合 LessonSelect 组件并从 src/lessons/index.js 读取课程元数据。 -->
-  </section>
+  <div>
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-mt-accent tracking-tight mb-2">keylab</h1>
+      <p class="text-mt-sub text-sm">为程序员设计的打字练习 — 代码、算法、概念</p>
+    </div>
+    <LessonSelect />
+  </div>
 </template>
