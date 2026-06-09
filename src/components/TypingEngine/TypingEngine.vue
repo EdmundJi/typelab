@@ -158,12 +158,12 @@ function handleKeyDown(e) {
   user-select: none;
 }
 
-.char-pending { color: #646669; }
-.char-correct { color: #d1d0c5; }
-.char-wrong   { color: #ca4754; }
+.char-pending { color: rgb(var(--mt-sub)); }
+.char-correct { color: rgb(var(--mt-text)); }
+.char-wrong   { color: rgb(var(--mt-wrong)); }
 
 .char-wrong-space {
-  background-color: #ca475440;
+  background-color: rgb(var(--mt-wrong) / 0.25);
   border-radius: 2px;
 }
 
@@ -174,7 +174,7 @@ function handleKeyDown(e) {
   top: 0.1em;
   width: 2px;
   height: 0.85em;
-  background: #e2b714;
+  background: rgb(var(--mt-caret));
   border-radius: 1px;
   animation: blink 1.1s step-start infinite;
 }
