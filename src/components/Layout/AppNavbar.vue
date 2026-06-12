@@ -2,11 +2,13 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { getAvatar } from '@/lib/avatar'
 
 const router = useRouter()
 const userStore = useUserStore()
 
 const userEmail = computed(() => userStore.user?.email ?? '')
+const avatar = computed(() => getAvatar(userStore.user?.email))
 const isLoggedIn = computed(() => Boolean(userStore.session && userStore.user))
 
 function handleLogout() {
@@ -32,6 +34,10 @@ function handleLogout() {
         <RouterLink v-if="isLoggedIn" class="nav-link" :to="{ name: 'profile' }">我的</RouterLink>
 
         <template v-if="isLoggedIn">
+          <span
+            class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0"
+            :style="{ backgroundColor: avatar.color }"
+          >{{ avatar.letter }}</span>
           <span class="max-w-40 truncate text-mt-sub text-xs" :title="userEmail">{{ userEmail }}</span>
           <button
             class="text-mt-sub hover:text-mt-text transition-colors text-sm"

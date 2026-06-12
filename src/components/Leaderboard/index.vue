@@ -9,29 +9,37 @@ const entries = ref([])
 const loading = ref(true)
 const error = ref(null)
 
+let refreshTimer = null
+let mounted = false
+
 async function load() {
   loading.value = true
   error.value = null
-  const { data, error: err } = await listLeaderboard()
-  if (err) {
+  try {
+    const { data, error: err } = await listLeaderboard()
+    if (!mounted) return
+    if (err) {
+      error.value = '加载失败'
+    } else {
+      entries.value = data ?? []
+    }
+  } catch (e) {
+    if (!mounted) return
     error.value = '加载失败'
-  } else {
-    entries.value = data ?? []
+  } finally {
+    if (mounted) loading.value = false
   }
-  loading.value = false
 }
 
-let refreshInterval = null
-
 onMounted(() => {
+  mounted = true
   load()
-  refreshInterval = setInterval(load, 30000)
+  refreshTimer = setInterval(load, 30000)
 })
 
 onUnmounted(() => {
-  if (refreshInterval) {
-    clearInterval(refreshInterval)
-  }
+  mounted = false
+  if (refreshTimer) clearInterval(refreshTimer)
 })
 </script>
 
@@ -42,7 +50,7 @@ onUnmounted(() => {
     <div v-else-if="entries.length === 0" class="py-16 text-center text-sm text-mt-sub">
       暂无数据，完成练习后成绩将出现在此
     </div>
-    <LeaderboardTable v-else :entries="entries" :current-user-id="userStore.user?.id ?? null" />
+    <LeaderboardTable v-else :entries="entries" :current-user-id="userStore.user?.id" />
 
     <button
       class="mt-6 text-xs text-mt-sub hover:text-mt-text transition-colors"
