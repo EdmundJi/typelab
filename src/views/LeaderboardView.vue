@@ -1,6 +1,6 @@
 <script setup>
-import { useUserStore } from '@/stores/user'
 import Leaderboard from '@/components/Leaderboard/index.vue'
+import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
 </script>

@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
 import { getAvatar } from '@/lib/avatar'
+import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
 const userStore = useUserStore()
