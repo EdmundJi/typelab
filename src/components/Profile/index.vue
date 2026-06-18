@@ -11,11 +11,7 @@ const loading = ref(true)
 const error = ref(null)
 
 onMounted(async () => {
-  if (!userStore.user) {
-    loading.value = false
-    return
-  }
-
+  if (!userStore.user) return
   const { data, error: err } = await listUserResults(userStore.user.id)
   if (err) {
     error.value = '加载失败'
