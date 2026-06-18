@@ -28,20 +28,42 @@ function categoryLabel(cat) {
 </script>
 
 <template>
-  <div class="flex flex-wrap gap-2">
+  <div class="flex flex-wrap gap-1.5">
     <button
       v-for="cat in categories"
       :key="cat"
       type="button"
-      class="px-3 py-1 text-xs font-medium rounded transition-colors"
-      :class="
-        activeCategory === cat
-          ? 'bg-mt-accent text-mt-bg'
-          : 'bg-mt-surface text-mt-sub hover:text-mt-text border border-mt-border'
-      "
+      class="filter-btn"
+      :class="activeCategory === cat ? 'active' : ''"
       @click="$emit('update:activeCategory', cat)"
     >
       {{ categoryLabel(cat) }}
     </button>
   </div>
 </template>
+
+<style scoped>
+.filter-btn {
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  border: 1px solid rgb(var(--mt-border));
+  color: rgb(var(--mt-sub));
+  background: transparent;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
+  cursor: pointer;
+}
+
+.filter-btn:hover {
+  color: rgb(var(--mt-text));
+  border-color: rgb(var(--mt-sub));
+}
+
+.filter-btn.active {
+  background: rgb(var(--mt-accent));
+  color: rgb(var(--mt-bg));
+  border-color: rgb(var(--mt-accent));
+}
+</style>

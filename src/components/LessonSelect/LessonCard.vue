@@ -16,8 +16,6 @@ const categoryLabel = {
   concepts: '概念',
 }
 
-const difficultyLabel = ['', '入门', '简单', '中等', '困难', '专家']
-
 function getLabel(category) {
   return categoryLabel[category] ?? category
 }
@@ -26,27 +24,34 @@ function getLabel(category) {
 <template>
   <RouterLink
     :to="{ name: 'lesson', params: { id: lesson.id } }"
-    class="group block rounded-lg border border-mt-border bg-mt-surface p-5 transition-colors hover:border-mt-accent"
+    class="lesson-card group panel block p-4 transition-colors hover:border-mt-accent/50"
   >
-    <div class="flex items-start justify-between gap-2 mb-3">
-      <h3 class="text-sm font-semibold text-mt-text group-hover:text-mt-accent transition-colors leading-snug">
-        {{ lesson.title }}
-      </h3>
-      <span class="shrink-0 text-xs text-mt-sub border border-mt-border rounded px-1.5 py-0.5">
+    <div class="flex items-start justify-between gap-2 mb-5">
+      <span class="text-xs text-mt-sub uppercase tracking-widest">
         {{ getLabel(lesson.category) }}
       </span>
-    </div>
-
-    <div class="flex items-center justify-between">
-      <div class="flex items-center gap-1" :title="`难度 ${lesson.difficulty}/5`">
+      <div class="flex items-center gap-0.5" :title="`难度 ${lesson.difficulty}/5`">
         <span
           v-for="n in 5"
           :key="n"
-          class="inline-block w-1.5 h-1.5 rounded-full"
+          class="inline-block w-1 h-3"
           :class="n <= lesson.difficulty ? 'bg-mt-accent' : 'bg-mt-border'"
         />
       </div>
-      <span class="text-xs text-mt-sub">{{ difficultyLabel[lesson.difficulty] }}</span>
+    </div>
+
+    <h3 class="text-sm text-mt-text group-hover:text-mt-accent transition-colors leading-snug">
+      {{ lesson.title }}
+    </h3>
+
+    <div class="mt-4 flex items-center justify-between">
+      <span class="text-xs text-mt-sub/60 group-hover:text-mt-accent/60 transition-colors">→ 开始练习</span>
     </div>
   </RouterLink>
 </template>
+
+<style scoped>
+.lesson-card {
+  display: block;
+}
+</style>
