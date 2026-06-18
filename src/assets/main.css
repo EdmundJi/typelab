@@ -10,41 +10,43 @@
   }
 
   :root.dark {
-    --mt-bg: 17 17 17;
-    --mt-surface: 30 30 30;
-    --mt-border: 42 42 42;
-    --mt-text: 209 208 197;
-    --mt-sub: 100 102 105;
-    --mt-correct: 209 208 197;
-    --mt-wrong: 202 71 84;
-    --mt-accent: 226 183 20;
-    --mt-caret: 226 183 20;
-    --mt-selection-bg: 226 183 20;
-    --mt-selection-text: 226 183 20;
-    --mt-scrollbar: 42 42 42;
-    --mt-focus: 226 183 20;
-    --mt-nav-link: 100 102 105;
-    --mt-nav-link-hover: 209 208 197;
-    --mt-nav-link-active: 226 183 20;
+    --mt-bg: 10 10 14;
+    --mt-surface: 16 16 22;
+    --mt-border: 30 30 44;
+    --mt-text: 220 220 232;
+    --mt-sub: 88 88 116;
+    --mt-correct: 220 220 232;
+    --mt-wrong: 224 72 72;
+    --mt-accent: 249 115 22;
+    --mt-caret: 249 115 22;
+    --mt-selection-bg: 249 115 22;
+    --mt-selection-text: 10 10 14;
+    --mt-scrollbar: 30 30 44;
+    --mt-focus: 249 115 22;
+    --mt-nav-link: 88 88 116;
+    --mt-nav-link-hover: 220 220 232;
+    --mt-nav-link-active: 249 115 22;
+    --mt-grid: 18 18 26;
   }
 
   :root.light {
-    --mt-bg: 248 248 242;
+    --mt-bg: 245 245 248;
     --mt-surface: 255 255 255;
-    --mt-border: 224 224 216;
-    --mt-text: 39 40 34;
-    --mt-sub: 117 113 94;
-    --mt-correct: 39 40 34;
-    --mt-wrong: 202 71 84;
-    --mt-accent: 192 155 12;
-    --mt-caret: 192 155 12;
-    --mt-selection-bg: 226 183 20;
-    --mt-selection-text: 192 155 12;
-    --mt-scrollbar: 200 200 192;
-    --mt-focus: 192 155 12;
-    --mt-nav-link: 117 113 94;
-    --mt-nav-link-hover: 39 40 34;
-    --mt-nav-link-active: 192 155 12;
+    --mt-border: 216 216 228;
+    --mt-text: 12 12 20;
+    --mt-sub: 108 108 140;
+    --mt-correct: 12 12 20;
+    --mt-wrong: 200 56 56;
+    --mt-accent: 220 95 5;
+    --mt-caret: 220 95 5;
+    --mt-selection-bg: 220 95 5;
+    --mt-selection-text: 245 245 248;
+    --mt-scrollbar: 200 200 216;
+    --mt-focus: 220 95 5;
+    --mt-nav-link: 108 108 140;
+    --mt-nav-link-hover: 12 12 20;
+    --mt-nav-link-active: 220 95 5;
+    --mt-grid: 228 228 238;
   }
 
   html,
@@ -57,11 +59,13 @@
     transition:
       background-color 0.2s,
       color 0.2s;
+    background-image: radial-gradient(rgb(var(--mt-grid)) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
   ::selection {
-    background-color: rgb(var(--mt-selection-bg) / 0.19);
-    color: rgb(var(--mt-selection-text));
+    background-color: rgb(var(--mt-selection-bg) / 0.2);
+    color: rgb(var(--mt-text));
   }
 
   ::-webkit-scrollbar {
@@ -75,11 +79,48 @@
 
   ::-webkit-scrollbar-thumb {
     background-color: rgb(var(--mt-scrollbar));
-    border-radius: 4px;
+    border-radius: 0;
   }
 
   :focus-visible {
-    outline: 2px solid rgb(var(--mt-focus) / 0.4);
+    outline: 1px solid rgb(var(--mt-focus) / 0.6);
     outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .panel {
+    position: relative;
+    background-color: rgb(var(--mt-surface));
+    border: 1px solid rgb(var(--mt-border));
+  }
+
+  .panel::before,
+  .panel::after {
+    content: "";
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-color: rgb(var(--mt-accent) / 0.35);
+    border-style: solid;
+    transition: border-color 0.15s;
+    pointer-events: none;
+  }
+
+  .panel::before {
+    top: -1px;
+    left: -1px;
+    border-width: 1px 0 0 1px;
+  }
+
+  .panel::after {
+    bottom: -1px;
+    right: -1px;
+    border-width: 0 1px 1px 0;
+  }
+
+  .panel:hover::before,
+  .panel:hover::after {
+    border-color: rgb(var(--mt-accent) / 0.75);
   }
 }
