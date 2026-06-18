@@ -1,11 +1,31 @@
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import VariantSelector from '@/components/LessonSelect/VariantSelector.vue'
 import TypingEngine from '@/components/TypingEngine/TypingEngine.vue'
-import { findLessonById } from '@/lib/db'
+import { listUserResults } from '@/lib/adapters/db'
+import { evaluateAndUnlock } from '@/lib/application/achievementEvaluator'
+import { getLessonById } from '@/lib/application/lessons'
+import { ACHIEVEMENTS } from '@/lib/domain/achievements'
+import { useStreakStore } from '@/stores/streak'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
+const streakStore = useStreakStore()
+
+// Toast state
+const toasts = ref([])
+let toastIdSeq = 0
+
+function showToast(message) {
+  const id = ++toastIdSeq
+  toasts.value.push({ id, message })
+  setTimeout(() => {
+    toasts.value = toasts.value.filter((t) => t.id !== id)
+  }, 3500)
+}
 
 const lesson = ref(null)
 const loading = ref(true)
@@ -17,7 +37,19 @@ const progress = ref(0)
 const elapsed = ref(0)
 const started = ref(false)
 
+const selectedVariantId = ref(null)
+
 let timerInterval = null
+
+const currentVariant = computed(() => {
+  if (!lesson.value?.variants) return null
+  return lesson.value.variants.find((v) => v.variant_id === selectedVariantId.value) ?? null
+})
+
+// Reset typing progress when variant changes
+watch(selectedVariantId, () => {
+  resetStats()
+})
 
 async function loadLesson(id) {
   loading.value = true
@@ -25,13 +57,21 @@ async function loadLesson(id) {
   clearTimer()
   resetStats()
 
-  const data = await findLessonById(id)
+  const data = await getLessonById(`builtin:${id}`)
   if (!data) {
     notFound.value = true
     loading.value = false
     return
   }
   lesson.value = data
+
+  // Set initial variant selection
+  if (data.variants?.length) {
+    selectedVariantId.value = data.variants[0].variant_id
+  } else {
+    selectedVariantId.value = null
+  }
+
   loading.value = false
 }
 
@@ -63,17 +103,47 @@ function handleUpdate({ progress: p, liveWpm: wpm, liveAccuracy: acc }) {
   }
 }
 
-function handleComplete(result) {
+async function handleComplete(result) {
   clearTimer()
-  router.push({
-    name: 'result',
-    state: {
-      result: {
-        ...result,
-        lessonId: lesson.value.id,
+
+  // Achievement evaluation (non-blocking, skipped for guests)
+  const userId = userStore.user?.id
+  if (userId) {
+    try {
+      const { data: allResults } = await listUserResults(userId)
+      const currentStreak = streakStore.currentStreak
+      const latestResult = {
+        wpm: result.wpm,
+        accuracy: result.accuracy,
+        language: currentVariant.value?.language ?? null,
+        finishedAt: new Date().toISOString(),
+      }
+      const newIds = await evaluateAndUnlock(userId, latestResult, allResults ?? [], currentStreak)
+      for (const id of newIds) {
+        const achievement = ACHIEVEMENTS.find((a) => a.id === id)
+        if (achievement) {
+          showToast(`解锁成就：${achievement.name}`)
+        }
+      }
+    } catch (err) {
+      console.warn('[TypingView] 成就解锁失败', err)
+    }
+  }
+
+  // Delay navigation slightly so toasts are visible (if any were shown)
+  const delay = userId ? 1200 : 0
+  setTimeout(() => {
+    router.push({
+      name: 'result',
+      state: {
+        result: {
+          ...result,
+          lessonId: lesson.value.id,
+          variant_id: selectedVariantId.value,
+        },
       },
-    },
-  })
+    })
+  }, delay)
 }
 
 function formatTime(secs) {
@@ -152,8 +222,18 @@ onBeforeUnmount(() => clearTimer())
 
       <!-- typing area -->
       <div class="panel p-6">
+        <!-- variant selector: only shown when multiple variants exist -->
+        <VariantSelector
+          v-if="lesson.variants && lesson.variants.length > 1"
+          v-model="selectedVariantId"
+          :variants="lesson.variants"
+        />
+
         <TypingEngine
-          :text="lesson.text"
+          v-if="currentVariant"
+          :key="selectedVariantId"
+          :text="currentVariant.code"
+          :language="currentVariant.language"
           @update="handleUpdate"
           @complete="handleComplete"
         />
@@ -163,6 +243,19 @@ onBeforeUnmount(() => clearTimer())
         点击文本区域开始 · Backspace 删除 · Tab/Enter 输入对应字符
       </p>
     </template>
+
+    <!-- Achievement Toasts -->
+    <Teleport to="body">
+      <div class="toast-container">
+        <div
+          v-for="toast in toasts"
+          :key="toast.id"
+          class="toast-item"
+        >
+          ★ {{ toast.message }}
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -192,5 +285,49 @@ onBeforeUnmount(() => clearTimer())
   height: 2rem;
   background: rgb(var(--mt-border));
   flex-shrink: 0;
+}
+
+.toast-container {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 9999;
+  pointer-events: none;
+}
+
+.toast-item {
+  background: rgb(var(--mt-panel, 24 24 27));
+  border: 1px solid rgb(var(--mt-accent));
+  color: rgb(var(--mt-accent));
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  animation: toast-in 0.25s ease, toast-out 0.3s ease 3.2s forwards;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
 }
 </style>
