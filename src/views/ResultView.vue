@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ResultSummary from '@/components/Result/ResultSummary.vue'
-import { getBestLessonWpm, saveResult } from '@/lib/db'
+import { getBestLessonWpm, saveResult } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()

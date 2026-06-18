@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 
 import LoginForm from '@/components/Auth/LoginForm.vue'
 import RegisterForm from '@/components/Auth/RegisterForm.vue'
-import { signOut } from '@/lib/db'
+import { signOut } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()

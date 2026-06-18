@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { signUp } from '@/lib/db'
+import { signUp } from '@/lib/adapters/db'
 
 const emit = defineEmits(['success', 'registered'])
 

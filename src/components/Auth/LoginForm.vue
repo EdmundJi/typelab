@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { signInWithPassword } from '@/lib/db'
+import { signInWithPassword } from '@/lib/adapters/db'
 
 const emit = defineEmits(['success'])
 

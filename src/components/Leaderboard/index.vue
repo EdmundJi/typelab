@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { listLeaderboard } from '@/lib/db'
+import { listLeaderboard } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 import LeaderboardTable from './LeaderboardTable.vue'
 

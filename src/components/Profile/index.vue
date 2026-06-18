@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { listUserResults } from '@/lib/db'
+import { listUserResults } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 import ProfileHistory from './ProfileHistory.vue'
 import ProgressChart from './ProgressChart.vue'
