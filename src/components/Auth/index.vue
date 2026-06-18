@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 
 import LoginForm from '@/components/Auth/LoginForm.vue'
 import RegisterForm from '@/components/Auth/RegisterForm.vue'
-import { signOut } from '@/lib/db'
+import { signOut } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -53,14 +53,14 @@ async function handleSignOut() {
 
 <template>
   <div class="mx-auto max-w-sm">
-    <div v-if="isLoggedIn" class="bg-mt-surface border border-mt-border rounded-lg p-6">
-      <p class="text-xs text-mt-sub mb-1">当前登录</p>
-      <p class="text-sm text-mt-text font-medium">{{ userStore.user?.email }}</p>
+    <div v-if="isLoggedIn" class="panel p-6">
+      <p class="text-xs text-mt-sub uppercase tracking-widest mb-1">当前登录</p>
+      <p class="text-sm text-mt-text">{{ userStore.user?.email }}</p>
 
       <p v-if="errorMessage" class="mt-3 text-xs text-mt-wrong">{{ errorMessage }}</p>
 
       <button
-        class="mt-6 w-full rounded px-4 py-2 text-sm border border-mt-border text-mt-sub font-medium transition-colors hover:text-mt-text hover:border-mt-text disabled:opacity-40 disabled:cursor-not-allowed"
+        class="mt-6 w-full px-4 py-2 text-xs uppercase tracking-widest border border-mt-border text-mt-sub font-medium transition-colors hover:text-mt-text hover:border-mt-sub disabled:opacity-40 disabled:cursor-not-allowed"
         type="button"
         :disabled="isSigningOut"
         @click="handleSignOut"
@@ -69,19 +69,19 @@ async function handleSignOut() {
       </button>
     </div>
 
-    <div v-else class="bg-mt-surface border border-mt-border rounded-lg p-6">
+    <div v-else class="panel p-6">
       <div class="flex mb-6 border-b border-mt-border">
         <button
-          class="flex-1 pb-3 text-sm font-medium transition-colors"
-          :class="activeTab === 'login' ? 'text-mt-accent border-b-2 border-mt-accent -mb-px' : 'text-mt-sub hover:text-mt-text'"
+          class="flex-1 pb-3 text-xs font-medium uppercase tracking-widest transition-colors"
+          :class="activeTab === 'login' ? 'text-mt-accent border-b border-mt-accent -mb-px' : 'text-mt-sub hover:text-mt-text'"
           type="button"
           @click="selectTab('login')"
         >
           登录
         </button>
         <button
-          class="flex-1 pb-3 text-sm font-medium transition-colors"
-          :class="activeTab === 'register' ? 'text-mt-accent border-b-2 border-mt-accent -mb-px' : 'text-mt-sub hover:text-mt-text'"
+          class="flex-1 pb-3 text-xs font-medium uppercase tracking-widest transition-colors"
+          :class="activeTab === 'register' ? 'text-mt-accent border-b border-mt-accent -mb-px' : 'text-mt-sub hover:text-mt-text'"
           type="button"
           @click="selectTab('register')"
         >

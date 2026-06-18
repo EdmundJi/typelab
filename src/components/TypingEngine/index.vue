@@ -24,7 +24,7 @@ function handleComplete(payload) {
 <style scoped>
 .typing-engine {
   font-family: 'Fira Code', 'Consolas', monospace;
-  background: #1e1e1e;
+  background: rgb(var(--mt-surface));
   padding: 2rem;
   border-radius: 8px;
   min-height: 200px;

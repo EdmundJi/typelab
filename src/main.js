@@ -4,8 +4,9 @@ import { createPinia } from 'pinia'
 import { createApp } from 'vue'
 
 import App from './App.vue'
-import { getCurrentSession, onAuthStateChange } from './lib/db'
+import { getCurrentSession, onAuthStateChange } from './lib/adapters/db'
 import router from './router'
+import { useThemeStore } from './stores/theme'
 import { useUserStore } from './stores/user'
 
 const app = createApp(App)
@@ -14,6 +15,9 @@ const pinia = createPinia()
 app.use(pinia)
 
 async function bootstrap() {
+  const themeStore = useThemeStore()
+  themeStore.apply()
+
   const userStore = useUserStore()
   const { data, error } = await getCurrentSession()
 

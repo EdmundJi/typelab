@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { signInWithPassword } from '@/lib/db'
+import { signInWithPassword } from '@/lib/adapters/db'
 
 const emit = defineEmits(['success'])
 
@@ -41,7 +41,7 @@ async function handleSubmit() {
       <input
         id="login-email"
         v-model.trim="email"
-        class="w-full bg-mt-bg border border-mt-border rounded px-3 py-2 text-sm text-mt-text outline-none transition focus:border-mt-accent placeholder:text-mt-sub"
+        class="w-full bg-mt-bg border border-mt-border px-3 py-2 text-sm text-mt-text outline-none transition focus:border-mt-accent placeholder:text-mt-sub"
         type="email"
         autocomplete="email"
         placeholder="you@example.com"
@@ -54,7 +54,7 @@ async function handleSubmit() {
       <input
         id="login-password"
         v-model="password"
-        class="w-full bg-mt-bg border border-mt-border rounded px-3 py-2 text-sm text-mt-text outline-none transition focus:border-mt-accent"
+        class="w-full bg-mt-bg border border-mt-border px-3 py-2 text-sm text-mt-text outline-none transition focus:border-mt-accent"
         type="password"
         autocomplete="current-password"
         required
@@ -64,7 +64,7 @@ async function handleSubmit() {
     <p v-if="errorMessage" class="text-xs text-mt-wrong">{{ errorMessage }}</p>
 
     <button
-      class="w-full rounded px-4 py-2 text-sm font-semibold transition-opacity bg-mt-accent text-mt-bg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+      class="w-full px-4 py-2 text-xs font-bold uppercase tracking-widest bg-mt-accent text-mt-bg transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
       type="submit"
       :disabled="isSubmitting"
     >

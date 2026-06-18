@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue'
-import { listUserResults } from '@/lib/db'
+import { listUserResults } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 import ProfileHistory from './ProfileHistory.vue'
 import ProgressChart from './ProgressChart.vue'
@@ -11,7 +11,11 @@ const loading = ref(true)
 const error = ref(null)
 
 onMounted(async () => {
-  if (!userStore.user) return
+  if (!userStore.user) {
+    loading.value = false
+    return
+  }
+
   const { data, error: err } = await listUserResults(userStore.user.id)
   if (err) {
     error.value = '加载失败'

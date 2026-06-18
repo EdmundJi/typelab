@@ -1,30 +1,135 @@
 <script setup>
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, ref, watch } from 'vue'
+import LineNumbers from './LineNumbers.vue'
+import { useCursor } from './useCursor.js'
+import { useTypingState } from './useTypingState.js'
 
 const props = defineProps({
   text: {
     type: String,
     required: true,
   },
+  language: {
+    type: String,
+    default: 'text',
+  },
 })
 
 const emit = defineEmits(['complete', 'update'])
 
-const chars = ref([])
-const currentIndex = ref(0)
-const container = ref(null)
-let isCompleted = false
-let startTime = null
-let totalErrors = 0
+// ── Prism lazy-load ─────────────────────────────────────────────────────────
+let Prism = null
+// tokenClassMap: char-index → 'token keyword' etc.
+const tokenClassMap = ref({})
 
+async function loadLanguageAndTokenize(text, lang) {
+  // Try to load Prism core
+  if (!Prism) {
+    try {
+      Prism = (await import('prismjs')).default
+    } catch {
+      tokenClassMap.value = {}
+      return
+    }
+  }
+
+  if (!text || lang === 'text' || lang === 'plaintext') {
+    tokenClassMap.value = {}
+    return
+  }
+
+  // Try to load language component
+  if (!Prism.languages[lang]) {
+    try {
+      await import(`prismjs/components/prism-${lang}.js`)
+    } catch {
+      // Language not supported — fall through to plaintext
+      tokenClassMap.value = {}
+      return
+    }
+  }
+
+  const grammar = Prism.languages[lang]
+  if (!grammar) {
+    tokenClassMap.value = {}
+    return
+  }
+
+  const classMap = {}
+  let charOffset = 0
+
+  function flattenContent(content) {
+    if (typeof content === 'string') return content
+    if (Array.isArray(content)) return content.map(flattenContent).join('')
+    if (content && typeof content === 'object' && content.content)
+      return flattenContent(content.content)
+    return ''
+  }
+
+  function processTokens(tokens) {
+    for (const token of tokens) {
+      if (typeof token === 'string') {
+        charOffset += token.length
+      } else {
+        const content =
+          typeof token.content === 'string' ? token.content : flattenContent(token.content)
+        const className = `token ${token.type}`
+        for (let i = 0; i < content.length; i++) {
+          classMap[charOffset + i] = className
+        }
+        charOffset += content.length
+      }
+    }
+  }
+
+  try {
+    const tokens = Prism.tokenize(text, grammar)
+    processTokens(tokens)
+    tokenClassMap.value = classMap
+  } catch {
+    tokenClassMap.value = {}
+  }
+}
+
+// ── chars ref shared between composables ───────────────────────────────────
+const chars = ref([])
+const container = ref(null)
+const startTime = ref(null)
+let isCompleted = false
+let totalErrors = 0
+let grossTypedCount = 0
+
+// ── Composables ─────────────────────────────────────────────────────────────
+const {
+  cursorIndex,
+  typedCharCount,
+  handleKey: stateHandleKey,
+  resetCursor,
+} = useTypingState(chars)
+const { cursorStyle } = useCursor(cursorIndex, chars, container)
+
+// ── Current line calculation ───────────────────────────────────────────────
+const currentLine = computed(() => {
+  let line = 1
+  for (let i = 0; i < cursorIndex.value && i < chars.value.length; i++) {
+    if (chars.value[i].char === '\n') line++
+  }
+  return line
+})
+
+// ── Reset on text change ────────────────────────────────────────────────────
 watch(
   () => props.text,
   async (newText) => {
     chars.value = newText.split('').map((char) => ({ char, status: 'pending' }))
-    currentIndex.value = 0
     isCompleted = false
-    startTime = null
+    startTime.value = null
     totalErrors = 0
+    grossTypedCount = 0
+    resetCursor()
+
+    // Re-tokenize
+    loadLanguageAndTokenize(newText, props.language)
 
     await nextTick()
     container.value?.focus()
@@ -32,32 +137,41 @@ watch(
   { immediate: true },
 )
 
-function calculateWpm() {
-  if (!startTime) return 0
-  const elapsedMinutes = (Date.now() - startTime) / 60000
-  if (elapsedMinutes === 0) return 0
-  return Math.round(chars.value.length / 5 / elapsedMinutes)
-}
+// Re-tokenize when language changes
+watch(
+  () => props.language,
+  (lang) => {
+    loadLanguageAndTokenize(props.text, lang)
+  },
+)
 
+// ── Accuracy calculation ────────────────────────────────────────────────────
+// Uses gross keystrokes (never decremented by backspace) so corrected errors still count.
 function calculateAccuracy() {
-  if (chars.value.length === 0) return 100
-  const correctCount = chars.value.filter((c) => c.status === 'correct').length
-  return parseFloat(((correctCount / chars.value.length) * 100).toFixed(1))
+  if (grossTypedCount === 0) return 100
+  return parseFloat(
+    (Math.max(0, (grossTypedCount - totalErrors) / grossTypedCount) * 100).toFixed(1),
+  )
 }
 
 function emitUpdate() {
-  const typed = currentIndex.value
+  const typed = cursorIndex.value
   const total = chars.value.length
   const correctCount = chars.value.filter((c) => c.status === 'correct').length
   let liveWpm = 0
-  if (startTime) {
-    const mins = (Date.now() - startTime) / 60000
+  if (startTime.value) {
+    const mins = (Date.now() - startTime.value) / 60000
     liveWpm = mins > 0 ? Math.round(correctCount / 5 / mins) : 0
   }
   emit('update', {
     progress: total > 0 ? typed / total : 0,
     liveWpm,
-    liveAccuracy: typed > 0 ? parseFloat(((correctCount / typed) * 100).toFixed(1)) : 100,
+    liveAccuracy:
+      grossTypedCount > 0
+        ? parseFloat(
+            (Math.max(0, (grossTypedCount - totalErrors) / grossTypedCount) * 100).toFixed(1),
+          )
+        : 100,
   })
 }
 
@@ -65,63 +179,46 @@ function handleKeyDown(e) {
   if (isCompleted) return
   if (e.ctrlKey || e.metaKey || e.altKey) return
 
-  if (e.key === 'Backspace') {
-    if (currentIndex.value > 0) {
-      currentIndex.value--
-      chars.value[currentIndex.value].status = 'pending'
-    }
-    emitUpdate()
-    return
+  if (e.key === 'Tab' || e.key === 'Enter') {
+    e.preventDefault()
   }
 
   if (e.isComposing) return
-  if (currentIndex.value >= chars.value.length) return
 
-  if (!startTime) {
-    startTime = Date.now()
+  // Start timer on first meaningful key
+  if (e.key !== 'Backspace' && !startTime.value && cursorIndex.value < chars.value.length) {
+    if (e.key.length === 1 || e.key === 'Enter' || e.key === 'Tab') {
+      startTime.value = Date.now()
+    }
   }
 
-  const expected = chars.value[currentIndex.value].char
+  // Track errors before state change
+  const prevIndex = cursorIndex.value
+  const result = stateHandleKey(e.key)
 
-  switch (e.key) {
-    case 'Tab':
-      e.preventDefault()
-      chars.value[currentIndex.value].status = expected === '\t' ? 'correct' : 'wrong'
-      if (expected !== '\t') totalErrors++
-      currentIndex.value++
-      break
-    case 'Enter':
-      e.preventDefault()
-      chars.value[currentIndex.value].status = expected === '\n' ? 'correct' : 'wrong'
-      if (expected !== '\n') totalErrors++
-      currentIndex.value++
-      break
-    case ' ':
-      if (expected === '\t') {
-        chars.value[currentIndex.value].status = 'correct'
-      } else {
-        chars.value[currentIndex.value].status = e.key === expected ? 'correct' : 'wrong'
-        if (e.key !== expected) totalErrors++
-      }
-      currentIndex.value++
-      break
-    default:
-      if (e.key.length === 1) {
-        chars.value[currentIndex.value].status = e.key === expected ? 'correct' : 'wrong'
-        if (e.key !== expected) totalErrors++
-        currentIndex.value++
-      }
+  if (result === 'ignore') return
+
+  // Track gross keystrokes and errors (never decremented by backspace)
+  if (result === 'advance' && prevIndex < chars.value.length) {
+    grossTypedCount++
+    if (chars.value[prevIndex].status === 'wrong') {
+      totalErrors++
+    }
   }
 
   emitUpdate()
 
-  if (currentIndex.value >= chars.value.length) {
+  if (cursorIndex.value >= chars.value.length && !isCompleted) {
     isCompleted = true
-    const duration = Math.max(1, Math.floor((Date.now() - startTime) / 1000))
+    const elapsed = startTime.value
+      ? Math.max(1, Math.floor((Date.now() - startTime.value) / 1000))
+      : 1
+    const elapsedMinutes = elapsed / 60
+    const finalWpm = elapsedMinutes > 0 ? Math.round(typedCharCount.value / 5 / elapsedMinutes) : 0
     emit('complete', {
-      wpm: calculateWpm(),
+      wpm: finalWpm,
       accuracy: calculateAccuracy(),
-      duration,
+      duration: elapsed,
       errors: totalErrors,
     })
   }
@@ -129,54 +226,73 @@ function handleKeyDown(e) {
 </script>
 
 <template>
-  <div
-    ref="container"
-    class="typing-area font-mono text-lg leading-relaxed whitespace-pre-wrap break-words outline-none"
-    tabindex="0"
-    @keydown="handleKeyDown"
-    @click="container?.focus()"
-  >
-    <span
-      v-for="(item, index) in chars"
-      :key="index"
-      class="relative"
-      :class="{
-        'char-pending': item.status === 'pending',
-        'char-correct': item.status === 'correct',
-        'char-wrong': item.status === 'wrong',
-        'char-wrong-space': item.status === 'wrong' && item.char === ' ',
-        'caret': index === currentIndex,
-      }"
-    >{{ item.char }}</span>
-    <span v-if="currentIndex >= chars.length && chars.length > 0" class="caret" />
+  <div class="typing-engine-wrapper">
+    <LineNumbers :text="props.text" :current-line="currentLine" />
+
+    <div
+      ref="container"
+      class="typing-area font-mono text-lg leading-relaxed whitespace-pre overflow-x-auto outline-none"
+      tabindex="0"
+      style="position: relative"
+      @keydown="handleKeyDown"
+      @click="container?.focus()"
+    >
+      <span
+        v-for="(item, index) in chars"
+        :key="index"
+        :data-char-index="index"
+        class="relative"
+        :class="[
+          {
+            'char-pending': item.status === 'pending',
+            'char-correct': item.status === 'correct',
+            'char-wrong': item.status === 'wrong',
+            'char-wrong-space': item.status === 'wrong' && item.char === ' ',
+          },
+          tokenClassMap[index] || '',
+        ]"
+      >{{ item.char }}</span>
+
+      <!-- Floating caret div (replaces ::before) -->
+      <div
+        v-if="chars.length > 0"
+        class="caret-div"
+        :style="cursorStyle"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
+.typing-engine-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
 .typing-area {
   cursor: text;
   user-select: none;
+  flex: 1;
+  min-width: 0;
 }
 
-.char-pending { color: #646669; }
-.char-correct { color: #d1d0c5; }
-.char-wrong   { color: #ca4754; }
+.char-pending { color: rgb(var(--mt-sub)); }
+.char-correct { color: rgb(var(--mt-text)); }
+.char-wrong   { color: rgb(var(--mt-wrong)); }
 
 .char-wrong-space {
-  background-color: #ca475440;
+  background-color: rgb(var(--mt-wrong) / 0.25);
   border-radius: 2px;
 }
 
-.caret::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0.1em;
-  width: 2px;
-  height: 0.85em;
-  background: #e2b714;
+/* Floating caret */
+.caret-div {
+  pointer-events: none;
+  background: rgb(var(--mt-caret));
   border-radius: 1px;
   animation: blink 1.1s step-start infinite;
+  z-index: 10;
 }
 
 @keyframes blink {

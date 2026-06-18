@@ -2,7 +2,7 @@
 import { onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import ResultSummary from '@/components/Result/ResultSummary.vue'
-import { getBestLessonWpm, saveResult } from '@/lib/db'
+import { getBestLessonWpm, saveResult } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -67,11 +67,12 @@ function goHome() {
   <div>
     <div v-if="result">
       <div class="mb-8">
-        <h1 class="text-2xl font-bold text-mt-text mb-1">成绩</h1>
-        <p v-if="saving" class="text-xs text-mt-sub">保存中...</p>
-        <p v-else-if="!userStore.session" class="text-xs text-mt-sub">
+        <p class="text-xs text-mt-sub tracking-[0.2em] uppercase mb-2">// 成绩</p>
+        <h1 class="text-2xl font-bold text-mt-text mb-1">完成</h1>
+        <p v-if="saving" class="text-xs text-mt-sub tracking-wide">保存中...</p>
+        <p v-else-if="!userStore.session" class="text-xs text-mt-sub tracking-wide">
           <RouterLink :to="{ name: 'login' }" class="text-mt-accent hover:opacity-80">登录</RouterLink>
-          后成绩自动保存
+          &nbsp;后成绩自动保存
         </p>
       </div>
 
@@ -85,13 +86,13 @@ function goHome() {
 
       <div class="mt-8 flex gap-3">
         <button
-          class="px-5 py-2 bg-mt-accent text-mt-bg text-sm font-semibold rounded hover:opacity-90 transition-opacity"
+          class="px-5 py-2 bg-mt-accent text-mt-bg text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity"
           @click="tryAgain"
         >
           再来一次
         </button>
         <button
-          class="px-5 py-2 bg-mt-surface border border-mt-border text-mt-sub text-sm font-medium rounded hover:text-mt-text transition-colors"
+          class="px-5 py-2 border border-mt-border text-mt-sub text-xs uppercase tracking-widest hover:text-mt-text hover:border-mt-sub transition-colors"
           @click="goHome"
         >
           选其他课程
