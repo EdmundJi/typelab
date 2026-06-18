@@ -3,7 +3,7 @@ import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'
 import { CanvasRenderer } from 'echarts/renderers'
-import { onMounted, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 
 echarts.use([LineChart, GridComponent, TooltipComponent, CanvasRenderer])
 
@@ -67,16 +67,29 @@ function buildOption(results) {
 }
 
 function render() {
-  if (!chart || props.results.length < 2) return
+  if (props.results.length < 2) {
+    chart?.dispose()
+    chart = null
+    return
+  }
+
+  if (!chartEl.value) return
+
+  if (!chart) {
+    chart = echarts.init(chartEl.value)
+  }
+
   chart.setOption(buildOption(props.results))
 }
 
-onMounted(() => {
-  chart = echarts.init(chartEl.value)
-  render()
-})
+onMounted(render)
 
-watch(() => props.results, render)
+watch(() => props.results, render, { flush: 'post' })
+
+onBeforeUnmount(() => {
+  chart?.dispose()
+  chart = null
+})
 </script>
 
 <template>

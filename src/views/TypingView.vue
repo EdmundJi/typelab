@@ -83,7 +83,10 @@ function formatTime(secs) {
 }
 
 onMounted(() => loadLesson(route.params.id))
-watch(() => route.params.id, (id) => loadLesson(id))
+watch(
+  () => route.params.id,
+  (id) => loadLesson(id),
+)
 onBeforeUnmount(() => clearTimer())
 </script>
 

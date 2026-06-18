@@ -21,7 +21,9 @@ async function bootstrap() {
     userStore.setSession(data.session)
   }
 
-  const { data: { subscription } } = onAuthStateChange((session) => {
+  const {
+    data: { subscription },
+  } = onAuthStateChange((session) => {
     userStore.setSession(session)
   })
 

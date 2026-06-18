@@ -152,11 +152,11 @@ npm run test -- TypingEngine   （Vitest 单元测试）
 **分支**：`feature/leaderboard`  
 **文件范围**：`src/components/Leaderboard/`、`src/views/LeaderboardView.vue`
 
-- [ ] 通过 `src/lib/db.js` 查询排行榜数据（开发阶段 mock 聚合，上线阶段 Supabase 聚合）
-- [ ] 展示前 20 名：排名、邮箱（只显示 @ 前的部分）、最高 WPM、准确率
-- [ ] 当前登录用户的行高亮
-- [ ] 每 30 秒自动刷新
-- [ ] 加载时显示 loading 状态
+- [x] 通过 `src/lib/db.js` 查询排行榜数据（开发阶段 mock 聚合，上线阶段 Supabase 聚合）
+- [x] 展示前 20 名：排名、邮箱（只显示 @ 前的部分）、最高 WPM、准确率
+- [x] 当前登录用户的行高亮
+- [x] 每 30 秒自动刷新
+- [x] 加载时显示 loading 状态
 
 验收：
 ```
