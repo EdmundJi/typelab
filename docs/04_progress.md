@@ -1,51 +1,64 @@
-# TypeLab — 进度看板
-
-## 当前里程碑
-
-**MVP**：用户能登录、选课、打字、看成绩、上排行榜
-
-目标完成时间：\_\_\_\_
+# keylab — 进度看板 v2
 
 ---
 
-## 已完成
+## Current Milestone
 
-- [x] T01 项目骨架 — Vue 3 + Vite + Router + Pinia + Tailwind + Supabase 基础结构已完成并通过构建验证
-- [x] T02 Layout 与导航 — 顶部导航、路由入口、基础页面布局已合并到 dev/main
-- [x] T03 用户认证 — 登录/注册/退出、Pinia session 更新、刷新后 session 恢复和 Supabase auth state change 同步已完成，并通过 `npm run check` 验证
+**v2.0 — IDE 级打字体验 + 多变体内容 + 进度激励系统 + 社区投稿**
 
----
-
-## 进行中
-
-| 任务 | 负责人 | 分支 | 状态 |
-|---|---|---|---|
-| T01 骨架 | Tech Lead | main | 已完成 |
-| T02 Layout | Yang | feature/layout | 已完成 |
-| T03 Auth | Yang | feature/auth | 已完成 |
-| T04 课程选择 | | feature/lesson-select | 未开始 |
-| T05 打字引擎 | | feature/typing-engine | 未开始 |
-| T06 结果页 | | feature/result | 未开始 |
-| T07 排行榜 | | feature/leaderboard | 未开始 |
-| T08 个人主页 | | feature/profile | 未开始 |
-| T09 题库内容 | | content/xxx | 未开始 |
+阶段一（打字体验核心）：T000 → T003–T007 → T010–T016 → T017–T018
+阶段二（激励系统）：T019–T022
+阶段三（内容体系）：T023–T029
 
 ---
 
-## 阻塞中
+## Done
+
+### v1 基线
+
+- [x] T01 项目骨架（Vue 3 + Vite + Supabase + Vercel）
+- [x] T02 Layout 与导航
+- [x] T03 用户认证（邮箱/密码，Pinia session）
+- [x] T04 课程选择（列表、筛选、卡片）
+- [x] T05 打字引擎 v1（逐字符匹配，WPM/准确率）
+- [x] T06 成绩结果页
+- [x] T07 排行榜
+- [x] T08 个人主页（历史记录表格 + ECharts 折线图）
+
+---
+
+## In Progress
+
+（当前无任何 v2 任务已开始）
+
+---
+
+## Blocked
 
 （无）
 
 ---
 
-## 已变更的决策
+## Changed Decisions
 
-（无）
+| 日期 | 决策 | 原因 |
+|---|---|---|
+| 2026-06-19 | 不引入代码执行沙箱 | 复杂度过高，与「打字训练器」定位不符 |
+| 2026-06-19 | 多变体改为「进入题目后选」而非卡片选 | 减少列表页信息密度 |
+| 2026-06-19 | 暂不做团队/小组功能 | 留到 v3 |
+| 2026-06-19 | 商业化暂定全免费 | 先把产品做好 |
+| 2026-06-19 | 项目名统一为 keylab（非 TypeLab） | 与 repo 名对齐 |
+| 2026-06-19 | lib/ 改为 domain/application/adapters 三层结构 | 明确边界，纯函数可单独测试，不依赖 Supabase |
 
 ---
 
-## 下一步
+## Next Tasks
 
-1. 继续分配 T04-T09 负责人
-2. 所有人 clone 仓库，checkout 自己的分支
-3. T05 打字引擎优先，其他模块可以先用假数据
+按顺序开始：
+
+1. **T000** — 安装 Vitest + Vue Test Utils（所有测试的前置）
+2. **T001 → T002** — 迁移 supabase.js / db.js 到 adapters/（重构起点）
+3. **T003 → T005** — 实现三个 domain 纯函数，同步写单元测试
+4. **T006 → T007** — application 层编排，此后所有功能可接入
+5. **T010–T015** — TypingEngine 重构（可与 T003–T007 并行）
+6. **T016 + T017–T018** — VariantSelector + 内容迁移
