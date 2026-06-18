@@ -38,7 +38,9 @@ function toggleTheme() {
 
       <div class="flex items-center gap-5">
         <RouterLink class="nav-link" :to="{ name: 'home' }">练习</RouterLink>
+        <RouterLink class="nav-link" :to="{ name: 'paths' }">路径</RouterLink>
         <RouterLink class="nav-link" :to="{ name: 'leaderboard' }">排行榜</RouterLink>
+        <RouterLink v-if="isLoggedIn" class="nav-link" :to="{ name: 'submit' }">投稿</RouterLink>
         <RouterLink v-if="isLoggedIn" class="nav-link" :to="{ name: 'profile' }">我的</RouterLink>
 
         <div class="w-px h-3 bg-mt-border mx-1" />
