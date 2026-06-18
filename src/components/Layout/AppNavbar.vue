@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { getAvatar } from '@/lib/avatar'
 import { useThemeStore } from '@/stores/theme'
 import { useUserStore } from '@/stores/user'
 
@@ -9,6 +10,7 @@ const userStore = useUserStore()
 const themeStore = useThemeStore()
 
 const userEmail = computed(() => userStore.user?.email ?? '')
+const avatar = computed(() => getAvatar(userStore.user?.email))
 const isLoggedIn = computed(() => Boolean(userStore.session && userStore.user))
 
 function handleLogout() {
@@ -60,6 +62,10 @@ function toggleTheme() {
         </button>
 
         <template v-if="isLoggedIn">
+          <span
+            class="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shrink-0"
+            :style="{ backgroundColor: avatar.color }"
+          >{{ avatar.letter }}</span>
           <span class="max-w-40 truncate text-mt-sub text-xs" :title="userEmail">{{ userEmail }}</span>
           <button
             class="text-mt-sub hover:text-mt-text transition-colors text-sm"
