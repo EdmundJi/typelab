@@ -9,18 +9,59 @@
     box-sizing: border-box;
   }
 
+  :root.dark {
+    --mt-bg: 17 17 17;
+    --mt-surface: 30 30 30;
+    --mt-border: 42 42 42;
+    --mt-text: 209 208 197;
+    --mt-sub: 100 102 105;
+    --mt-correct: 209 208 197;
+    --mt-wrong: 202 71 84;
+    --mt-accent: 226 183 20;
+    --mt-caret: 226 183 20;
+    --mt-selection-bg: 226 183 20;
+    --mt-selection-text: 226 183 20;
+    --mt-scrollbar: 42 42 42;
+    --mt-focus: 226 183 20;
+    --mt-nav-link: 100 102 105;
+    --mt-nav-link-hover: 209 208 197;
+    --mt-nav-link-active: 226 183 20;
+  }
+
+  :root.light {
+    --mt-bg: 248 248 242;
+    --mt-surface: 255 255 255;
+    --mt-border: 224 224 216;
+    --mt-text: 39 40 34;
+    --mt-sub: 117 113 94;
+    --mt-correct: 39 40 34;
+    --mt-wrong: 202 71 84;
+    --mt-accent: 192 155 12;
+    --mt-caret: 192 155 12;
+    --mt-selection-bg: 226 183 20;
+    --mt-selection-text: 192 155 12;
+    --mt-scrollbar: 200 200 192;
+    --mt-focus: 192 155 12;
+    --mt-nav-link: 117 113 94;
+    --mt-nav-link-hover: 39 40 34;
+    --mt-nav-link-active: 192 155 12;
+  }
+
   html,
   body {
-    background-color: #111111;
-    color: #d1d0c5;
+    background-color: rgb(var(--mt-bg));
+    color: rgb(var(--mt-text));
     font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
   }
 
   ::selection {
-    background-color: #e2b71430;
-    color: #e2b714;
+    background-color: rgb(var(--mt-selection-bg) / 0.19);
+    color: rgb(var(--mt-selection-text));
   }
 
   ::-webkit-scrollbar {
@@ -33,12 +74,12 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    background-color: #2a2a2a;
+    background-color: rgb(var(--mt-scrollbar));
     border-radius: 4px;
   }
 
   :focus-visible {
-    outline: 2px solid #e2b71466;
+    outline: 2px solid rgb(var(--mt-focus) / 0.4);
     outline-offset: 2px;
   }
 }
