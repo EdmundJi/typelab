@@ -7,6 +7,7 @@ const lessonModules = import.meta.glob('./**/*.json', {
 
 export const lessons = Object.values(lessonModules).flat()
 
+// lessonMetas 返回含 variants 字段的对象（v2 格式已无顶层 text 字段）
 export const lessonMetas = lessons.map(({ text, ...meta }) => meta)
 
 export const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]))
