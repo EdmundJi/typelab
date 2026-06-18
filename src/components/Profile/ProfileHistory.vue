@@ -1,6 +1,5 @@
 <script setup>
 import { computed } from 'vue'
-import { getLessonMetaById } from '@/lessons'
 
 const props = defineProps({
   results: {
@@ -21,10 +20,6 @@ function formatDate(iso) {
 function formatDuration(secs) {
   if (secs < 60) return `${secs}s`
   return `${Math.floor(secs / 60)}m${secs % 60 > 0 ? ` ${secs % 60}s` : ''}`
-}
-
-function getLessonTitle(lessonId) {
-  return getLessonMetaById(lessonId)?.title ?? lessonId
 }
 
 const stats = computed(() => {
@@ -72,7 +67,7 @@ const stats = computed(() => {
             :key="r.id"
             class="border-b border-mt-border last:border-0"
           >
-            <td class="py-3 pr-4 text-mt-sub text-xs max-w-40 truncate">{{ getLessonTitle(r.lesson_id) }}</td>
+            <td class="py-3 pr-4 text-mt-sub text-xs max-w-40 truncate">{{ r.lesson_id }}</td>
             <td class="py-3 pr-4 text-right font-bold text-mt-accent">{{ r.wpm }}</td>
             <td class="py-3 pr-4 text-right text-mt-text">{{ r.accuracy }}%</td>
             <td class="py-3 pr-4 text-right text-mt-sub">{{ formatDuration(r.duration) }}</td>
