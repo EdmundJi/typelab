@@ -244,38 +244,40 @@ function handleKeyDown(e: KeyboardEvent) {
 
 <template>
   <div class="typing-engine-wrapper font-mono text-lg leading-relaxed">
-    <LineNumbers :text="props.text" :current-line="currentLine" />
+    <div class="typing-content">
+      <LineNumbers :text="props.text" :current-line="currentLine" />
 
-    <div
-      ref="container"
-      class="typing-area whitespace-pre overflow-x-auto outline-none"
-      tabindex="0"
-      style="position: relative"
-      @keydown="handleKeyDown"
-      @click="container?.focus()"
-    >
-      <span
-        v-for="(item, index) in chars"
-        :key="index"
-        :data-char-index="index"
-        class="relative"
-        :class="[
-          {
-            'char-pending': item.status === 'pending',
-            'char-correct': item.status === 'correct',
-            'char-wrong': item.status === 'wrong',
-            'char-wrong-space': item.status === 'wrong' && item.char === ' ',
-          },
-          tokenClassMap[index] || '',
-        ]"
-      >{{ item.char }}</span>
-
-      <!-- Floating caret div (replaces ::before) -->
       <div
-        v-if="chars.length > 0"
-        class="caret-div"
-        :style="cursorStyle"
-      />
+        ref="container"
+        class="typing-area whitespace-pre overflow-x-auto outline-none"
+        tabindex="0"
+        style="position: relative"
+        @keydown="handleKeyDown"
+        @click="container?.focus()"
+      >
+        <span
+          v-for="(item, index) in chars"
+          :key="index"
+          :data-char-index="index"
+          class="relative"
+          :class="[
+            {
+              'char-pending': item.status === 'pending',
+              'char-correct': item.status === 'correct',
+              'char-wrong': item.status === 'wrong',
+              'char-wrong-space': item.status === 'wrong' && item.char === ' ',
+            },
+            tokenClassMap[index] || '',
+          ]"
+        >{{ item.char }}</span>
+
+        <!-- Floating caret div (replaces ::before) -->
+        <div
+          v-if="chars.length > 0"
+          class="caret-div"
+          :style="cursorStyle"
+        />
+      </div>
     </div>
     <div class="mt-3 flex w-full justify-between text-[11px] text-mt-sub">
       <span>Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符</span>
@@ -286,6 +288,11 @@ function handleKeyDown(e: KeyboardEvent) {
 
 <style scoped>
 .typing-engine-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.typing-content {
   display: flex;
   flex-direction: row;
   align-items: flex-start;

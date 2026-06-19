@@ -255,7 +255,7 @@ onBeforeUnmount(() => clearTimer())
         <TypingEngine
           v-if="currentVariant"
           :key="`${selectedVariantId}-${resetKey}`"
-          :text="currentVariant.code"
+          :text="currentVariant.code ?? currentVariant.text ?? ''"
           :language="currentVariant.language"
           @update="handleUpdate"
           @complete="handleComplete"
