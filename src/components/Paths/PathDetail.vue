@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { listUserResults } from '@/lib/adapters/db'
@@ -66,7 +66,9 @@ function goToLesson(item) {
       <p class="text-mt-sub text-xs">{{ path.description }}</p>
     </div>
 
-    <div v-if="loading" class="text-mt-sub text-xs">加载中…</div>
+    <div v-if="loading" class="space-y-2" aria-label="正在加载路径详情">
+      <div v-for="i in 4" :key="i" class="h-12 border border-mt-border bg-mt-bg animate-pulse rounded" />
+    </div>
 
     <ul v-else class="space-y-2">
       <li

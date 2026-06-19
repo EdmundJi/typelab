@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import AppFooter from './AppFooter.vue'
 import AppNavbar from './AppNavbar.vue'
 </script>
 
@@ -8,5 +9,6 @@ import AppNavbar from './AppNavbar.vue'
     <main class="mx-auto w-full max-w-5xl px-6 py-10">
       <slot />
     </main>
+    <AppFooter />
   </div>
 </template>

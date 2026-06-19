@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue'
 import {
   addToCollection,
@@ -9,12 +9,7 @@ import {
 } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
 
-const props = defineProps({
-  lesson: {
-    type: Object,
-    required: true,
-  },
-})
+const props = defineProps<{ lesson: any; bestWpm?: number | null }>()
 
 const userStore = useUserStore()
 
@@ -28,12 +23,14 @@ const categoryLabel = {
   concepts: '概念',
 }
 
-function getLabel(category) {
+function getLabel(category: string) {
   return categoryLabel[category] ?? category
 }
 
 // ——— 收藏逻辑 ———
-const lessonRef = `builtin:${props.lesson.id}`
+const lessonRef = String(props.lesson.id).startsWith('community:')
+  ? props.lesson.id
+  : `builtin:${props.lesson.id}`
 
 const showDropdown = ref(false)
 const collections = ref([])
@@ -42,7 +39,7 @@ const dropdownLoading = ref(false)
 const newColName = ref('')
 const creatingCol = ref(false)
 
-async function openDropdown(e) {
+async function openDropdown(e: Event) {
   e.preventDefault()
   e.stopPropagation()
   if (!userStore.user?.id) return
@@ -62,7 +59,7 @@ function closeDropdown() {
   newColName.value = ''
 }
 
-async function toggleCollection(collectionId) {
+async function toggleCollection(collectionId: string) {
   if (collectedIds.value.includes(collectionId)) {
     await removeFromCollection(collectionId, lessonRef)
     collectedIds.value = collectedIds.value.filter((id) => id !== collectionId)
@@ -72,7 +69,7 @@ async function toggleCollection(collectionId) {
   }
 }
 
-async function handleCreateCol(e) {
+async function handleCreateCol(e: Event) {
   e.preventDefault()
   const name = newColName.value.trim()
   if (!name || creatingCol.value) return
@@ -113,12 +110,12 @@ const isBookmarked = () => collectedIds.value.length > 0
             ★
           </button>
           <!-- 难度条 -->
-          <div class="flex items-center gap-0.5" :title="`难度 ${lesson.difficulty}/5`">
+          <div class="flex items-center gap-0.5" :title="`难度 ${lesson.difficulty ?? lesson.variants?.[0]?.difficulty ?? 'n/a'}`">
             <span
               v-for="n in 5"
               :key="n"
               class="inline-block w-1 h-3"
-              :class="n <= lesson.difficulty ? 'bg-mt-accent' : 'bg-mt-border'"
+              :class="n <= (Number(lesson.difficulty) || 3) ? 'bg-mt-accent' : 'bg-mt-border'"
             />
           </div>
         </div>
@@ -128,8 +125,12 @@ const isBookmarked = () => collectedIds.value.length > 0
         {{ lesson.title }}
       </h3>
 
+      <div class="mt-3 flex flex-wrap gap-1">
+        <span v-for="lang in [...new Set(lesson.variants?.map((v: any) => v.language) ?? [])]" :key="lang" class="text-[10px] border border-mt-border px-1.5 py-0.5 text-mt-sub">{{ lang }}</span>
+      </div>
       <div class="mt-4 flex items-center justify-between">
         <span class="text-xs text-mt-sub/60 group-hover:text-mt-accent/60 transition-colors">→ 开始练习</span>
+        <span v-if="bestWpm" class="text-xs text-mt-accent">pb: {{ bestWpm }} wpm</span>
       </div>
     </RouterLink>
 
@@ -145,8 +146,10 @@ const isBookmarked = () => collectedIds.value.length > 0
         <button class="text-xs text-mt-sub hover:text-mt-text" @click="closeDropdown">✕</button>
       </div>
 
-      <!-- 加载中 -->
-      <div v-if="dropdownLoading" class="px-3 py-3 text-xs text-mt-sub/60">加载中…</div>
+      <!-- loading skeleton -->
+      <div v-if="dropdownLoading" class="px-3 py-3 space-y-2" aria-label="正在加载收藏夹">
+        <div v-for="i in 3" :key="i" class="h-4 bg-mt-border/50 animate-pulse rounded" />
+      </div>
 
       <template v-else>
         <!-- 收藏夹列表 -->

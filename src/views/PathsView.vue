@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import PathDetail from '@/components/Paths/PathDetail.vue'
@@ -102,7 +102,9 @@ watch(
     </div>
 
     <!-- Loading state -->
-    <div v-if="loading" class="text-mt-sub text-xs">加载中…</div>
+    <div v-if="loading" class="space-y-3" aria-label="正在加载学习路径">
+      <div v-for="i in 3" :key="i" class="h-20 border border-mt-border bg-mt-card animate-pulse rounded" />
+    </div>
 
     <!-- Error state -->
     <div v-else-if="error" class="text-red-400 text-xs">{{ error }}</div>

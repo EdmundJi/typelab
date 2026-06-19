@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
 import LineNumbers from './LineNumbers.vue'
-import { useCursor } from './useCursor.js'
-import { useTypingState } from './useTypingState.js'
+import { useCursor } from './useCursor'
+import { useTypingState } from './useTypingState'
 
 const props = defineProps({
   text: {
@@ -15,7 +15,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['complete', 'update'])
+const emit = defineEmits(['complete', 'update', 'reset'])
 
 // ── Prism lazy-load ─────────────────────────────────────────────────────────
 let Prism = null
@@ -109,6 +109,7 @@ const {
 const { cursorStyle } = useCursor(cursorIndex, chars, container)
 
 // ── Current line calculation ───────────────────────────────────────────────
+const totalLines = computed(() => Math.max(1, props.text.split('\n').length))
 const currentLine = computed(() => {
   let line = 1
   for (let i = 0; i < cursorIndex.value && i < chars.value.length; i++) {
@@ -175,7 +176,23 @@ function emitUpdate() {
   })
 }
 
-function handleKeyDown(e) {
+function resetState() {
+  chars.value = props.text.split('').map((char) => ({ char, status: 'pending' }))
+  isCompleted = false
+  startTime.value = null
+  totalErrors = 0
+  grossTypedCount = 0
+  resetCursor()
+  emitUpdate()
+}
+
+function handleKeyDown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    resetState()
+    emit('reset')
+    return
+  }
   if (isCompleted) return
   if (e.ctrlKey || e.metaKey || e.altKey) return
 
@@ -259,6 +276,10 @@ function handleKeyDown(e) {
         class="caret-div"
         :style="cursorStyle"
       />
+    </div>
+    <div class="mt-3 flex w-full justify-between text-[11px] text-mt-sub">
+      <span>Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符</span>
+      <span>行 {{ currentLine }}/{{ totalLines }}</span>
     </div>
   </div>
 </template>

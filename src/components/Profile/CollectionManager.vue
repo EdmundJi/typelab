@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { createCollection, deleteCollection, listCollections } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
@@ -87,7 +87,9 @@ onMounted(refresh)
       <p v-if="createError" class="text-xs text-red-400 mb-3">{{ createError }}</p>
 
       <!-- 加载 / 错误 -->
-      <p v-if="loading" class="text-xs text-mt-sub">加载中…</p>
+      <div v-if="loading" class="space-y-2" aria-label="正在加载收藏夹">
+        <div v-for="i in 2" :key="i" class="h-10 border border-mt-border bg-mt-card animate-pulse rounded" />
+      </div>
       <p v-else-if="error" class="text-xs text-red-400">{{ error }}</p>
 
       <!-- 收藏夹列表 -->

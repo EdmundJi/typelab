@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import AchievementBadges from '@/components/Profile/AchievementBadges.vue'
 import CollectionManager from '@/components/Profile/CollectionManager.vue'
 import Profile from '@/components/Profile/index.vue'

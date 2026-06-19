@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { listMySubmissions } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
@@ -41,8 +41,8 @@ onMounted(async () => {
       登录后查看投稿记录
     </div>
 
-    <div v-else-if="loading" class="hint-block">
-      加载中...
+    <div v-else-if="loading" class="space-y-2" aria-label="正在加载投稿记录">
+      <div v-for="i in 3" :key="i" class="h-12 border border-mt-border bg-mt-card animate-pulse rounded" />
     </div>
 
     <div v-else-if="submissions.length === 0" class="hint-block">

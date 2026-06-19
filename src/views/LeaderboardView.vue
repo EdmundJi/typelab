@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import Leaderboard from '@/components/Leaderboard/index.vue'
 import { useUserStore } from '@/stores/user'
 

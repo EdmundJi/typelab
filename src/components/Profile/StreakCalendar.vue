@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import { useStreakStore } from '@/stores/streak'
 import { useUserStore } from '@/stores/user'

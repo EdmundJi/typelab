@@ -1,0 +1,1 @@
+<template><div class="animate-pulse border border-mt-border px-4 py-3 flex gap-4"><div class="h-3 w-8 bg-mt-border/60"/><div class="h-3 flex-1 bg-mt-border/50"/><div class="h-3 w-16 bg-mt-border/60"/></div></template>
