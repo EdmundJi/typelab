@@ -1,355 +1,368 @@
-# keylab — 任务清单 v2
+# keylab — 任务清单 v3
 
-每个任务 30–90 分钟完成。验收标准全部通过 + PR 合并到 dev 视为完成。
-
----
-
-## lib/ 层级约定
-
-```
-src/lib/
-├── domain/      纯业务规则，不碰数据库、HTTP、文件系统
-│   ├── streak.js          Streak 计算（纯函数）
-│   ├── achievements.js    成就解锁规则（纯函数）
-│   └── lessonRef.js       lesson_ref 解析/构建工具
-├── application/ 业务用例编排，调用 domain 和 adapters
-│   ├── lessons.js         课程加载 + 格式标准化
-│   └── achievementEvaluator.js  触发解锁流程（写 db）
-└── adapters/    外部系统实现，仅此层碰 Supabase
-    ├── supabase.js        Supabase client 单例（仅供 db.js 导入）
-    └── db.js              所有表操作 + 开发 mock
-```
-
-界面层（`src/views/`、`src/stores/`、`src/components/`）只能调用 `application/` 和 `adapters/db.js`，**不得直接引用 `adapters/supabase.js`**。
+> 本文依据 `docs/00_proposal.md`、`docs/01_requirements.md`、`docs/02_architecture.md` 更新。  
+> v1 / v2 已完成的历史任务见 `docs/04_progress.md`；本文只列出新一轮 v3 升级任务。  
+> 每个任务建议控制在 30–90 分钟。验收标准全部通过 + PR 合并到 `dev` 视为完成。
 
 ---
 
-## Module: infra/testing
+## 执行顺序
 
-- [ ] T000 安装并配置 Vitest + Vue Test Utils
-  - Files: `package.json`, `vite.config.js`, `tests/setup.js`
+产品优先顺序：
+
+```text
+1. 修复社区课程不出现在首页
+2. 新增 404 页面
+3. 首页分游客 / 登录用户两路重构
+4. 成绩页升级
+5. Footer
+6. 登录页、排行榜、打字页、课程卡片、Loading 等打磨
+7. TypeScript 基础设施
+8. db adapter 重构
+9. 补全测试
+10. CI workflow
+11. CHANGELOG + 1.0.0
+```
+
+工程线如单独推进，可按：
+
+```text
+TypeScript 基础设施 → db adapter 重构 → 补全测试 → CI workflow → CHANGELOG + 语义版本
+```
+
+---
+
+## Module: product/home-discovery
+
+- [ ] T030 首页课程列表改用 application/listLessons
+  - Files: `src/components/LessonSelect/index.vue`, `src/lib/application/lessons.js` / `.ts`
   - Steps:
-    - `npm install -D vitest @vue/test-utils @vitest/coverage-v8 jsdom`
-    - 在 `vite.config.js` 中添加 `test: { environment: 'jsdom', setupFiles: ['tests/setup.js'] }`
-    - 在 `package.json` scripts 添加 `"test": "vitest run"`
+    - `LessonSelect` 不再直接依赖静态 `lessonMetas`
+    - 调用 `listLessons()` 合并内置课程与 approved 社区课程
+    - 加入 loading / error / empty 状态
   - Acceptance:
-    - `npm run test` 无错误退出（即使 0 个测试文件）
-    - `npm run check`
+    - 内置课程展示正常
+    - 审核通过的社区课程展示在首页
+    - pending / rejected 社区课程不展示
+    - 查询社区课程失败时降级展示内置课程，不导致页面崩溃
+
+- [ ] T031 新增 404 页面与 catch-all 路由
+  - Files: `src/views/NotFoundView.vue`, `src/router/index.js` / `.ts`
+  - Acceptance:
+    - 访问未知路径进入 404 页面
+    - 页面显示 `// 404`、`页面不存在`、`← 返回首页`
+    - 返回首页链接可用
+
+- [ ] T032 首页游客视图重构
+  - Files: `src/views/HomeView.vue`
+  - Acceptance:
+    - 未登录用户看到 Hero：`为程序员设计的打字练习`
+    - 副标题为：`通过打出真实算法代码，同时训练手速和算法记忆`
+    - CTA：`开始练习 →` 跳到课程列表锚点；`注册账号` 跳转 `/login`
+    - 展示三个卖点：真实代码、多语言变体、算法记忆
+    - 下方保留课程列表入口
+
+- [ ] T033 首页登录用户 Dashboard
+  - Files: `src/views/HomeView.vue`, `src/stores/streak.js` / `.ts`
+  - Acceptance:
+    - 登录用户看到 Streak、今日是否已练、总练习次数、本周练习次数、个人最佳 WPM
+    - 有历史记录时显示上次练习课程与「继续」按钮
+    - 无历史记录时显示推荐入门课程
+    - 展示 `学习路径 →`，跳转 `/paths`
+
+- [ ] T034 课程筛选增强：搜索 + 分类 + 语言
+  - Files: `src/components/LessonSelect/LessonFilter.vue`, `src/components/LessonSelect/index.vue`
+  - Acceptance:
+    - 搜索框按课程标题实时过滤
+    - 分类 Tabs 保留并可与搜索组合
+    - 语言下拉支持全部 / Python / JavaScript / Go / 其他出现过的语言
+    - 搜索、分类、语言三者可组合生效
+
+- [ ] T035 课程卡片展示语言标签与个人 PB
+  - Files: `src/components/LessonSelect/LessonCard.vue`, `src/components/LessonSelect/index.vue`
+  - Acceptance:
+    - 卡片展示 category/topic、标题、难度、可用语言标签、开始练习入口
+    - `LessonCard` 支持可选 `bestWpm` prop
+    - 登录用户可看到 `pb: 87 wpm`
+    - PB 来源为一次性 `listUserResults(userId)` 后前端 Map 聚合，不允许每张卡片发起 DB 查询
 
 ---
 
-## Module: lib/adapters
+## Module: product/result-flow
 
-- [ ] T001 迁移 supabase.js → lib/adapters/supabase.js
-  - Files: `src/lib/adapters/supabase.js`（新建），`src/lib/supabase.js`（删除），`src/lib/db.js`（更新 import）
-  - Steps: 移动文件，全局替换 import 路径，确认无残留旧路径
+- [ ] T036 成绩摘要增强
+  - Files: `src/components/Result/ResultSummary.vue`, `src/views/ResultView.vue`
   - Acceptance:
-    - `npm run build`
-    - `npm run check`
-    - `grep -r "from.*lib/supabase" src/` 返回空
+    - 显示 WPM、准确率、用时、错误数
+    - 首次完成显示 `首次完成`
+    - 新纪录时 WPM 高亮并显示 `↑ 新纪录`
+    - 未破纪录时显示 `距最佳 -X wpm`
 
-- [ ] T002 迁移 db.js → lib/adapters/db.js
-  - Files: `src/lib/adapters/db.js`（新建），`src/lib/db.js`（删除），所有引用方（更新 import）
-  - Steps: 移动文件，全局替换 `@/lib/db` → `@/lib/adapters/db`
+- [ ] T037 结果页推荐下一课
+  - Files: `src/views/ResultView.vue`
   - Acceptance:
-    - `npm run build`
-    - `npm run check`
-    - `grep -r "from.*['\"]@/lib/db['\"]" src/` 返回空
+    - 按同 category 推荐下一课
+    - 优先推荐未完成课程；无法判断未完成时同 category 随机
+    - 显示课程标题、语言、难度与 `→ 去练习`
+    - 推荐失败时不影响结果页展示
+
+- [ ] T038 结果页复制成绩
+  - Files: `src/views/ResultView.vue`, `src/components/Result/ResultSummary.vue`
+  - Acceptance:
+    - 数字区域右上角有复制按钮
+    - 使用 `navigator.clipboard.writeText()`
+    - 复制格式符合需求文档 R04.4
+    - 点击后显示勾选状态，2 秒后恢复
 
 ---
 
-## Module: lib/domain
+## Module: product/layout-polish
 
-- [ ] T003 实现 domain/lessonRef.js（parse / build 纯函数）
-  - Files: `src/lib/domain/lessonRef.js`, `tests/unit/domain/lessonRef.test.js`
+- [ ] T039 新增 AppFooter 并接入 Layout
+  - Files: `src/components/Layout/AppFooter.vue`, `src/components/Layout/AppLayout.vue`
   - Acceptance:
-    - `npm run test tests/unit/domain/lessonRef.test.js`
-    - `npm run check src/lib/domain/lessonRef.js tests/unit/domain/lessonRef.test.js`
-  - Tests must cover:
-    - `parse('builtin:py-bfs-01')` → `{ type: 'builtin', id: 'py-bfs-01' }`
-    - `parse('community:uuid-here')` → `{ type: 'community', id: 'uuid-here' }`
-    - `build({ type: 'builtin', id: 'py-bfs-01' })` → `'builtin:py-bfs-01'`
-    - parse → build 往返一致
-    - 格式非法 → throw
+    - Footer 在 `<main>` 下方渲染
+    - 内容包含 KEYLAB、品牌说明、练习 / 路径 / 排行榜 / GitHub 链接、© 2026、v1.0.0
+    - 高度不超过 60px，风格与 Navbar 一致
 
-- [ ] T004 实现 domain/streak.js（calcStreak 纯函数）
-  - Files: `src/lib/domain/streak.js`, `tests/unit/domain/streak.test.js`
+- [ ] T040 登录页价值说明
+  - Files: `src/views/LoginView.vue`
   - Acceptance:
-    - `npm run test tests/unit/domain/streak.test.js`
-    - `npm run check src/lib/domain/streak.js tests/unit/domain/streak.test.js`
-  - Tests must cover:
-    - 空数组 → `{ currentStreak: 0, bestStreak: 0, calendarData: {} }`
-    - 连续 7 天 → `currentStreak: 7`
-    - 断一天后 → `currentStreak: 1`
-    - UTC+8 边界：UTC 15:59 归当天，UTC 16:00 归次日
-    - 无效时间戳 → 跳过，不 throw
+    - Header 显示 `登录 / 注册`
+    - 显示三行价值说明：成绩自动保存、Streak 日历、解锁成就与排行榜
 
-- [ ] T005 实现 domain/achievements.js（纯规则函数）
-  - Files: `src/lib/domain/achievements.js`, `tests/unit/domain/achievements.test.js`
+- [ ] T041 排行榜当前用户排名与空状态
+  - Files: `src/views/LeaderboardView.vue`
   - Acceptance:
-    - `npm run test tests/unit/domain/achievements.test.js`
-    - `npm run check src/lib/domain/achievements.js tests/unit/domain/achievements.test.js`
-  - Tests must cover（每个成就一个 test case）:
-    - `first-finish`: `allResults.length === 1`
-    - `wpm-100`: `latestResult.wpm >= 100`
-    - `perfect-accuracy`: `latestResult.accuracy === 100`
-    - `streak-7`: `currentStreak >= 7`
-    - `multilingual`: distinct languages in allResults `>= 3`
-    - `practice-50`: `allResults.length >= 50`
-    - 已解锁 → 不返回（`alreadyUnlocked` 过滤）
+    - 已登录且当前用户在榜单中时显示 `你的排名：第 X 名`
+    - 无记录时显示 `还没有人上榜，成为第一个吧`
+    - 空状态提供 CTA 去练习
+
+- [ ] T042 打字界面 Esc reset 与行进度
+  - Files: `src/components/TypingEngine/TypingEngine.vue`, `src/views/TypingView.vue`
+  - Acceptance:
+    - `Escape` 触发 `emit('reset')`
+    - `TypingView` 接收 reset 并重新加载当前课程 / 变体
+    - 重置后清空输入、计时、错误和进度
+    - 底部提示包含 `Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符`
+    - stats bar 显示 `行 current/total`
+
+- [ ] T043 统一 Skeleton loading 组件
+  - Files: `src/components/ui/SkeletonCard.vue`, `src/components/ui/SkeletonRow.vue`
+  - Acceptance:
+    - 课程列表 loading 显示 3 个 SkeletonCard
+    - 排行榜 loading 显示 5 行 SkeletonRow
+    - 个人主页 loading 显示大矩形占位
+    - 使用 `animate-pulse` 或等效动画
 
 ---
 
-## Module: lib/application
+## Module: engineering/typescript
 
-- [ ] T006 实现 application/lessons.js（LessonLoader）
-  - Files: `src/lib/application/lessons.js`, `tests/unit/application/lessons.test.js`
-  - Dependencies: T002（adapters/db.js），T003（lessonRef.js）
+- [ ] T044 安装 TypeScript 与 vue-tsc
+  - Files: `package.json`, `package-lock.json`
+  - Steps:
+    - `npm install -D typescript vue-tsc`
+    - 新增 script：`"typecheck": "vue-tsc --noEmit"`
   - Acceptance:
-    - `npm run test tests/unit/application/lessons.test.js`
-    - `npm run check src/lib/application/lessons.js`
-  - Tests must cover:
-    - v1 格式（无 `variants`）→ 自动包装为单变体 v2
-    - `listLessons({ language: 'javascript' })` 只返回有 JS 变体的课程
-    - `getLessonById('builtin:py-bfs-01')` 返回含 `variants[]` 的对象
-    - `community:<uuid>` 不存在 → 返回 `null`（不 throw）
-    - Supabase 查询失败 → 降级为纯内置，不 throw
+    - `npm run typecheck` 可执行
+    - 不新增不必要的 `@types/*`
 
-- [ ] T007 实现 application/achievementEvaluator.js
-  - Files: `src/lib/application/achievementEvaluator.js`, `tests/unit/application/achievementEvaluator.test.js`
-  - Dependencies: T005（domain/achievements.js），T002（adapters/db.js）
+- [ ] T045 新增 TypeScript 配置
+  - Files: `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json`
   - Acceptance:
-    - `npm run test tests/unit/application/achievementEvaluator.test.js`
-    - `npm run check src/lib/application/achievementEvaluator.js`
-  - Tests must cover:
-    - 首次完成 → `evaluateAndUnlock(...)` 返回 `['first-finish']`
-    - WPM ≥ 100 → 返回包含 `'wpm-100'`
-    - `unlockAchievement` PK 冲突 → 静默忽略，返回值不含该 id
-    - 已全部解锁 → 返回 `[]`
+    - 配置与 `plan.md` Phase 1.2 保持一致
+    - Vue SFC、Vite、Vitest 路径别名可被类型系统识别
+
+- [ ] T046 新增中心类型声明
+  - Files: `src/types/index.ts`
+  - Acceptance:
+    - 包含需求文档 R09.5 所列接口
+    - `Variant` 字段使用 `variant_id: string`
+    - 不使用错误的 `id` 字段替代 `variant_id`
+
+- [ ] T047 修正 SPEC Variant 字段勘误
+  - Files: `SPEC.md`
+  - Acceptance:
+    - SPEC 中 Variant 字段同步为 `variant_id`
+    - 文档说明保留与现有 JSON / 代码兼容的原因
+
+- [ ] T048 按顺序迁移 JS 到 TS
+  - Files:
+    - `src/lib/domain/*.js` → `.ts`
+    - `src/lib/application/*.js` → `.ts`
+    - `src/lib/avatar.js` → `.ts`
+    - `src/stores/*.js` → `.ts`
+    - `src/router/index.js` → `.ts`
+    - `src/lessons/index.js` → `.ts`
+    - `src/main.js` → `.ts`
+    - `vite.config.js` → `.ts`
+  - Acceptance:
+    - 按 domain → application → adapters → stores/router → composables → main 顺序迁移
+    - 每次迁移只改扩展名和类型注解，不改业务逻辑
+    - `npm run typecheck` 通过
+
+- [ ] T049 Vue SFC script setup 迁移为 TypeScript
+  - Files: `src/**/*.vue`
+  - Acceptance:
+    - 所有 `<script setup>` 改为 `<script setup lang="ts">`
+    - `defineProps` / `defineEmits` 有类型声明
+    - 重点检查 `TypingEngine`、`TypingView`
+    - `npm run typecheck` 通过
 
 ---
 
-## Module: components/TypingEngine
+## Module: engineering/db-adapter
 
-- [ ] T010 浮动光标（CSS ::before → getBoundingClientRect div）
-  - Files: `src/components/TypingEngine/useCursor.js`（新建），`src/components/TypingEngine/TypingEngine.vue`
+- [ ] T050 定义 DbAdapter 接口
+  - Files: `src/lib/adapters/types.ts`
   - Acceptance:
-    - `npm run check src/components/TypingEngine/`
-    - 手动验证：`\n` 处光标跳到下一行行首，`\t` 处光标宽度正确
-    - 手动验证：光标 blink 动画保留
+    - 定义 `DbAdapter` 与 `Subscription`
+    - 覆盖 Auth、Results、Achievements、Community、Collections、Paths 所有方法
+    - 方法签名与 `docs/01_requirements.md` R10.2 / `plan.md` Phase 2 一致
 
-- [ ] T011 安装 Prism.js + 语法高亮 token 层
-  - Files: `src/components/TypingEngine/TypingEngine.vue`
-  - Steps: `npm install prismjs`，在 TypingEngine 中 tokenize text，将 token className 叠加到字符 span
+- [ ] T051 拆分 Supabase client
+  - Files: `src/lib/adapters/supabase.ts`
   - Acceptance:
-    - `npm run check src/components/TypingEngine/TypingEngine.vue`
-    - 手动验证：Python `def`/`return`/`for` 有高亮色
-    - 手动验证：`language='xyz'`（不支持）→ 降级 plaintext，不报错
+    - 只有该文件创建 Supabase client
+    - 导出 `isSupabaseConfigured`
+    - 业务代码不直接 import Supabase client
 
-- [ ] T012 行号组件 LineNumbers.vue
-  - Files: `src/components/TypingEngine/LineNumbers.vue`（新建），`src/components/TypingEngine/TypingEngine.vue`
+- [ ] T052 实现 MemoryAdapter
+  - Files: `src/lib/adapters/MemoryAdapter.ts`, `tests/fixtures/paths.ts`
   - Acceptance:
-    - `npm run check src/components/TypingEngine/`
-    - 手动验证：行号数量等于代码行数，与代码行对齐
-    - 手动验证：当前行有微亮背景色
+    - 完整实现 `DbAdapter`
+    - 使用 Map + 数组保存实例状态
+    - 无模块级可变状态导致测试泄漏
+    - 提供 `reset()`
+    - 默认不内置 mock paths；paths fixture 移到 `tests/fixtures/paths.ts`
 
-- [ ] T013 useTypingState.js — Enter 自动缩进
-  - Files: `src/components/TypingEngine/useTypingState.js`（新建/重构），`tests/unit/components/useTypingState.test.js`
+- [ ] T053 实现 SupabaseAdapter
+  - Files: `src/lib/adapters/SupabaseAdapter.ts`
   - Acceptance:
-    - `npm run test tests/unit/components/useTypingState.test.js`
-    - Tests must cover:
-      - Enter 后 cursor 自动越过下一行前置 4 个空格
-      - 跳过的字符 `typedCharCount` 不增加
-      - 无前置空白时 Enter 正常换行
+    - 完整实现 `DbAdapter`
+    - 构造函数接受 Supabase client 实例
+    - 所有 `supabase.from(...)` 调用只存在于该 adapter 内
+    - 便于测试注入 mock client
 
-- [ ] T014 useTypingState.js — Tab 跳过缩进块
-  - Files: `src/components/TypingEngine/useTypingState.js`, `tests/unit/components/useTypingState.test.js`
-  - Dependencies: T013（同文件）
+- [ ] T054 实现 db.ts 兼容门面
+  - Files: `src/lib/adapters/db.ts`
   - Acceptance:
-    - `npm run test tests/unit/components/useTypingState.test.js`
-    - Tests must cover:
-      - Tab 跳过 4 个连续空格
-      - Space 可替代 Tab 匹配缩进字符（接受 Space 视为匹配）
-      - Tab 越过后 `typedCharCount` 不增加
+    - 根据 `isSupabaseConfigured` 选择 `SupabaseAdapter` 或 `MemoryAdapter`
+    - 导出 `db: DbAdapter`
+    - 继续导出旧具名函数，现有 View / Store 不需要大规模改 import
 
-- [ ] T015 useWpm.js — WPM 分母排除自动跳过字符
-  - Files: `src/components/TypingEngine/useWpm.js`（新建/重构），`tests/unit/components/useWpm.test.js`
+- [ ] T055 application 层支持 adapter 注入
+  - Files: `src/lib/application/lessons.ts`, `src/lib/application/achievementEvaluator.ts`
   - Acceptance:
-    - `npm run test tests/unit/components/useWpm.test.js`
-    - Tests must cover:
-      - `typedCharCount`（WPM 分母）独立于 `cursorIndex`（位置）
-      - 跳过 4 个缩进字符后 cursorIndex+4，typedCharCount 不变
-      - WPM = `(typedCharCount / 5) / (elapsedMinutes)`
+    - `listLessons(filters = {}, adapter = db)`
+    - `getLessonById(ref, adapter = db)`
+    - `evaluateAndUnlock(..., adapter = db)`
+    - 单元测试可直接传入 `new MemoryAdapter()`
 
 ---
 
-## Module: components/LessonSelect
+## Module: engineering/tests
 
-- [ ] T016 VariantSelector.vue + TypingView 接入
-  - Files: `src/components/LessonSelect/VariantSelector.vue`（新建），`src/views/TypingView.vue`
-  - Dependencies: T006（application/lessons.js），T010–T015（TypingEngine 重构完成）
+- [ ] T056 现有测试迁移为 TypeScript
+  - Files: `tests/unit/**/*.test.js` → `.test.ts`
   - Acceptance:
-    - `npm run check src/components/LessonSelect/VariantSelector.vue src/views/TypingView.vue`
-    - 手动验证：多变体题目顶部显示选择器，切换后代码更新，打字进度重置
-    - 手动验证：单变体题目不显示选择器
-    - 手动验证：结果保存时 payload 含 `variant_id`
+    - 所有现有测试通过
+    - import 路径适配 TS 迁移后的文件
+
+- [ ] T057 application 测试改为注入 MemoryAdapter
+  - Files: `tests/unit/application/lessons.test.ts`, `tests/unit/application/achievementEvaluator.test.ts`
+  - Acceptance:
+    - 删除模块级 `vi.mock('@/lib/adapters/db')`
+    - 每个测试创建独立 `new MemoryAdapter()`
+    - 覆盖 approved 社区课程、未审核不展示、解锁幂等等行为
+
+- [ ] T058 新增 MemoryAdapter 单元测试
+  - Files: `tests/unit/adapters/MemoryAdapter.test.ts`
+  - Acceptance:
+    - 覆盖 Auth、results、leaderboard、achievements、community、collections、paths、reset
+    - 用例数约 25 个
+
+- [ ] T059 新增 avatar / stores / router 测试
+  - Files:
+    - `tests/unit/lib/avatar.test.ts`
+    - `tests/unit/stores/streak.test.ts`
+    - `tests/unit/stores/user.test.ts`
+    - `tests/unit/router/guards.test.ts`
+  - Acceptance:
+    - `getAvatar` 覆盖空字符串、单字符、颜色一致性、哈希稳定性
+    - streak store 支持注入 MemoryAdapter 并正确更新 state
+    - user store 覆盖 `setSession` / `clearSession` / 派生字段
+    - router guards 覆盖 `requiresAuth`、`requiresAdmin`、无 meta、catch-all
+
+- [ ] T060 记录不纳入单测范围
+  - Files: `tests/README.md`
+  - Acceptance:
+    - 说明 `useCursor.ts` 不测原因：依赖 `getBoundingClientRect`
+    - 说明完整 `TypingEngine.vue` layout 不测原因
+    - 说明 `SupabaseAdapter.ts` 不纳入单元覆盖率，未来用集成测试覆盖
+
+- [ ] T061 配置覆盖率阈值
+  - Files: `vite.config.ts`
+  - Acceptance:
+    - coverage provider 使用 `v8`
+    - include：`src/lib/**`, `src/stores/**`, `src/router/**`
+    - exclude：`src/lib/adapters/supabase.ts`, `src/lib/adapters/SupabaseAdapter.ts`
+    - thresholds：lines 80、functions 80
+    - `npm run test` 覆盖率通过
 
 ---
 
-## Module: content
+## Module: engineering/release
 
-- [ ] T017 将现有 JSON 题目迁移至 v2 多变体格式
-  - Files: `src/lessons/**/*.json`，`src/lessons/index.js`
-  - Dependencies: T006（lessons.js 定义新格式）
+- [ ] T062 新增 GitHub Actions CI
+  - Files: `.github/workflows/ci.yml`
   - Acceptance:
-    - `npm run test tests/unit/application/lessons.test.js`（T006 测试全通过）
-    - `node -e "import('./src/lessons/index.js').then(m => console.log(m.default[0].variants))"` 输出数组
+    - push / PR 到 `main`、`dev` 触发
+    - Node.js 20 + npm cache
+    - 步骤顺序：`npm ci` → `npm run typecheck` → `npm run check` → `npm run test` → `npm run build`
+    - 保留现有 `leaderboard.yml`
 
-- [ ] T018 为 ≥ 3 道算法题添加 JavaScript 变体
-  - Files: `src/lessons/**/*.json`
-  - Dependencies: T017
+- [ ] T063 更新版本号到 1.0.0
+  - Files: `package.json`, `package-lock.json`
   - Acceptance:
-    - 手动验证：`listLessons({ language: 'javascript' })` 返回 ≥ 3 条
-    - 手动验证：VariantSelector 在这 3 道题上可切换 Python ↔ JavaScript
+    - `name` 保持 `typelab` 不变
+    - `version` 从 `0.0.0` 改为 `1.0.0`
 
----
-
-## Module: stores/streak
-
-- [ ] T019 streak Pinia store（接入 domain/streak.js）
-  - Files: `src/stores/streak.js`（新建）
-  - Dependencies: T004（domain/streak.js）
+- [ ] T064 新增 CHANGELOG
+  - Files: `CHANGELOG.md`
   - Acceptance:
-    - `npm run check src/stores/streak.js`
-    - store 暴露 `currentStreak`、`bestStreak`、`calendarData`、`refresh(userId)` action
-    - `refresh` 调用 `db.listUserResults` 后传入 `calcStreak`，不自行计算
-
-- [ ] T020 StreakCalendar.vue
-  - Files: `src/components/Profile/StreakCalendar.vue`，`src/views/ProfileView.vue`
-  - Dependencies: T019
-  - Acceptance:
-    - `npm run check src/components/Profile/StreakCalendar.vue`
-    - 手动验证：个人主页显示类 GitHub 日历，有记录的格子着色
-    - 手动验证：显示当前连续天数 + 最长连续天数
-    - 手动验证：完成一次练习后刷新，今天格子点亮
-
----
-
-## Module: achievements
-
-- [ ] T021 AchievementBadges.vue + 个人主页集成
-  - Files: `src/components/Profile/AchievementBadges.vue`（新建），`src/views/ProfileView.vue`
-  - Dependencies: T002（db.listUserAchievements），T005（domain/achievements.js 成就元数据）
-  - Acceptance:
-    - `npm run check src/components/Profile/AchievementBadges.vue`
-    - 手动验证：个人主页显示全部 7 个成就，已解锁高亮，未解锁灰色
-    - 手动验证：hover 显示成就名称和解锁条件
-
-- [ ] T022 TypingView 完成后触发解锁 Toast
-  - Files: `src/views/TypingView.vue`
-  - Dependencies: T007（achievementEvaluator），T021（AchievementBadges 先完成）
-  - Acceptance:
-    - `npm run check src/views/TypingView.vue`
-    - 手动验证：首次完成练习弹出「起步」解锁提示
-    - 手动验证：WPM ≥ 100 时弹出「百键侠」
-    - 手动验证：重复完成不重复弹出已解锁成就
-
----
-
-## Module: paths
-
-- [ ] T023 Supabase paths + path_items 表 schema + seed
-  - Files: `supabase/migrations/<timestamp>_create_paths.sql`
-  - Steps: 建表（`paths`、`path_items`），插入 ≥ 2 条系统路径数据
-  - Acceptance:
-    - `supabase db reset` 后 `supabase db query "select count(*) from paths"` 返回 ≥ 2
-    - `npm run check`
-
-- [ ] T024 PathsView.vue + 路径进度计算
-  - Files: `src/views/PathsView.vue`（新建），`src/components/Paths/PathList.vue`（新建），`src/components/Paths/PathDetail.vue`（新建），`src/router/index.js`
-  - Dependencies: T023，T006（getLessonById 解析 lesson_ref）
-  - Acceptance:
-    - `npm run check src/views/PathsView.vue src/components/Paths/`
-    - 手动验证：导航可进入路径列表，显示进度 N/M
-    - 手动验证：完成路径内某道题后该题标记为已完成，百分比更新
-    - 手动验证：`lesson_ref` 指向不存在课程 → 显示「题目已下架」
-
----
-
-## Module: collections
-
-- [ ] T025 collections DB 函数（adapters/db.js）
-  - Files: `src/lib/adapters/db.js`（新增 collections 函数组）
-  - Dependencies: T002
-  - Acceptance:
-    - `npm run check src/lib/adapters/db.js`
-    - 手动验证（需登录）：`createCollection`、`addToCollection`、`removeFromCollection`、`deleteCollection` 均正常
-
-- [ ] T026 CollectionManager.vue + 收藏按钮
-  - Files: `src/components/Profile/CollectionManager.vue`（新建），`src/views/ProfileView.vue`，`src/components/LessonSelect/LessonCard.vue`
-  - Dependencies: T025
-  - Acceptance:
-    - `npm run check src/components/Profile/CollectionManager.vue`
-    - 手动验证：题目卡片显示收藏按钮，点击弹出收藏夹选择器
-    - 手动验证：个人主页「我的收藏」展示收藏夹，可顺序进入练习
-
----
-
-## Module: community
-
-- [ ] T027 SubmitView.vue + db.submitLesson
-  - Files: `src/views/SubmitView.vue`（新建），`src/lib/adapters/db.js`（submitLesson），`src/router/index.js`
-  - Acceptance:
-    - `npm run check src/views/SubmitView.vue`
-    - 手动验证：登录用户填表提交后状态显示「等待审核」
-    - 手动验证：未登录访问 /submit → 跳转 /login
-
-- [ ] T028 AdminReviewView.vue + db.reviewLesson
-  - Files: `src/views/AdminReviewView.vue`（新建），`src/lib/adapters/db.js`（reviewLesson），`src/router/index.js`
-  - Dependencies: T027
-  - Acceptance:
-    - `npm run check src/views/AdminReviewView.vue`
-    - 手动验证：admin 账号点击通过后，题库列表可见该题
-    - 手动验证：非 admin 访问 /admin/review → 跳转首页
-
-- [ ] T029 MySubmissions 标签页（ProfileView）
-  - Files: `src/components/Profile/MySubmissions.vue`（新建），`src/views/ProfileView.vue`
-  - Dependencies: T027
-  - Acceptance:
-    - `npm run check src/components/Profile/MySubmissions.vue`
-    - 手动验证：个人主页「我的投稿」标签显示历史投稿及状态
-    - 手动验证：被拒绝投稿显示拒绝原因
+    - 采用 Keep a Changelog 格式
+    - 包含 `[Unreleased]`
+    - 包含 `[1.0.0] - 2026-06-20`
+    - Added / Changed / Fixed 覆盖本轮功能与修复
 
 ---
 
 ## 任务依赖关系
 
-```
-T000 ──────────────────────────────── 所有含 npm run test 的任务
-T001 → T002
+```text
+T030 → T034 → T035
+T031 → T033
+T032 → T033
+T036 → T037 → T038
+T039 ─┐
+T040 ├→ 产品体验完整性验收
+T041 ┤
+T042 ┤
+T043 ┘
 
-T002 ┬→ T006 → T017 → T018
-     └→ T025 → T026
+T044 → T045 → T046 → T048 → T049
+T046 → T047
+T050 → T051 → T052 → T054 → T055
+T050 → T053 → T054
+T052 → T057 → T058
+T056 → T057
+T056 → T059
+T060 → T061
+T044 → T062
+T063 → T064
 
-T003 → T006
-T004 → T019 → T020
-T005 → T007 → T022
-
-T006 → T016
-
-T010 ┐
-T011 ┤
-T012 ┤→ T016
-T013 ┤
-T014 ┤
-T015 ┘
-
-T007 → T022
-
-T023 → T024
-
-T025 → T026
-
-T027 ┬→ T028
-     └→ T029
+最终发布门禁：
+npm run typecheck && npm run check && npm run test && npm run build
 ```
