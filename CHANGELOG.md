@@ -6,6 +6,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-06-20
+
+### Added
+- Learning paths with progress tracking, path detail pages, and built-in path seed data.
+- Collections, streak calendar, achievement badges, and profile submission management.
+- Community submission and admin review flows backed by Supabase adapters.
+- Multi-variant lesson selector, expanded lesson content, and JavaScript variants.
+- Vitest coverage, router/store/domain tests, and GitHub CI verification.
+- Supabase migrations for paths, app tables, RLS policies, and data integrity constraints.
+
+### Changed
+- Typing experience now uses line numbers, floating caret, syntax highlighting, WPM composables, and resilient lesson text rendering.
+- Frontend data access is split into domain, application, and adapter layers with TypeScript entry points.
+- UI is refreshed across home, lessons, leaderboard, profile, result, auth, and layout surfaces.
+- Package lock is synchronized for CI npm compatibility.
+
+### Fixed
+- Canonical `lesson_ref` handling for built-in/community lessons, result persistence, path completion, and retry/recommendation routes.
+- `get_leaderboard` migration now drops the old function before recreating it with the new return type.
+- Typing page layout now keeps the real exercise text visible above shortcut help.
+- Documentation trailing whitespace and merge conflicts from syncing `dev` into `main`.
+
 ## [1.0.0] - 2026-06-20
 
 ### Added
