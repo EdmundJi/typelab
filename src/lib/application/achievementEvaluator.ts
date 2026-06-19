@@ -8,8 +8,10 @@
  * - 返回实际解锁的成就 id 数组
  */
 
-import * as db from '@/lib/adapters/db'
+import { db } from '@/lib/adapters/db'
+import type { DbAdapter } from '@/lib/adapters/types'
 import { checkNewUnlocks } from '@/lib/domain/achievements'
+import type { TypingResult, UserResult } from '@/types'
 
 /**
  * 评估并解锁新成就
@@ -19,11 +21,17 @@ import { checkNewUnlocks } from '@/lib/domain/achievements'
  * @param {number} currentStreak — 当前连续天数
  * @returns {Promise<string[]>} 本次实际解锁的成就 id 列表
  */
-export async function evaluateAndUnlock(userId, latestResult, allResults, currentStreak) {
+export async function evaluateAndUnlock(
+  userId: string,
+  latestResult: TypingResult | UserResult,
+  allResults: Array<TypingResult | UserResult>,
+  currentStreak: number,
+  adapter: DbAdapter = db,
+) {
   let alreadyUnlocked = []
 
   try {
-    alreadyUnlocked = await db.listUserAchievements(userId)
+    alreadyUnlocked = await adapter.listUserAchievements(userId)
   } catch (err) {
     console.warn('[achievementEvaluator] 获取已解锁成就失败，降级为空列表', err)
   }
@@ -39,7 +47,7 @@ export async function evaluateAndUnlock(userId, latestResult, allResults, curren
 
   for (const id of newUnlocks) {
     try {
-      await db.unlockAchievement(userId, id)
+      await adapter.unlockAchievement(userId, id)
       actuallyUnlocked.push(id)
     } catch (err) {
       // PK 冲突或其他错误 → 静默忽略，不计入返回值

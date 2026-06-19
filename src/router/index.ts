@@ -4,6 +4,7 @@ import AdminReviewView from '@/views/AdminReviewView.vue'
 import HomeView from '@/views/HomeView.vue'
 import LeaderboardView from '@/views/LeaderboardView.vue'
 import LoginView from '@/views/LoginView.vue'
+import NotFoundView from '@/views/NotFoundView.vue'
 import PathsView from '@/views/PathsView.vue'
 import ProfileView from '@/views/ProfileView.vue'
 import ResultView from '@/views/ResultView.vue'
@@ -26,6 +27,7 @@ const routes = [
     component: AdminReviewView,
     meta: { requiresAuth: true, requiresAdmin: true },
   },
+  { path: '/:pathMatch(.*)*', name: 'not-found', component: NotFoundView },
 ]
 
 const router = createRouter({

@@ -11,8 +11,9 @@
  * 不直接导入 adapters/supabase.js，只使用 adapters/db.js。
  */
 
-import { lessons as builtinLessons } from '@/lessons/index'
-import * as db from '@/lib/adapters/db'
+import { lessons as builtinLessons } from '@/lessons'
+import { db } from '@/lib/adapters/db'
+import type { DbAdapter } from '@/lib/adapters/types'
 import { parse } from '@/lib/domain/lessonRef'
 
 /**
@@ -62,15 +63,15 @@ function inferLanguage(lesson) {
  * @param {{ language?: string }} [filters]
  * @returns {Promise<Object[]>}
  */
-export async function listLessons(filters = {}) {
-  const { language } = filters
+export async function listLessons(filters: any = {}, adapter: DbAdapter = db) {
+  const { language, category, search } = filters
 
   // 加载内置课程（已标准化）
   let lessons = builtinLessons.map(normalizeToV2)
 
   // 尝试加载社区课程（降级处理）
   try {
-    const communityResult = await db.queryCommunityLessons({ status: 'approved' })
+    const communityResult = await adapter.queryCommunityLessons({ status: 'approved' })
     const communityData = communityResult?.data ?? communityResult ?? []
     if (Array.isArray(communityData)) {
       const communityLessons = communityData.map((cl) => normalizeCommunityLesson(cl))
@@ -80,10 +81,14 @@ export async function listLessons(filters = {}) {
     // Supabase 查询失败 → 降级为纯内置，不 throw
   }
 
-  // 按语言筛选
-  if (language) {
+  if (category && category !== 'all')
+    lessons = lessons.filter((lesson) => lesson.category === category || lesson.topic === category)
+  if (language && language !== 'all')
     lessons = lessons.filter((lesson) => lesson.variants.some((v) => v.language === language))
-  }
+  if (search)
+    lessons = lessons.filter((lesson) =>
+      lesson.title?.toLowerCase().includes(String(search).toLowerCase()),
+    )
 
   return lessons
 }
@@ -93,8 +98,8 @@ export async function listLessons(filters = {}) {
  * @param {string} ref — 'builtin:<id>' 或 'community:<uuid>'
  * @returns {Promise<Object|null>}
  */
-export async function getLessonById(ref) {
-  let parsed
+export async function getLessonById(ref: string, adapter: DbAdapter = db) {
+  let parsed: { type: string; id: string } | null
   try {
     parsed = parse(ref)
   } catch {
@@ -109,7 +114,7 @@ export async function getLessonById(ref) {
 
   if (parsed.type === 'community') {
     try {
-      const result = await db.queryCommunityLessons({ id: parsed.id, status: 'approved' })
+      const result = await adapter.queryCommunityLessons({ id: parsed.id, status: 'approved' })
       const data = result?.data ?? result
       const item = Array.isArray(data) ? data[0] : data
       if (!item) return null
