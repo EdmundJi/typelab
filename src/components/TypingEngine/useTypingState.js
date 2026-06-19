@@ -1,7 +1,12 @@
 import { ref } from 'vue'
 
 /**
- * useTypingState — handles keystroke logic with auto-indent and tab-skip.
+ * useTypingState — handles per-character keystroke logic with IDE-like optional spacing.
+ *
+ * Whitespace between two word characters is semantic and must be typed, e.g. `if n` or
+ * `const value`. Whitespace around operators and punctuation is formatter-style spacing,
+ * so typing the next non-space character may skip it, similar to how an IDE formatter
+ * normalizes `value = 1` from `value=1`.
  *
  * @param {import('vue').Ref<Array<{char: string, status: string}>>} chars
  * @returns {{
@@ -14,44 +19,75 @@ export function useTypingState(chars) {
   const cursorIndex = ref(0)
   const typedCharCount = ref(0)
 
-  // Auto-advance past whitespace (space and tab) — whitespace is never user-typed in code mode.
-  // Called after every forward movement so the cursor always rests on a non-whitespace char.
-  function skipSpaces() {
-    while (
-      cursorIndex.value < chars.value.length &&
-      (chars.value[cursorIndex.value].char === ' ' || chars.value[cursorIndex.value].char === '\t')
-    ) {
-      chars.value[cursorIndex.value].status = 'correct'
-      cursorIndex.value++
-    }
-  }
-
-  // Call after text/cursor reset so initial leading spaces are also skipped.
   function resetCursor() {
     cursorIndex.value = 0
     typedCharCount.value = 0
-    skipSpaces()
+  }
+
+  function isHorizontalWhitespace(char) {
+    return char === ' ' || char === '\t'
+  }
+
+  function isWordChar(char) {
+    return /[A-Za-z0-9_$]/.test(char ?? '')
+  }
+
+  function previousNonWhitespaceIndex(index) {
+    for (let i = index - 1; i >= 0; i--) {
+      if (chars.value[i].char === '\n') return -1
+      if (!isHorizontalWhitespace(chars.value[i].char)) return i
+    }
+    return -1
+  }
+
+  function nextNonWhitespaceIndex(index) {
+    for (let i = index; i < chars.value.length; i++) {
+      if (chars.value[i].char === '\n') return -1
+      if (!isHorizontalWhitespace(chars.value[i].char)) return i
+    }
+    return -1
+  }
+
+  function canSkipFormatterWhitespace(index) {
+    if (!isHorizontalWhitespace(chars.value[index]?.char)) return false
+
+    const prevIndex = previousNonWhitespaceIndex(index)
+    const nextIndex = nextNonWhitespaceIndex(index)
+    if (nextIndex === -1) return false
+
+    const prev = prevIndex === -1 ? '' : chars.value[prevIndex].char
+    const next = chars.value[nextIndex].char
+
+    // Space between two identifiers/keywords/numbers is semantic, not formatting.
+    // Examples: `if n`, `const doubled`, `let value`.
+    return !(isWordChar(prev) && isWordChar(next))
+  }
+
+  function maybeSkipFormatterWhitespaceFor(key) {
+    if (key.length !== 1) return false
+    if (!isHorizontalWhitespace(chars.value[cursorIndex.value]?.char)) return false
+    if (!canSkipFormatterWhitespace(cursorIndex.value)) return false
+
+    const nextIndex = nextNonWhitespaceIndex(cursorIndex.value)
+    if (nextIndex === -1 || chars.value[nextIndex].char !== key) return false
+
+    for (let i = cursorIndex.value; i < nextIndex; i++) {
+      chars.value[i].status = 'correct'
+      chars.value[i].autoSkipped = true
+    }
+    cursorIndex.value = nextIndex
+    return true
   }
 
   function handleKey(key) {
     if (key === 'Backspace') {
       if (cursorIndex.value > 0) {
-        // Step back over any auto-skipped whitespace first (restoring them to pending)
-        while (
-          cursorIndex.value > 0 &&
-          (chars.value[cursorIndex.value - 1].char === ' ' ||
-            chars.value[cursorIndex.value - 1].char === '\t') &&
-          chars.value[cursorIndex.value - 1].status === 'correct'
-        ) {
-          cursorIndex.value--
-          chars.value[cursorIndex.value].status = 'pending'
+        cursorIndex.value--
+        if (!chars.value[cursorIndex.value].autoSkipped && typedCharCount.value > 0) {
+          typedCharCount.value--
         }
-        // Then undo the real typed char
-        if (cursorIndex.value > 0) {
-          cursorIndex.value--
-          if (typedCharCount.value > 0) typedCharCount.value--
-          chars.value[cursorIndex.value].status = 'pending'
-        }
+        chars.value[cursorIndex.value].status = 'pending'
+        chars.value[cursorIndex.value].autoSkipped = false
         return 'backspace'
       }
       return 'ignore'
@@ -59,35 +95,33 @@ export function useTypingState(chars) {
 
     if (cursorIndex.value >= chars.value.length) return 'ignore'
 
+    maybeSkipFormatterWhitespaceFor(key)
+    if (cursorIndex.value >= chars.value.length) return 'ignore'
+
     const expected = chars.value[cursorIndex.value].char
 
     if (key === 'Enter') {
-      if (expected !== '\n') {
-        chars.value[cursorIndex.value].status = 'wrong'
-        cursorIndex.value++
-        typedCharCount.value++
-        skipSpaces()
-        return 'advance'
-      }
-      chars.value[cursorIndex.value].status = 'correct'
+      chars.value[cursorIndex.value].status = expected === '\n' ? 'correct' : 'wrong'
+      chars.value[cursorIndex.value].autoSkipped = false
       cursorIndex.value++
       typedCharCount.value++
-      skipSpaces()
       return 'advance'
     }
 
     if (key === 'Tab') {
-      // Tab skips up to 4 spaces; with auto-skip active this is mostly a no-op,
-      // but kept for explicit indentation flow at the start of a line.
-      skipSpaces()
-      return cursorIndex.value > 0 ? 'advance' : 'ignore'
+      if (expected !== '\t') return 'ignore'
+      chars.value[cursorIndex.value].status = 'correct'
+      chars.value[cursorIndex.value].autoSkipped = false
+      cursorIndex.value++
+      typedCharCount.value++
+      return 'advance'
     }
 
     if (key.length === 1) {
       chars.value[cursorIndex.value].status = key === expected ? 'correct' : 'wrong'
+      chars.value[cursorIndex.value].autoSkipped = false
       cursorIndex.value++
       typedCharCount.value++
-      skipSpaces()
       return 'advance'
     }
 

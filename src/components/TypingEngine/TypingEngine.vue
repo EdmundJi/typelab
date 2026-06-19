@@ -226,12 +226,12 @@ function handleKeyDown(e) {
 </script>
 
 <template>
-  <div class="typing-engine-wrapper">
+  <div class="typing-engine-wrapper font-mono text-lg leading-relaxed">
     <LineNumbers :text="props.text" :current-line="currentLine" />
 
     <div
       ref="container"
-      class="typing-area font-mono text-lg leading-relaxed whitespace-pre overflow-x-auto outline-none"
+      class="typing-area whitespace-pre overflow-x-auto outline-none"
       tabindex="0"
       style="position: relative"
       @keydown="handleKeyDown"
