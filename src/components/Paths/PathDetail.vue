@@ -1,8 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { listUserResults } from '@/lib/adapters/db'
 import { getLessonById } from '@/lib/application/lessons'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 import { useUserStore } from '@/stores/user'
 
 const props = defineProps({
@@ -27,7 +28,7 @@ onMounted(async () => {
     const { data: results } = await listUserResults(userId)
     if (results) {
       for (const r of results) {
-        completedRefs.add(r.lesson_id)
+        completedRefs.add(toLessonRef(r.lesson_id))
       }
     }
   }
@@ -39,7 +40,7 @@ onMounted(async () => {
       return {
         ...item,
         lesson,
-        completed: completedRefs.has(item.lesson_ref),
+        completed: completedRefs.has(toLessonRef(item.lesson_ref)),
       }
     }),
   )
@@ -47,15 +48,9 @@ onMounted(async () => {
   loading.value = false
 })
 
-function getLessonId(lessonRef) {
-  // Extract the id part from 'builtin:<id>' or 'community:<uuid>'
-  const colonIdx = lessonRef.indexOf(':')
-  return colonIdx !== -1 ? lessonRef.slice(colonIdx + 1) : lessonRef
-}
-
 function goToLesson(item) {
   if (!item.lesson) return
-  router.push({ name: 'lesson', params: { id: getLessonId(item.lesson_ref) } })
+  router.push({ name: 'lesson', params: { id: toLessonRef(item.lesson_ref) } })
 }
 </script>
 
@@ -66,7 +61,9 @@ function goToLesson(item) {
       <p class="text-mt-sub text-xs">{{ path.description }}</p>
     </div>
 
-    <div v-if="loading" class="text-mt-sub text-xs">加载中…</div>
+    <div v-if="loading" class="space-y-2" aria-label="正在加载路径详情">
+      <div v-for="i in 4" :key="i" class="h-12 border border-mt-border bg-mt-bg animate-pulse rounded" />
+    </div>
 
     <ul v-else class="space-y-2">
       <li

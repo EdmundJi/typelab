@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
-import { useWpm } from '@/components/TypingEngine/useWpm.js'
+import { useWpm } from '@/components/TypingEngine/useWpm'
 
 describe('T015 — useWpm', () => {
   beforeEach(() => {

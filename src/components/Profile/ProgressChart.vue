@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { LineChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent } from 'echarts/components'
 import * as echarts from 'echarts/core'

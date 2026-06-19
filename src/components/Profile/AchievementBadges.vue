@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { listUserAchievements } from '@/lib/adapters/db'
 import { ACHIEVEMENTS } from '@/lib/domain/achievements'

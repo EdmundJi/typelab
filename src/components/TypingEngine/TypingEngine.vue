@@ -1,8 +1,8 @@
-<script setup>
+<script setup lang="ts">
 import { computed, nextTick, ref, watch } from 'vue'
 import LineNumbers from './LineNumbers.vue'
-import { useCursor } from './useCursor.js'
-import { useTypingState } from './useTypingState.js'
+import { useCursor } from './useCursor'
+import { useTypingState } from './useTypingState'
 
 const props = defineProps({
   text: {
@@ -15,7 +15,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['complete', 'update'])
+const emit = defineEmits(['complete', 'update', 'reset'])
 
 // ── Prism lazy-load ─────────────────────────────────────────────────────────
 let Prism = null
@@ -109,6 +109,7 @@ const {
 const { cursorStyle } = useCursor(cursorIndex, chars, container)
 
 // ── Current line calculation ───────────────────────────────────────────────
+const totalLines = computed(() => Math.max(1, props.text.split('\n').length))
 const currentLine = computed(() => {
   let line = 1
   for (let i = 0; i < cursorIndex.value && i < chars.value.length; i++) {
@@ -175,7 +176,23 @@ function emitUpdate() {
   })
 }
 
-function handleKeyDown(e) {
+function resetState() {
+  chars.value = props.text.split('').map((char) => ({ char, status: 'pending' }))
+  isCompleted = false
+  startTime.value = null
+  totalErrors = 0
+  grossTypedCount = 0
+  resetCursor()
+  emitUpdate()
+}
+
+function handleKeyDown(e: KeyboardEvent) {
+  if (e.key === 'Escape') {
+    e.preventDefault()
+    resetState()
+    emit('reset')
+    return
+  }
   if (isCompleted) return
   if (e.ctrlKey || e.metaKey || e.altKey) return
 
@@ -226,45 +243,56 @@ function handleKeyDown(e) {
 </script>
 
 <template>
-  <div class="typing-engine-wrapper">
-    <LineNumbers :text="props.text" :current-line="currentLine" />
+  <div class="typing-engine-wrapper font-mono text-lg leading-relaxed">
+    <div class="typing-content">
+      <LineNumbers :text="props.text" :current-line="currentLine" />
 
-    <div
-      ref="container"
-      class="typing-area font-mono text-lg leading-relaxed whitespace-pre overflow-x-auto outline-none"
-      tabindex="0"
-      style="position: relative"
-      @keydown="handleKeyDown"
-      @click="container?.focus()"
-    >
-      <span
-        v-for="(item, index) in chars"
-        :key="index"
-        :data-char-index="index"
-        class="relative"
-        :class="[
-          {
-            'char-pending': item.status === 'pending',
-            'char-correct': item.status === 'correct',
-            'char-wrong': item.status === 'wrong',
-            'char-wrong-space': item.status === 'wrong' && item.char === ' ',
-          },
-          tokenClassMap[index] || '',
-        ]"
-      >{{ item.char }}</span>
-
-      <!-- Floating caret div (replaces ::before) -->
       <div
-        v-if="chars.length > 0"
-        class="caret-div"
-        :style="cursorStyle"
-      />
+        ref="container"
+        class="typing-area whitespace-pre overflow-x-auto outline-none"
+        tabindex="0"
+        style="position: relative"
+        @keydown="handleKeyDown"
+        @click="container?.focus()"
+      >
+        <span
+          v-for="(item, index) in chars"
+          :key="index"
+          :data-char-index="index"
+          class="relative"
+          :class="[
+            {
+              'char-pending': item.status === 'pending',
+              'char-correct': item.status === 'correct',
+              'char-wrong': item.status === 'wrong',
+              'char-wrong-space': item.status === 'wrong' && item.char === ' ',
+            },
+            tokenClassMap[index] || '',
+          ]"
+        >{{ item.char }}</span>
+
+        <!-- Floating caret div (replaces ::before) -->
+        <div
+          v-if="chars.length > 0"
+          class="caret-div"
+          :style="cursorStyle"
+        />
+      </div>
+    </div>
+    <div class="mt-3 flex w-full justify-between text-[11px] text-mt-sub">
+      <span>Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符</span>
+      <span>行 {{ currentLine }}/{{ totalLines }}</span>
     </div>
   </div>
 </template>
 
 <style scoped>
 .typing-engine-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.typing-content {
   display: flex;
   flex-direction: row;
   align-items: flex-start;

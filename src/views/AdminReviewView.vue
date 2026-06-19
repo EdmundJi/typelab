@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { listPendingSubmissions, reviewLesson } from '@/lib/adapters/db'
@@ -53,7 +53,13 @@ async function reject(id) {
     </div>
 
     <template v-else>
-      <div v-if="loading" class="loading-hint">加载中...</div>
+      <div v-if="loading" class="space-y-3" aria-label="正在加载待审核投稿">
+        <div v-for="i in 3" :key="i" class="submission-card animate-pulse">
+          <div class="h-4 w-32 bg-mt-border/60 rounded" />
+          <div class="h-20 bg-mt-border/40 rounded" />
+          <div class="h-3 w-48 bg-mt-border/50 rounded" />
+        </div>
+      </div>
 
       <div v-else-if="submissions.length === 0" class="empty-hint">
         暂无待审核投稿

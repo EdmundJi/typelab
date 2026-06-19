@@ -57,13 +57,21 @@ export const ACHIEVEMENTS = [
  * 成就 id → 解锁判断函数的映射
  * @type {Record<string, (ctx: CheckContext) => boolean>}
  */
+function resultLanguage(result) {
+  if (result?.language) return result.language
+  const variantId = result?.variant_id
+  if (!variantId) return null
+  const knownLanguages = ['typescript', 'javascript', 'python', 'java', 'cpp', 'go', 'text']
+  return knownLanguages.find((language) => String(variantId).includes(`-${language}-`)) ?? null
+}
+
 const UNLOCK_RULES = {
   'first-finish': ({ allResults }) => allResults.length === 1,
   'wpm-100': ({ latestResult }) => latestResult?.wpm >= 100,
   'perfect-accuracy': ({ latestResult }) => latestResult?.accuracy === 100,
   'streak-7': ({ currentStreak }) => currentStreak >= 7,
   multilingual: ({ allResults }) => {
-    const langs = new Set(allResults.map((r) => r.language).filter(Boolean))
+    const langs = new Set(allResults.map(resultLanguage).filter(Boolean))
     return langs.size >= 3
   },
   'practice-50': ({ allResults }) => allResults.length >= 50,

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { calcStreak } from '../../../src/lib/domain/streak.js'
+import { calcStreak } from '../../../src/lib/domain/streak'
 
 // Helper: 给定 UTC+8 日期字符串，返回对应的 UTC ISO 时间戳（取当天 UTC+8 正午）
 function utc8DayToUTC(dateKey) {

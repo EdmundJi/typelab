@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import VariantSelector from '@/components/LessonSelect/VariantSelector.vue'
@@ -7,6 +7,7 @@ import { listUserResults } from '@/lib/adapters/db'
 import { evaluateAndUnlock } from '@/lib/application/achievementEvaluator'
 import { getLessonById } from '@/lib/application/lessons'
 import { ACHIEVEMENTS } from '@/lib/domain/achievements'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 import { useStreakStore } from '@/stores/streak'
 import { useUserStore } from '@/stores/user'
 
@@ -38,6 +39,7 @@ const elapsed = ref(0)
 const started = ref(false)
 
 const selectedVariantId = ref(null)
+const resetKey = ref(0)
 
 let timerInterval = null
 
@@ -51,13 +53,14 @@ watch(selectedVariantId, () => {
   resetStats()
 })
 
-async function loadLesson(id) {
+async function loadLesson(id: any) {
   loading.value = true
   notFound.value = false
   clearTimer()
   resetStats()
 
-  const data = await getLessonById(`builtin:${id}`)
+  const ref = toLessonRef(id)
+  const data = await getLessonById(ref)
   if (!data) {
     notFound.value = true
     loading.value = false
@@ -83,6 +86,12 @@ function resetStats() {
   started.value = false
 }
 
+function handleReset() {
+  clearTimer()
+  resetStats()
+  resetKey.value++
+}
+
 function clearTimer() {
   if (timerInterval) {
     clearInterval(timerInterval)
@@ -90,7 +99,7 @@ function clearTimer() {
   }
 }
 
-function handleUpdate({ progress: p, liveWpm: wpm, liveAccuracy: acc }) {
+function handleUpdate({ progress: p, liveWpm: wpm, liveAccuracy: acc }: any) {
   progress.value = p
   liveWpm.value = wpm
   liveAccuracy.value = acc
@@ -103,8 +112,10 @@ function handleUpdate({ progress: p, liveWpm: wpm, liveAccuracy: acc }) {
   }
 }
 
-async function handleComplete(result) {
+async function handleComplete(result: any) {
   clearTimer()
+
+  const lessonRef = toLessonRef(lesson.value.id)
 
   // Achievement evaluation (non-blocking, skipped for guests)
   const userId = userStore.user?.id
@@ -113,12 +124,23 @@ async function handleComplete(result) {
       const { data: allResults } = await listUserResults(userId)
       const currentStreak = streakStore.currentStreak
       const latestResult = {
+        user_id: userId,
+        lesson_id: lessonRef,
+        variant_id: selectedVariantId.value,
         wpm: result.wpm,
         accuracy: result.accuracy,
+        duration: result.duration,
+        errors: result.errors,
         language: currentVariant.value?.language ?? null,
         finishedAt: new Date().toISOString(),
       }
-      const newIds = await evaluateAndUnlock(userId, latestResult, allResults ?? [], currentStreak)
+      const allResultsWithLatest = [...(allResults ?? []), latestResult]
+      const newIds = await evaluateAndUnlock(
+        userId,
+        latestResult,
+        allResultsWithLatest,
+        currentStreak,
+      )
       for (const id of newIds) {
         const achievement = ACHIEVEMENTS.find((a) => a.id === id)
         if (achievement) {
@@ -138,15 +160,16 @@ async function handleComplete(result) {
       state: {
         result: {
           ...result,
-          lessonId: lesson.value.id,
+          lessonId: lessonRef,
           variant_id: selectedVariantId.value,
+          language: currentVariant.value?.language ?? null,
         },
       },
     })
   }, delay)
 }
 
-function formatTime(secs) {
+function formatTime(secs: number) {
   const m = Math.floor(secs / 60)
   const s = secs % 60
   return m > 0 ? `${m}:${String(s).padStart(2, '0')}` : `${s}s`
@@ -231,16 +254,17 @@ onBeforeUnmount(() => clearTimer())
 
         <TypingEngine
           v-if="currentVariant"
-          :key="selectedVariantId"
-          :text="currentVariant.code"
+          :key="`${selectedVariantId}-${resetKey}`"
+          :text="currentVariant.code ?? currentVariant.text ?? ''"
           :language="currentVariant.language"
           @update="handleUpdate"
           @complete="handleComplete"
+          @reset="handleReset"
         />
       </div>
 
       <p class="mt-4 text-center text-xs text-mt-sub/50 tracking-wide">
-        点击文本区域开始 · Backspace 删除 · Tab/Enter 输入对应字符
+        Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符
       </p>
     </template>
 
