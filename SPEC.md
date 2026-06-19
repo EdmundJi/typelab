@@ -53,7 +53,7 @@ Variant {
   "topic": "sorting",
   "difficulty": 3,
   "variants": [{
-    "id": "py-quicksort-01-v1",
+    "variant_id": "py-quicksort-01-v1",
     "language": "python",
     "style": "standard",
     "step": 3,
@@ -77,7 +77,7 @@ Variant {
     "difficulty": 2,
     "variants": [
       {
-        "id": "py-bfs-01-v1",
+        "variant_id": "py-bfs-01-v1",
         "language": "python",
         "style": "verbose",
         "step": 3,

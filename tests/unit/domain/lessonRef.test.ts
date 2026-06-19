@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { build, parse } from '../../../src/lib/domain/lessonRef.js'
+import { build, parse } from '../../../src/lib/domain/lessonRef'
 
 describe('lessonRef.parse', () => {
   it('parses builtin ref correctly', () => {

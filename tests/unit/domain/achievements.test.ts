@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { ACHIEVEMENTS, checkNewUnlocks } from '../../../src/lib/domain/achievements.js'
+import { ACHIEVEMENTS, checkNewUnlocks } from '../../../src/lib/domain/achievements'
 
 // Helper: 创建基础 ctx，所有条件均不满足
 function makeCtx(overrides = {}) {
@@ -123,6 +123,17 @@ describe('checkNewUnlocks', () => {
       ],
     })
     expect(checkNewUnlocks(ctx)).not.toContain('multilingual')
+  })
+
+  it('multilingual: can derive language from saved variant_id', () => {
+    const ctx = makeCtx({
+      allResults: [
+        { wpm: 50, accuracy: 90, variant_id: 'py-bfs-01-python-standard' },
+        { wpm: 60, accuracy: 90, variant_id: 'py-dijkstra-01-javascript-standard' },
+        { wpm: 70, accuracy: 90, variant_id: 'algo-go-standard' },
+      ],
+    })
+    expect(checkNewUnlocks(ctx)).toContain('multilingual')
   })
 
   it('practice-50: unlocks when allResults.length >= 50', () => {

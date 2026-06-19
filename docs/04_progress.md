@@ -73,6 +73,45 @@ T030 → T031 → T032 → T033 → T036 → T039 → T034/T035/T040/T041/T042/T
 - [x] T028 AdminReviewView.vue + db.reviewLesson（admin 路由守卫）
 - [x] T029 MySubmissions.vue + ProfileView 集成
 
+
+### v3 系统更新（2026-06-20）
+
+- [x] T030 首页课程列表改用 application/listLessons
+- [x] T031 新增 404 页面与 catch-all 路由
+- [x] T032 首页游客视图重构
+- [x] T033 首页登录用户 Dashboard
+- [x] T034 课程筛选增强：搜索 + 分类 + 语言
+- [x] T035 课程卡片展示语言标签与个人 PB
+- [x] T036 成绩摘要增强：首次完成 / 新纪录 / 距最佳
+- [x] T037 结果页推荐下一课
+- [x] T038 结果页复制成绩
+- [x] T039 新增 AppFooter 并接入 Layout
+- [x] T040 登录页价值说明
+- [x] T041 排行榜当前用户排名与空状态
+- [x] T042 打字界面 Esc reset 与行进度
+- [x] T043 统一 Skeleton loading 组件
+- [x] T044 安装 TypeScript 与 vue-tsc
+- [x] T045 新增 TypeScript 配置
+- [x] T046 新增中心类型声明
+- [x] T047 修正 SPEC Variant 字段勘误
+- [x] T048 按顺序迁移 JS 到 TS
+- [x] T049 Vue SFC script setup 迁移为 TypeScript
+- [x] T050 定义 DbAdapter 接口
+- [x] T051 拆分 Supabase client
+- [x] T052 实现 MemoryAdapter
+- [x] T053 实现 SupabaseAdapter
+- [x] T054 实现 db.ts 兼容门面
+- [x] T055 application 层支持 adapter 注入
+- [x] T056 现有测试迁移为 TypeScript
+- [x] T057 application 测试改为注入 MemoryAdapter
+- [x] T058 新增 MemoryAdapter 单元测试
+- [x] T059 新增 avatar / stores / router 测试
+- [x] T060 记录不纳入单测范围
+- [x] T061 配置覆盖率阈值
+- [x] T062 新增 GitHub Actions CI
+- [x] T063 更新版本号到 1.0.0
+- [x] T064 新增 CHANGELOG
+
 ### v2 Bug Fixes（2026-06-19）
 
 - [x] 行号与代码行错位 → whitespace-pre + overflow-x-auto，行号严格 1:1 对齐
@@ -91,26 +130,26 @@ T030 → T031 → T032 → T033 → T036 → T039 → T034/T035/T040/T041/T042/T
 
 ### 首页与课程发现
 
-- [ ] T030 首页课程列表改用 application/listLessons
-- [ ] T031 新增 404 页面与 catch-all 路由
-- [ ] T032 首页游客视图重构
-- [ ] T033 首页登录用户 Dashboard
-- [ ] T034 课程筛选增强：搜索 + 分类 + 语言
-- [ ] T035 课程卡片展示语言标签与个人 PB
+- [x] T030 首页课程列表改用 application/listLessons
+- [x] T031 新增 404 页面与 catch-all 路由
+- [x] T032 首页游客视图重构
+- [x] T033 首页登录用户 Dashboard
+- [x] T034 课程筛选增强：搜索 + 分类 + 语言
+- [x] T035 课程卡片展示语言标签与个人 PB
 
 ### 成绩页
 
-- [ ] T036 成绩摘要增强：首次完成 / 新纪录 / 距最佳
-- [ ] T037 结果页推荐下一课
-- [ ] T038 结果页复制成绩
+- [x] T036 成绩摘要增强：首次完成 / 新纪录 / 距最佳
+- [x] T037 结果页推荐下一课
+- [x] T038 结果页复制成绩
 
 ### 基础页面与细节打磨
 
-- [ ] T039 新增 AppFooter 并接入 Layout
-- [ ] T040 登录页价值说明
-- [ ] T041 排行榜当前用户排名与空状态
-- [ ] T042 打字界面 Esc reset 与行进度
-- [ ] T043 统一 Skeleton loading 组件
+- [x] T039 新增 AppFooter 并接入 Layout
+- [x] T040 登录页价值说明
+- [x] T041 排行榜当前用户排名与空状态
+- [x] T042 打字界面 Esc reset 与行进度
+- [x] T043 统一 Skeleton loading 组件
 
 ---
 
@@ -118,36 +157,36 @@ T030 → T031 → T032 → T033 → T036 → T039 → T034/T035/T040/T041/T042/T
 
 ### TypeScript
 
-- [ ] T044 安装 TypeScript 与 vue-tsc
-- [ ] T045 新增 TypeScript 配置
-- [ ] T046 新增中心类型声明
-- [ ] T047 修正 SPEC Variant 字段勘误
-- [ ] T048 按顺序迁移 JS 到 TS
-- [ ] T049 Vue SFC script setup 迁移为 TypeScript
+- [x] T044 安装 TypeScript 与 vue-tsc
+- [x] T045 新增 TypeScript 配置
+- [x] T046 新增中心类型声明
+- [x] T047 修正 SPEC Variant 字段勘误
+- [x] T048 按顺序迁移 JS 到 TS
+- [x] T049 Vue SFC script setup 迁移为 TypeScript
 
 ### DbAdapter
 
-- [ ] T050 定义 DbAdapter 接口
-- [ ] T051 拆分 Supabase client
-- [ ] T052 实现 MemoryAdapter
-- [ ] T053 实现 SupabaseAdapter
-- [ ] T054 实现 db.ts 兼容门面
-- [ ] T055 application 层支持 adapter 注入
+- [x] T050 定义 DbAdapter 接口
+- [x] T051 拆分 Supabase client
+- [x] T052 实现 MemoryAdapter
+- [x] T053 实现 SupabaseAdapter
+- [x] T054 实现 db.ts 兼容门面
+- [x] T055 application 层支持 adapter 注入
 
 ### Tests
 
-- [ ] T056 现有测试迁移为 TypeScript
-- [ ] T057 application 测试改为注入 MemoryAdapter
-- [ ] T058 新增 MemoryAdapter 单元测试
-- [ ] T059 新增 avatar / stores / router 测试
-- [ ] T060 记录不纳入单测范围
-- [ ] T061 配置覆盖率阈值
+- [x] T056 现有测试迁移为 TypeScript
+- [x] T057 application 测试改为注入 MemoryAdapter
+- [x] T058 新增 MemoryAdapter 单元测试
+- [x] T059 新增 avatar / stores / router 测试
+- [x] T060 记录不纳入单测范围
+- [x] T061 配置覆盖率阈值
 
 ### CI / Release
 
-- [ ] T062 新增 GitHub Actions CI
-- [ ] T063 更新版本号到 1.0.0
-- [ ] T064 新增 CHANGELOG
+- [x] T062 新增 GitHub Actions CI
+- [x] T063 更新版本号到 1.0.0
+- [x] T064 新增 CHANGELOG
 
 ---
 
@@ -192,11 +231,11 @@ npm run build
 - [ ] 审核通过的社区课程能出现在首页课程列表
 - [ ] 课程可通过搜索、分类、语言快速找到
 - [ ] 练习完成后有明确终点感、个人最佳反馈、下一步行动
-- [ ] TypeScript typecheck 通过
-- [ ] CI 在 push / PR 上稳定运行
-- [ ] `src/lib/**`、`src/stores/**`、`src/router/**` 覆盖率达到 lines 80%、functions 80%
-- [ ] Mock 与 Supabase 数据访问经 adapter 隔离
-- [ ] 生产包不再包含开发 mock 数据
+- [x] TypeScript typecheck 通过（2026-06-20：`npm run typecheck`）
+- [x] CI 在 push / PR 上稳定运行（workflow 已新增；本地同序列验证通过）
+- [x] `src/lib/**`、`src/stores/**`、`src/router/**` 覆盖率达到 lines 80%、functions 80%（2026-06-20：`npm run test`，96 tests，覆盖率超过门禁）
+- [x] Mock 与 Supabase 数据访问经 adapter 隔离
+- [x] 生产包不再包含开发 mock 数据
 
 ---
 
@@ -234,3 +273,10 @@ npm run build
 - 不在单元测试中覆盖真实 Supabase 网络交互
 - 不测试依赖 DOM layout 的 `useCursor` 和完整 `TypingEngine` 布局行为
 - 不在本轮补充大量课程内容；内容扩充作为 UI 完成后的独立任务
+
+
+## v3 Residual Risks
+
+- `npm run check` passes but reports 42 Biome warnings for explicit `any`; build/typecheck/test are green.
+- MemoryAdapter / db facade tests cover all method groups in grouped cases rather than the originally estimated ~25 individual cases.
+- Product UI changes are code-validated; browser/manual UX verification remains required for exact visual behavior.

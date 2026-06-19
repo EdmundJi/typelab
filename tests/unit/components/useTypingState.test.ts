@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { ref } from 'vue'
-import { useTypingState } from '@/components/TypingEngine/useTypingState.js'
+import { useTypingState } from '@/components/TypingEngine/useTypingState'
 
 function makeChars(str) {
   return ref(str.split('').map((char) => ({ char, status: 'pending' })))
@@ -129,10 +129,10 @@ describe('Enter', () => {
 // ─── Backspace ──────────────────────────────────────────────────────────────
 
 describe('Backspace', () => {
-  let chars
-  let cursorIndex
-  let typedCharCount
-  let handleKey
+  let chars: ReturnType<typeof makeChars>
+  let cursorIndex: { value: number }
+  let typedCharCount: { value: number }
+  let handleKey: (key: string) => string
 
   beforeEach(() => {
     chars = makeChars('ab')
