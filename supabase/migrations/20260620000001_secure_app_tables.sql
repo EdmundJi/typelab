@@ -311,7 +311,9 @@ create policy "path_items_admin_write"
   using (public.is_admin())
   with check (public.is_admin());
 
-create or replace function public.get_leaderboard()
+drop function if exists public.get_leaderboard();
+
+create function public.get_leaderboard()
 returns table (
   user_id uuid,
   email text,
