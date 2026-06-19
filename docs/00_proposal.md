@@ -215,7 +215,7 @@ typecheck → check → test → build
 - Mock 与 Supabase 数据访问通过 adapter 隔离
 - 生产包不再包含开发 mock 数据
 
-## 不做什么
+## 不做什么（v2 明确排除）
 
 ### 产品边界
 

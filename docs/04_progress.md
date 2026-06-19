@@ -1,6 +1,6 @@
 # keylab — 进度看板 v3
 
-> 本文依据 `docs/00_proposal.md`、`docs/01_requirements.md`、`docs/02_architecture.md`、`docs/03_tasks.md` 更新。  
+> 本文依据 `docs/00_proposal.md`、`docs/01_requirements.md`、`docs/02_architecture.md`、`docs/03_tasks.md` 更新。
 > v1 / v2 为已完成历史；v3 为当前新一轮工程化升级 + UI / 产品完善。
 
 ---

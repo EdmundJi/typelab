@@ -1,7 +1,7 @@
 # keylab — 系统架构文档 v3
 
-> 本文由 `docs/01_requirements.md`、`PLAN.md`、`PLAN_UI.md` 汇总生成。  
-> 目标：在不实现代码的前提下，为后续迭代提供低耦合模块划分、目录结构、测试策略、技术取舍与 ADR 草稿。  
+> 本文由 `docs/01_requirements.md`、`PLAN.md`、`PLAN_UI.md` 汇总生成。
+> 目标：在不实现代码的前提下，为后续迭代提供低耦合模块划分、目录结构、测试策略、技术取舍与 ADR 草稿。
 > 若本文与 `docs/01_requirements.md` 冲突，以需求文档为准；若需求文档与 `SPEC.md` 的 `Variant.id` 冲突，以现有代码/JSON 的 `variant_id` 为准，并同步修正 `SPEC.md`。
 
 ---
@@ -729,79 +729,79 @@ npm run build
 
 ### ADR-0005 — 保留 `variant_id`，修正 SPEC 文档错误
 
-**状态**：提案  
-**背景**：`SPEC.md` 曾将 Variant 字段写为 `id`，但 JSON 文件与现有代码均使用 `variant_id`。  
-**决策**：TypeScript 类型、业务代码、测试都使用 `variant_id`；同步修正 `SPEC.md`。  
+**状态**：提案
+**背景**：`SPEC.md` 曾将 Variant 字段写为 `id`，但 JSON 文件与现有代码均使用 `variant_id`。
+**决策**：TypeScript 类型、业务代码、测试都使用 `variant_id`；同步修正 `SPEC.md`。
 **后果**：避免批量迁移 JSON 与旧代码；类型系统可防止再次误用 `id`。
 
 ### ADR-0006 — 通过 DbAdapter 隔离 Supabase 与业务代码
 
-**状态**：提案  
-**背景**：旧 `db.js` 同时包含 Supabase 逻辑和 mock 分支，导致测试依赖 `vi.mock`，真实与 mock 容易漂移。  
-**决策**：定义 `DbAdapter`；实现 `SupabaseAdapter` 与 `MemoryAdapter`；`db.ts` 作为兼容门面。  
+**状态**：提案
+**背景**：旧 `db.js` 同时包含 Supabase 逻辑和 mock 分支，导致测试依赖 `vi.mock`，真实与 mock 容易漂移。
+**决策**：定义 `DbAdapter`；实现 `SupabaseAdapter` 与 `MemoryAdapter`；`db.ts` 作为兼容门面。
 **后果**：业务层可注入 adapter，测试无需 mock 整个模块；代价是短期拆分文件和补类型成本增加。
 
 ### ADR-0007 — `db.ts` 保持旧具名函数兼容导出
 
-**状态**：提案  
-**背景**：现有组件和 store 可能大量从 `db.js` 具名导入函数。若一次性改为 `db.method()`，会引发大范围 UI 文件变更。  
-**决策**：`db.ts` 导出 `db: DbAdapter`，同时重新导出所有旧具名函数。  
+**状态**：提案
+**背景**：现有组件和 store 可能大量从 `db.js` 具名导入函数。若一次性改为 `db.method()`，会引发大范围 UI 文件变更。
+**决策**：`db.ts` 导出 `db: DbAdapter`，同时重新导出所有旧具名函数。
 **后果**：降低迁移风险；后续可逐步收敛为注入式调用。
 
 ### ADR-0008 — MemoryAdapter 不内置 paths mock 数据
 
-**状态**：提案  
-**背景**：旧 mock 数据进入生产包会造成语义混乱，也让测试 fixture 与运行时状态耦合。  
-**决策**：MemoryAdapter 默认空状态；测试需要 paths 时从 `tests/fixtures/paths.ts` seed。  
+**状态**：提案
+**背景**：旧 mock 数据进入生产包会造成语义混乱，也让测试 fixture 与运行时状态耦合。
+**决策**：MemoryAdapter 默认空状态；测试需要 paths 时从 `tests/fixtures/paths.ts` seed。
 **后果**：测试更显式，生产构建不携带无关 mock paths；开发环境需要显式 seed 才有路径演示数据。
 
 ### ADR-0009 — 登录用户课程 PB 在前端批量聚合
 
-**状态**：提案  
-**背景**：课程卡片要展示个人最佳 WPM；逐卡调用 DB 会产生 N+1 查询。  
-**决策**：进入课程列表时一次性 `listUserResults(userId)`，在前端用 `Map<lessonId, bestWpm>` 聚合。  
+**状态**：提案
+**背景**：课程卡片要展示个人最佳 WPM；逐卡调用 DB 会产生 N+1 查询。
+**决策**：进入课程列表时一次性 `listUserResults(userId)`，在前端用 `Map<lessonId, bestWpm>` 聚合。
 **后果**：显著减少请求；用户历史非常大时可后续增加分页或服务端聚合接口。
 
 ### ADR-0010 — 社区课程统一走 `listLessons()` 进入首页
 
-**状态**：提案  
-**背景**：直接使用静态 `lessonMetas` 会遗漏审核通过的社区课程。  
-**决策**：课程列表 UI 只调用 application 层 `listLessons()`；静态课程索引只作为 application 的输入之一。  
+**状态**：提案
+**背景**：直接使用静态 `lessonMetas` 会遗漏审核通过的社区课程。
+**决策**：课程列表 UI 只调用 application 层 `listLessons()`；静态课程索引只作为 application 的输入之一。
 **后果**：首页课程发现与课程详情逻辑一致；需要 loading/skeleton 处理异步加载。
 
 ### ADR-0011 — TypingEngine 只发 reset 事件，不直接重载课程
 
-**状态**：提案  
-**背景**：Esc reset 需要清空输入、计时、错误与进度；课程/变体加载属于 View 责任。  
-**决策**：`TypingEngine` 在 Escape 时 `emit('reset')`；`TypingView` 负责重新加载当前课程/变体或刷新 reset key。  
+**状态**：提案
+**背景**：Esc reset 需要清空输入、计时、错误与进度；课程/变体加载属于 View 责任。
+**决策**：`TypingEngine` 在 Escape 时 `emit('reset')`；`TypingView` 负责重新加载当前课程/变体或刷新 reset key。
 **后果**：TypingEngine 保持无路由/无数据依赖；测试 focus 在事件而非页面行为。
 
 ### ADR-0012 — Skeleton 作为统一 Loading 反馈
 
-**状态**：提案  
-**背景**：简单“加载中...”容易造成页面空白感，需求要求统一 skeleton。  
-**决策**：新增 `SkeletonCard`、`SkeletonRow`，课程列表/排行榜/个人主页复用。  
+**状态**：提案
+**背景**：简单“加载中...”容易造成页面空白感，需求要求统一 skeleton。
+**决策**：新增 `SkeletonCard`、`SkeletonRow`，课程列表/排行榜/个人主页复用。
 **后果**：视觉一致；组件本身保持无业务逻辑。
 
 ### ADR-0013 — 不对 `useCursor` 与完整 TypingEngine 做 jsdom layout 单测
 
-**状态**：提案  
-**背景**：光标定位依赖 `getBoundingClientRect`，jsdom 无真实 layout。  
-**决策**：`useCursor` 与完整 `TypingEngine.vue` DOM layout 测试不纳入单元测试范围；核心逻辑由 `useTypingState`、`useWpm` 覆盖，并在 `tests/README.md` 记录。  
+**状态**：提案
+**背景**：光标定位依赖 `getBoundingClientRect`，jsdom 无真实 layout。
+**决策**：`useCursor` 与完整 `TypingEngine.vue` DOM layout 测试不纳入单元测试范围；核心逻辑由 `useTypingState`、`useWpm` 覆盖，并在 `tests/README.md` 记录。
 **后果**：避免脆弱测试；若未来需要，可用 Playwright 做浏览器级回归。
 
 ### ADR-0014 — SupabaseAdapter 排除在单元覆盖率阈值外
 
-**状态**：提案  
-**背景**：SupabaseAdapter 的价值在真实 Supabase/RLS 交互，mock client 单测收益低。  
-**决策**：coverage exclude `supabase.ts` 与 `SupabaseAdapter.ts`；单测集中覆盖 MemoryAdapter 和 application 注入。  
+**状态**：提案
+**背景**：SupabaseAdapter 的价值在真实 Supabase/RLS 交互，mock client 单测收益低。
+**决策**：coverage exclude `supabase.ts` 与 `SupabaseAdapter.ts`；单测集中覆盖 MemoryAdapter 和 application 注入。
 **后果**：覆盖率更真实；未来可补 Supabase local 集成测试。
 
 ### ADR-0015 — 结果页推荐下一课使用轻量同分类随机策略
 
-**状态**：提案  
-**背景**：内容库规模小，复杂推荐算法维护成本高。  
-**决策**：优先同 category 未完成课程；无法判断未完成时从同 category 随机。  
+**状态**：提案
+**背景**：内容库规模小，复杂推荐算法维护成本高。
+**决策**：优先同 category 未完成课程；无法判断未完成时从同 category 随机。
 **后果**：实现简单、可解释；个性化推荐留待课程量增长后再设计。
 
 ---

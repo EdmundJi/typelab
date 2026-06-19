@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import ResultSummary from '@/components/Result/ResultSummary.vue'
 import { getBestLessonWpm, listUserResults, saveResult } from '@/lib/adapters/db'
 import { getLessonById, listLessons } from '@/lib/application/lessons'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 import { useUserStore } from '@/stores/user'
 
 const router = useRouter()
@@ -61,19 +62,17 @@ onMounted(async () => {
     router.replace({ name: 'home' })
     return
   }
-  lesson.value = await getLessonById(
-    String(result.value.lessonId).startsWith('community:')
-      ? result.value.lessonId
-      : `builtin:${result.value.lessonId}`,
-  )
+  const lessonRef = toLessonRef(result.value.lessonId)
+  result.value.lessonId = lessonRef
+  lesson.value = await getLessonById(lessonRef)
   if (userStore.user && shouldPersist.value) {
-    const { data } = await getBestLessonWpm(userStore.user.id, result.value.lessonId)
+    const { data } = await getBestLessonWpm(userStore.user.id, lessonRef)
     bestWpm.value = data ?? null
     saving.value = true
     try {
       await saveResult({
         user_id: userStore.user.id,
-        lesson_id: result.value.lessonId,
+        lesson_id: lessonRef,
         wpm: result.value.wpm,
         accuracy: result.value.accuracy,
         duration: result.value.duration,
@@ -95,13 +94,14 @@ async function loadRecommendation() {
     let completed = new Set<string>()
     if (userStore.user?.id) {
       const { data } = await listUserResults(userStore.user.id)
-      completed = new Set(
-        (data ?? []).map((r: any) => String(r.lesson_id).replace(/^builtin:/, '')),
-      )
+      completed = new Set((data ?? []).map((r: any) => toLessonRef(r.lesson_id)))
     }
-    const same = all.filter((l: any) => l.category === category && l.id !== lesson.value?.id)
+    const currentLessonRef = toLessonRef(result.value.lessonId)
+    const same = all.filter(
+      (l: any) => l.category === category && toLessonRef(l.id) !== currentLessonRef,
+    )
     recommendation.value =
-      same.find((l: any) => !completed.has(String(l.id).replace(/^builtin:/, ''))) ??
+      same.find((l: any) => !completed.has(toLessonRef(l.id))) ??
       same[Math.floor(Math.random() * same.length)] ??
       null
   } catch {
@@ -137,6 +137,6 @@ async function copyResult() {
     <div class="mb-8"><p class="text-xs text-mt-sub tracking-[0.2em] uppercase mb-2">// 成绩</p><h1 class="text-2xl font-bold text-mt-text mb-1">完成</h1><p v-if="saving" class="text-xs text-mt-sub tracking-wide">保存中...</p><p v-else-if="!userStore.session" class="text-xs text-mt-sub tracking-wide"><RouterLink :to="{ name: 'login' }" class="text-mt-accent hover:opacity-80">登录</RouterLink>&nbsp;后成绩自动保存</p></div>
     <div class="relative"><button class="absolute right-2 top-2 z-10 text-xs text-mt-sub hover:text-mt-accent" @click="copyResult">{{ copied ? '✓' : '复制' }}</button><ResultSummary :wpm="result.wpm" :accuracy="result.accuracy" :duration="result.duration" :errors="result.errors" :best-wpm="bestWpm" /><p v-if="copyError" class="mt-2 text-xs text-mt-wrong">{{ copyError }}</p></div>
     <div class="mt-8 flex gap-3"><button class="px-5 py-2 bg-mt-accent text-mt-bg text-xs font-bold uppercase tracking-widest hover:opacity-90 transition-opacity" @click="tryAgain">再来一次</button><button class="px-5 py-2 border border-mt-border text-mt-sub text-xs uppercase tracking-widest hover:text-mt-text hover:border-mt-sub transition-colors" @click="goHome">选其他课程</button></div>
-    <div v-if="recommendation" class="panel mt-6 p-4"><p class="mb-2 text-xs text-mt-sub tracking-widest">推荐下一课</p><div class="flex items-center justify-between gap-4"><div><p class="text-sm text-mt-text">{{ recommendation.title }}</p><p class="text-xs text-mt-sub">{{ recommendation.variants?.[0]?.language }} · 难度 {{ recommendation.difficulty ?? recommendation.variants?.[0]?.difficulty ?? '★★☆' }}</p></div><RouterLink :to="{ name: 'lesson', params: { id: String(recommendation.id).replace(/^builtin:/, '') } }" class="text-xs text-mt-accent">→ 去练习</RouterLink></div></div>
+    <div v-if="recommendation" class="panel mt-6 p-4"><p class="mb-2 text-xs text-mt-sub tracking-widest">推荐下一课</p><div class="flex items-center justify-between gap-4"><div><p class="text-sm text-mt-text">{{ recommendation.title }}</p><p class="text-xs text-mt-sub">{{ recommendation.variants?.[0]?.language }} · 难度 {{ recommendation.difficulty ?? recommendation.variants?.[0]?.difficulty ?? '★★☆' }}</p></div><RouterLink :to="{ name: 'lesson', params: { id: toLessonRef(recommendation.id) } }" class="text-xs text-mt-accent">→ 去练习</RouterLink></div></div>
   </div></div>
 </template>

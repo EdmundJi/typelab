@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { listUserResults } from '@/lib/adapters/db'
 import { getLessonById } from '@/lib/application/lessons'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 import { useUserStore } from '@/stores/user'
 
 const props = defineProps({
@@ -27,7 +28,7 @@ onMounted(async () => {
     const { data: results } = await listUserResults(userId)
     if (results) {
       for (const r of results) {
-        completedRefs.add(r.lesson_id)
+        completedRefs.add(toLessonRef(r.lesson_id))
       }
     }
   }
@@ -39,7 +40,7 @@ onMounted(async () => {
       return {
         ...item,
         lesson,
-        completed: completedRefs.has(item.lesson_ref),
+        completed: completedRefs.has(toLessonRef(item.lesson_ref)),
       }
     }),
   )
@@ -47,15 +48,9 @@ onMounted(async () => {
   loading.value = false
 })
 
-function getLessonId(lessonRef) {
-  // Extract the id part from 'builtin:<id>' or 'community:<uuid>'
-  const colonIdx = lessonRef.indexOf(':')
-  return colonIdx !== -1 ? lessonRef.slice(colonIdx + 1) : lessonRef
-}
-
 function goToLesson(item) {
   if (!item.lesson) return
-  router.push({ name: 'lesson', params: { id: getLessonId(item.lesson_ref) } })
+  router.push({ name: 'lesson', params: { id: toLessonRef(item.lesson_ref) } })
 }
 </script>
 

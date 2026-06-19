@@ -7,6 +7,7 @@ import { listUserResults } from '@/lib/adapters/db'
 import { evaluateAndUnlock } from '@/lib/application/achievementEvaluator'
 import { getLessonById } from '@/lib/application/lessons'
 import { ACHIEVEMENTS } from '@/lib/domain/achievements'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 import { useStreakStore } from '@/stores/streak'
 import { useUserStore } from '@/stores/user'
 
@@ -58,10 +59,7 @@ async function loadLesson(id: any) {
   clearTimer()
   resetStats()
 
-  const ref =
-    String(id).startsWith('community:') || String(id).startsWith('builtin:')
-      ? String(id)
-      : `builtin:${id}`
+  const ref = toLessonRef(id)
   const data = await getLessonById(ref)
   if (!data) {
     notFound.value = true
@@ -117,6 +115,8 @@ function handleUpdate({ progress: p, liveWpm: wpm, liveAccuracy: acc }: any) {
 async function handleComplete(result: any) {
   clearTimer()
 
+  const lessonRef = toLessonRef(lesson.value.id)
+
   // Achievement evaluation (non-blocking, skipped for guests)
   const userId = userStore.user?.id
   if (userId) {
@@ -125,7 +125,7 @@ async function handleComplete(result: any) {
       const currentStreak = streakStore.currentStreak
       const latestResult = {
         user_id: userId,
-        lesson_id: lesson.value?.id,
+        lesson_id: lessonRef,
         variant_id: selectedVariantId.value,
         wpm: result.wpm,
         accuracy: result.accuracy,
@@ -160,7 +160,7 @@ async function handleComplete(result: any) {
       state: {
         result: {
           ...result,
-          lessonId: lesson.value.id,
+          lessonId: lessonRef,
           variant_id: selectedVariantId.value,
           language: currentVariant.value?.language ?? null,
         },

@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import PathDetail from '@/components/Paths/PathDetail.vue'
 import PathList from '@/components/Paths/PathList.vue'
 import { listPaths, listUserResults } from '@/lib/adapters/db'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
@@ -34,14 +35,16 @@ async function loadPaths() {
     const { data: results } = await listUserResults(userId)
     if (results) {
       for (const r of results) {
-        completedRefs.add(r.lesson_id)
+        completedRefs.add(toLessonRef(r.lesson_id))
       }
     }
   }
 
   paths.value = (data ?? []).map((path) => ({
     ...path,
-    _completedCount: (path.items ?? []).filter((item) => completedRefs.has(item.lesson_ref)).length,
+    _completedCount: (path.items ?? []).filter((item) =>
+      completedRefs.has(toLessonRef(item.lesson_ref)),
+    ).length,
   }))
 
   // If a path id is in the route params, select it

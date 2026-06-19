@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { build, parse } from '../../../src/lib/domain/lessonRef'
+import { build, isLessonRef, parse, toLessonRef } from '../../../src/lib/domain/lessonRef'
 
 describe('lessonRef.parse', () => {
   it('parses builtin ref correctly', () => {
@@ -51,6 +51,38 @@ describe('lessonRef.build', () => {
 
   it('throws on unknown type', () => {
     expect(() => build({ type: 'unknown', id: 'some-id' })).toThrow()
+  })
+})
+
+describe('lessonRef.toLessonRef', () => {
+  it('keeps builtin refs unchanged', () => {
+    expect(toLessonRef('builtin:py-bfs-01')).toBe('builtin:py-bfs-01')
+  })
+
+  it('keeps community refs unchanged', () => {
+    expect(toLessonRef('community:550e8400-e29b-41d4-a716-446655440000')).toBe(
+      'community:550e8400-e29b-41d4-a716-446655440000',
+    )
+  })
+
+  it('canonicalizes bare ids as builtin refs', () => {
+    expect(toLessonRef('py-bfs-01')).toBe('builtin:py-bfs-01')
+  })
+
+  it('rejects malformed known-prefix refs', () => {
+    expect(() => toLessonRef('community:')).toThrow()
+  })
+})
+
+describe('lessonRef.isLessonRef', () => {
+  it('returns true for valid refs', () => {
+    expect(isLessonRef('builtin:py-bfs-01')).toBe(true)
+    expect(isLessonRef('community:uuid-here')).toBe(true)
+  })
+
+  it('returns false for bare ids and malformed refs', () => {
+    expect(isLessonRef('py-bfs-01')).toBe(false)
+    expect(isLessonRef('builtin:')).toBe(false)
   })
 })
 

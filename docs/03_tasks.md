@@ -1,7 +1,7 @@
 # keylab — 任务清单 v3
 
-> 本文依据 `docs/00_proposal.md`、`docs/01_requirements.md`、`docs/02_architecture.md` 更新。  
-> v1 / v2 已完成的历史任务见 `docs/04_progress.md`；本文只列出新一轮 v3 升级任务。  
+> 本文依据 `docs/00_proposal.md`、`docs/01_requirements.md`、`docs/02_architecture.md` 更新。
+> v1 / v2 已完成的历史任务见 `docs/04_progress.md`；本文只列出新一轮 v3 升级任务。
 > 每个任务建议控制在 30–90 分钟。验收标准全部通过 + PR 合并到 `dev` 视为完成。
 
 ---
