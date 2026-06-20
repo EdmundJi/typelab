@@ -41,7 +41,7 @@ async function loadLanguageAndTokenize(text, lang) {
   // Try to load language component
   if (!Prism.languages[lang]) {
     try {
-      await import(`prismjs/components/prism-${lang}.js`)
+      await import(/* @vite-ignore */ `prismjs/components/prism-${lang}.js`)
     } catch {
       // Language not supported — fall through to plaintext
       tokenClassMap.value = {}
@@ -118,6 +118,17 @@ const currentLine = computed(() => {
   return line
 })
 
+const currentLineRange = computed(() => {
+  const cursor = Math.min(cursorIndex.value, props.text.length)
+  const start = props.text.lastIndexOf('\n', Math.max(0, cursor - 1)) + 1
+  const nextBreak = props.text.indexOf('\n', cursor)
+  return { start, end: nextBreak === -1 ? props.text.length : nextBreak }
+})
+
+function isCurrentLineIndex(index: number) {
+  return index >= currentLineRange.value.start && index <= currentLineRange.value.end
+}
+
 // ── Reset on text change ────────────────────────────────────────────────────
 watch(
   () => props.text,
@@ -137,6 +148,24 @@ watch(
   },
   { immediate: true },
 )
+
+watch(cursorIndex, async () => {
+  await nextTick()
+  const el = container.value
+  const target = el?.querySelector(`[data-char-index="${cursorIndex.value}"]`) as HTMLElement | null
+  if (!el || !target) return
+
+  const safeEdge = 40
+  const containerRect = el.getBoundingClientRect()
+  const targetRect = target.getBoundingClientRect()
+  const left = targetRect.left - containerRect.left + el.scrollLeft
+  const right = targetRect.right - containerRect.left + el.scrollLeft
+  if (left < el.scrollLeft + safeEdge) {
+    el.scrollLeft = Math.max(0, left - safeEdge)
+  } else if (right > el.scrollLeft + el.clientWidth - safeEdge) {
+    el.scrollLeft = right - el.clientWidth + safeEdge
+  }
+})
 
 // Re-tokenize when language changes
 watch(
@@ -159,10 +188,11 @@ function emitUpdate() {
   const typed = cursorIndex.value
   const total = chars.value.length
   const correctCount = chars.value.filter((c) => c.status === 'correct').length
-  let liveWpm = 0
+  let liveWpm: number | null = null
   if (startTime.value) {
-    const mins = (Date.now() - startTime.value) / 60000
-    liveWpm = mins > 0 ? Math.round(correctCount / 5 / mins) : 0
+    const elapsedMs = Date.now() - startTime.value
+    const mins = elapsedMs / 60000
+    liveWpm = elapsedMs >= 1000 && grossTypedCount >= 5 ? Math.round(correctCount / 5 / mins) : null
   }
   emit('update', {
     progress: total > 0 ? typed / total : 0,
@@ -243,7 +273,7 @@ function handleKeyDown(e: KeyboardEvent) {
 </script>
 
 <template>
-  <div class="typing-engine-wrapper font-mono text-lg leading-relaxed">
+  <div class="typing-engine-wrapper font-mono text-base sm:text-lg leading-relaxed">
     <div class="typing-content">
       <LineNumbers :text="props.text" :current-line="currentLine" />
 
@@ -251,6 +281,10 @@ function handleKeyDown(e: KeyboardEvent) {
         ref="container"
         class="typing-area whitespace-pre overflow-x-auto outline-none"
         tabindex="0"
+        role="textbox"
+        aria-label="代码打字练习区"
+        aria-multiline="true"
+        aria-readonly="true"
         style="position: relative"
         @keydown="handleKeyDown"
         @click="container?.focus()"
@@ -266,6 +300,7 @@ function handleKeyDown(e: KeyboardEvent) {
               'char-correct': item.status === 'correct',
               'char-wrong': item.status === 'wrong',
               'char-wrong-space': item.status === 'wrong' && item.char === ' ',
+              'char-current-line': item.status === 'pending' && isCurrentLineIndex(index),
             },
             tokenClassMap[index] || '',
           ]"
@@ -279,9 +314,10 @@ function handleKeyDown(e: KeyboardEvent) {
         />
       </div>
     </div>
-    <div class="mt-3 flex w-full justify-between text-[11px] text-mt-sub">
-      <span>Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符</span>
-      <span>行 {{ currentLine }}/{{ totalLines }}</span>
+    <div class="typing-help mt-4 flex w-full items-start justify-between gap-3 font-sans text-xs text-mt-sub">
+      <span class="desktop-help">Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符</span>
+      <span class="mobile-help">建议横屏或连接实体键盘，输入时会自动跟随光标</span>
+      <span class="font-mono whitespace-nowrap">行 {{ currentLine }}/{{ totalLines }}</span>
     </div>
   </div>
 </template>
@@ -305,9 +341,16 @@ function handleKeyDown(e: KeyboardEvent) {
   min-width: 0;
 }
 
-.char-pending { color: rgb(var(--mt-sub)); }
+.char-pending { color: rgb(var(--mt-sub) / 0.68); }
+.char-pending.char-current-line { color: rgb(var(--mt-sub)); }
 .char-correct { color: rgb(var(--mt-text)); }
-.char-wrong   { color: rgb(var(--mt-wrong)); }
+.char-wrong   {
+  color: rgb(var(--mt-wrong));
+  background: rgb(var(--mt-wrong) / 0.1);
+  text-decoration: underline;
+  text-decoration-color: rgb(var(--mt-wrong) / 0.75);
+  text-underline-offset: 3px;
+}
 
 .char-wrong-space {
   background-color: rgb(var(--mt-wrong) / 0.25);
@@ -323,7 +366,32 @@ function handleKeyDown(e: KeyboardEvent) {
   z-index: 10;
 }
 
+.mobile-help {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  .line-numbers {
+    width: 2.25rem;
+  }
+
+  .desktop-help {
+    display: none;
+  }
+
+  .mobile-help {
+    display: inline;
+    line-height: 1.55;
+  }
+}
+
 @keyframes blink {
   50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret-div {
+    animation: none;
+  }
 }
 </style>

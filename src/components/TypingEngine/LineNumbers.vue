@@ -59,7 +59,14 @@ const lines = computed(() => {
 }
 
 .line-number--active {
-  background-color: rgb(var(--mt-text) / 0.06);
-  color: rgb(var(--mt-text) / 0.7);
+  background-color: rgb(var(--mt-accent) / 0.1);
+  color: rgb(var(--mt-accent));
+}
+
+@media (max-width: 639px) {
+  .line-numbers {
+    width: 2.25rem;
+    padding-right: 0.45rem;
+  }
 }
 </style>

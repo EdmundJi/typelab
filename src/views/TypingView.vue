@@ -32,7 +32,7 @@ const lesson = ref(null)
 const loading = ref(true)
 const notFound = ref(false)
 
-const liveWpm = ref(0)
+const liveWpm = ref<number | null>(null)
 const liveAccuracy = ref(100)
 const progress = ref(0)
 const elapsed = ref(0)
@@ -79,7 +79,7 @@ async function loadLesson(id: any) {
 }
 
 function resetStats() {
-  liveWpm.value = 0
+  liveWpm.value = null
   liveAccuracy.value = 100
   progress.value = 0
   elapsed.value = 0
@@ -111,6 +111,10 @@ function handleUpdate({ progress: p, liveWpm: wpm, liveAccuracy: acc }: any) {
     }, 1000)
   }
 }
+
+watch(started, (isStarted) => {
+  document.body.classList.toggle('typing-session-active', isStarted)
+})
 
 async function handleComplete(result: any) {
   clearTimer()
@@ -180,11 +184,14 @@ watch(
   () => route.params.id,
   (id) => loadLesson(id),
 )
-onBeforeUnmount(() => clearTimer())
+onBeforeUnmount(() => {
+  clearTimer()
+  document.body.classList.remove('typing-session-active')
+})
 </script>
 
 <template>
-  <div>
+  <div class="typing-session" :class="{ 'typing-session--active': started }">
     <div v-if="loading" class="flex items-center justify-center py-32">
       <span class="text-mt-sub text-xs tracking-widest uppercase">loading...</span>
     </div>
@@ -198,7 +205,7 @@ onBeforeUnmount(() => clearTimer())
 
     <template v-else-if="lesson">
       <!-- breadcrumb -->
-      <div class="mb-8 flex items-center gap-2 text-xs">
+      <div class="session-breadcrumb mb-6 flex items-center gap-2 font-mono text-xs transition-opacity">
         <RouterLink :to="{ name: 'home' }" class="text-mt-sub hover:text-mt-accent transition-colors uppercase tracking-widest">
           练习
         </RouterLink>
@@ -207,10 +214,10 @@ onBeforeUnmount(() => clearTimer())
       </div>
 
       <!-- stats bar: terminal-style -->
-      <div class="panel mb-6 px-5 py-3 flex items-center gap-8">
+      <div class="stats-panel panel mb-5 px-4 py-3 sm:px-5">
         <div class="stat-item">
           <span class="stat-label">wpm</span>
-          <span class="stat-value text-mt-accent">{{ started ? liveWpm : '—' }}</span>
+          <span class="stat-value text-mt-accent">{{ started && liveWpm !== null ? liveWpm : '—' }}</span>
         </div>
         <div class="divider" />
         <div class="stat-item">
@@ -222,7 +229,7 @@ onBeforeUnmount(() => clearTimer())
           <span class="stat-label">time</span>
           <span class="stat-value">{{ started ? formatTime(elapsed) : '—' }}</span>
         </div>
-        <div class="flex-1 ml-4">
+        <div class="session-progress">
           <div class="relative h-px bg-mt-border overflow-visible">
             <div
               class="absolute inset-y-0 left-0 bg-mt-accent transition-all duration-200"
@@ -244,7 +251,7 @@ onBeforeUnmount(() => clearTimer())
       </div>
 
       <!-- typing area -->
-      <div class="panel p-6">
+      <div class="typing-panel panel p-4 sm:p-6">
         <!-- variant selector: only shown when multiple variants exist -->
         <VariantSelector
           v-if="lesson.variants && lesson.variants.length > 1"
@@ -263,9 +270,6 @@ onBeforeUnmount(() => clearTimer())
         />
       </div>
 
-      <p class="mt-4 text-center text-xs text-mt-sub/50 tracking-wide">
-        Esc 重置 · Backspace 删除 · Tab/Enter 输入对应字符
-      </p>
     </template>
 
     <!-- Achievement Toasts -->
@@ -290,11 +294,18 @@ onBeforeUnmount(() => clearTimer())
   gap: 2px;
 }
 
+.stats-panel {
+  display: grid;
+  grid-template-columns: auto 1px auto 1px auto minmax(12rem, 1fr);
+  align-items: center;
+  gap: 1.5rem;
+}
+
 .stat-label {
   font-size: 0.6rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: rgb(var(--mt-sub));
+  color: rgb(var(--mt-sub) / 0.82);
 }
 
 .stat-value {
@@ -309,6 +320,19 @@ onBeforeUnmount(() => clearTimer())
   height: 2rem;
   background: rgb(var(--mt-border));
   flex-shrink: 0;
+}
+
+.session-progress {
+  min-width: 0;
+  margin-left: 0.5rem;
+}
+
+.typing-session--active .session-breadcrumb {
+  opacity: 0.52;
+}
+
+.typing-panel {
+  overflow: hidden;
 }
 
 .toast-container {
@@ -352,6 +376,37 @@ onBeforeUnmount(() => clearTimer())
   to {
     opacity: 0;
     transform: translateY(-8px);
+  }
+}
+
+@media (max-width: 767px) {
+  .stats-panel {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .stats-panel .divider {
+    display: none;
+  }
+
+  .session-progress {
+    grid-column: 1 / -1;
+    margin: 0.35rem 0 0;
+  }
+
+  .stat-item {
+    padding-right: 0.75rem;
+    border-right: 1px solid rgb(var(--mt-border));
+  }
+
+  .stat-item:nth-of-type(5) {
+    border-right: 0;
+  }
+
+  .toast-container {
+    right: 1rem;
+    bottom: 1rem;
+    left: 1rem;
   }
 }
 </style>
