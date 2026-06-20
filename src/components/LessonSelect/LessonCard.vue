@@ -8,8 +8,9 @@ import {
   removeFromCollection,
 } from '@/lib/adapters/db'
 import { useUserStore } from '@/stores/user'
+import type { LessonMeta } from '@/types'
 
-const props = defineProps<{ lesson: any; bestWpm?: number | null }>()
+const props = defineProps<{ lesson: LessonMeta; bestWpm?: number | null }>()
 
 const userStore = useUserStore()
 
@@ -27,15 +28,12 @@ function getLabel(category: string) {
   return categoryLabel[category] ?? category
 }
 
-function getDifficulty(lesson: any) {
-  const raw = lesson.difficulty ?? lesson.variants?.[0]?.difficulty ?? 'intermediate'
-  if (typeof raw === 'number') return Math.max(1, Math.min(5, raw))
-  return { beginner: 1, intermediate: 3, advanced: 5 }[raw] ?? 3
+function getDifficulty(lesson: LessonMeta) {
+  return lesson.difficulty
 }
 
-function getDifficultyLabel(lesson: any) {
-  const raw = lesson.difficulty ?? lesson.variants?.[0]?.difficulty ?? 'intermediate'
-  return { beginner: '入门', intermediate: '进阶', advanced: '挑战' }[raw] ?? raw
+function getDifficultyLabel(lesson: LessonMeta) {
+  return ['', '入门', '基础', '进阶', '困难', '挑战'][lesson.difficulty]
 }
 
 // ——— 收藏逻辑 ———
@@ -119,7 +117,7 @@ const isBookmarked = () => collectedIds.value.length > 0
     >
       <div class="flex items-start justify-between gap-2 mb-5" :class="userStore.user ? 'pr-7' : ''">
         <span class="font-mono text-[10px] text-mt-sub uppercase tracking-widest">
-          {{ getLabel(lesson.category) }}
+          {{ getLabel(lesson.topic) }}
         </span>
         <div class="flex items-center gap-2">
           <span class="font-mono text-[10px] text-mt-sub/80">{{ getDifficultyLabel(lesson) }}</span>
@@ -139,7 +137,7 @@ const isBookmarked = () => collectedIds.value.length > 0
       </h3>
 
       <div class="mt-3 flex flex-wrap gap-1">
-        <span v-for="lang in [...new Set(lesson.variants?.map((v: any) => v.language) ?? [])]" :key="lang" class="font-mono text-[10px] border border-mt-border px-1.5 py-0.5 text-mt-sub">{{ lang }}</span>
+        <span v-for="lang in [...new Set(lesson.variants.map((v) => v.language))]" :key="lang" class="font-mono text-[10px] border border-mt-border px-1.5 py-0.5 text-mt-sub">{{ lang }}</span>
       </div>
       <div class="mt-4 flex items-center justify-between">
         <span class="font-mono text-xs text-mt-sub group-hover:text-mt-accent transition-colors">开始练习 →</span>

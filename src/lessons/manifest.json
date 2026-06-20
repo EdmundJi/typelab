@@ -1,0 +1,183 @@
+[
+  {
+    "id": "js-array-methods-01",
+    "title": "JavaScript 数组常用方法",
+    "topic": "js",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "js-array-methods-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/js/js-basics.json"
+  },
+  {
+    "id": "py-fibonacci-01",
+    "title": "斐波那契数列 — 动态规划",
+    "topic": "dp",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "py-fibonacci-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "py-fibonacci-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/dp.json"
+  },
+  {
+    "id": "py-dijkstra-01",
+    "title": "Dijkstra 最短路径",
+    "topic": "graph",
+    "difficulty": 5,
+    "variants": [
+      {
+        "variant_id": "py-dijkstra-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "py-dijkstra-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/graph.json"
+  },
+  {
+    "id": "py-quicksort-01",
+    "title": "快速排序",
+    "topic": "sorting",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "py-quicksort-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "py-quicksort-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/sorting.json"
+  },
+  {
+    "id": "py-mergesort-01",
+    "title": "归并排序",
+    "topic": "sorting",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "py-mergesort-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/sorting.json"
+  },
+  {
+    "id": "py-bfs-01",
+    "title": "BFS 广度优先遍历",
+    "topic": "trees",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "py-bfs-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/trees.json"
+  },
+  {
+    "id": "py-dfs-01",
+    "title": "DFS 深度优先遍历",
+    "topic": "trees",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "py-dfs-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/trees.json"
+  },
+  {
+    "id": "concept-big-o-01",
+    "title": "大 O 记号基础概念",
+    "topic": "concepts",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "concept-big-o-01-text-standard",
+        "language": "text",
+        "style": "standard",
+        "step": 1,
+        "label": "文本 · 标准练习"
+      }
+    ],
+    "source_file": "./concepts/complexity.json"
+  },
+  {
+    "id": "warmup-home-row-01",
+    "title": "Home Row 基础练习",
+    "topic": "warmup",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "warmup-home-row-01-text-standard",
+        "language": "text",
+        "style": "standard",
+        "step": 1,
+        "label": "文本 · 标准练习"
+      }
+    ],
+    "source_file": "./warmup/01-home-row.json"
+  },
+  {
+    "id": "warmup-home-row-02",
+    "title": "Home Row 进阶练习",
+    "topic": "warmup",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "warmup-home-row-02-text-standard",
+        "language": "text",
+        "style": "standard",
+        "step": 1,
+        "label": "文本 · 标准练习"
+      }
+    ],
+    "source_file": "./warmup/01-home-row.json"
+  }
+]

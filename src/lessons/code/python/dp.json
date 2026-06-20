@@ -1,23 +1,26 @@
 [
   {
     "id": "py-fibonacci-01",
-    "title": "斐波那契数列 — 动态规划（Python）",
-    "category": "dp",
+    "title": "斐波那契数列 — 动态规划",
+    "topic": "dp",
+    "difficulty": 3,
     "variants": [
       {
         "variant_id": "py-fibonacci-01-python-standard",
         "language": "python",
         "style": "standard",
-        "difficulty": "intermediate",
-        "code": "def fib_dp(n):\n    if n <= 1:\n        return n\n    dp = [0] * (n + 1)\n    dp[1] = 1\n    for i in range(2, n + 1):\n        dp[i] = dp[i - 1] + dp[i - 2]\n    return dp[n]",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def fib_dp(n):\n    if n <= 1:\n        return n\n    dp = [0] * (n + 1)\n    dp[1] = 1\n    for i in range(2, n + 1):\n        dp[i] = dp[i - 1] + dp[i - 2]\n    return dp[n]",
         "note": "自底向上的 DP 将时间复杂度从 O(2ⁿ) 降至 O(n)，空间复杂度 O(n)。"
       },
       {
         "variant_id": "py-fibonacci-01-javascript-standard",
         "language": "javascript",
         "style": "standard",
-        "difficulty": "intermediate",
-        "code": "function fibDp(n) {\n  if (n <= 1) return n\n  const dp = new Array(n + 1).fill(0)\n  dp[1] = 1\n  for (let i = 2; i <= n; i++) {\n    dp[i] = dp[i - 1] + dp[i - 2]\n  }\n  return dp[n]\n}",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function fibDp(n) {\n  if (n <= 1) return n\n  const dp = new Array(n + 1).fill(0)\n  dp[1] = 1\n  for (let i = 2; i <= n; i++) {\n    dp[i] = dp[i - 1] + dp[i - 2]\n  }\n  return dp[n]\n}",
         "note": "自底向上的动态规划，时间复杂度 O(n)，空间复杂度 O(n)，避免了递归的指数级重复计算。"
       }
     ]

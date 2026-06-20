@@ -50,5 +50,5 @@ export async function listLessonMetas() {
   return lessonMetas
 }
 export async function findLessonById(id: string) {
-  return getBuiltinLessonById(id) ?? null
+  return (await getBuiltinLessonById(id)) ?? null
 }

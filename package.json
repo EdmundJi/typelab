@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "lessons:manifest": "node scripts/generate-lesson-manifest.mjs",
+    "lessons:manifest:check": "node scripts/generate-lesson-manifest.mjs --check",
+    "prebuild": "npm run lessons:manifest:check",
     "build": "vite build",
     "preview": "vite preview",
     "format": "biome format --write .",
@@ -12,6 +15,7 @@
     "lint": "biome lint .",
     "check": "biome check .",
     "check:fix": "biome check --write .",
+    "pretest": "npm run lessons:manifest:check",
     "test": "vitest run --coverage",
     "typecheck": "vue-tsc --noEmit"
   },

@@ -161,9 +161,9 @@ community:<communityLessonId>
 | 项目 | 内容 |
 |---|---|
 | 位置 | `src/lib/application/lessons.ts` |
-| 职责 | 合并内置 JSON 课程与审核通过的社区课程；v1/v2 标准化；按搜索/分类/语言支持上层过滤；按 lesson_ref 获取课程。 |
-| 输入 | `listLessons(filters = {}, adapter = db)`、`getLessonById(ref, adapter = db)`；过滤条件可含 `category/topic/language/search/status`。 |
-| 输出 | `Promise<NormalizedLesson[]>` 或 `Promise<NormalizedLesson | null>`。 |
+| 职责 | 从轻量 manifest 合并内置课程元数据与审核通过的社区课程；进入题目时按需加载 JSON 正文；兼容 v1；按搜索/主题/语言支持上层过滤。 |
+| 输入 | `listLessons(filters = {}, adapter = db)`、`getLessonById(ref, adapter = db)`；过滤条件可含 `topic/language/search`，旧调用的 `category` 仅作为兼容别名。 |
+| 输出 | 列表返回不含正文的 `Promise<LessonMeta[]>`；详情返回 `Promise<NormalizedLesson | null>`。 |
 | 依赖 | `src/lessons/index.ts`、`DbAdapter.queryCommunityLessons`、`lessonRef`、共享类型。 |
 | 错误处理 | 社区查询失败时降级为只返回内置课程并记录警告；未审核/拒绝社区课程不得进入首页；未知 ref 返回 `null`。 |
 
@@ -172,6 +172,8 @@ community:<communityLessonId>
 - `LessonSelect/index.vue` 必须调用本模块 `listLessons()`，不能只读静态 `lessonMetas`。
 - 加载期间向 UI 暴露 loading 状态。
 - 语言列表来自 `lesson.variants.map(v => v.language)` 聚合。
+- `src/lessons/manifest.json` 由 `npm run lessons:manifest` 生成，禁止手工维护。
+- 内置课程正文不得通过 eager glob 进入课程列表包；只能在 `getLessonById()` 中动态加载。
 
 ---
 
@@ -512,6 +514,7 @@ src/
 │       └── db.ts
 ├── lessons/
 │   ├── index.ts
+│   ├── manifest.json
 │   └── *.json
 ├── composables/
 │   └── ...

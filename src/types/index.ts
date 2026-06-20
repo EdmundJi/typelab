@@ -1,18 +1,30 @@
+export type LessonDifficulty = 1 | 2 | 3 | 4 | 5
+
 export interface Variant {
   variant_id: string
   language: string
-  style?: string
-  difficulty?: string | number
-  code: string
-  note?: string | null
+  style: 'verbose' | 'standard' | 'concise'
+  step: 1 | 2 | 3
+  label: string
+  text: string
+  note: string
 }
 export interface NormalizedLesson {
   id: string
   title: string
-  category?: string
-  topic?: string
-  difficulty?: number | string
+  topic: string
+  difficulty: LessonDifficulty
   variants: Variant[]
+}
+
+export type VariantMeta = Omit<Variant, 'text' | 'note'>
+
+export interface LessonMeta extends Omit<NormalizedLesson, 'variants'> {
+  variants: VariantMeta[]
+}
+
+export interface LessonManifestEntry extends LessonMeta {
+  source_file: string
 }
 export interface V1Lesson {
   id: string

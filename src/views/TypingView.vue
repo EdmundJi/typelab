@@ -262,7 +262,7 @@ onBeforeUnmount(() => {
         <TypingEngine
           v-if="currentVariant"
           :key="`${selectedVariantId}-${resetKey}`"
-          :text="currentVariant.code ?? currentVariant.text ?? ''"
+          :text="currentVariant.text"
           :language="currentVariant.language"
           @update="handleUpdate"
           @complete="handleComplete"

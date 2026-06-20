@@ -20,7 +20,7 @@
 }
 
 Variant {
-  id: string,           // 变体唯一 id，格式：{lesson_id}-v{n}，如 "py-bfs-01-v1"
+  variant_id: string,   // 变体唯一 id，格式：{lesson_id}-v{n}，如 "py-bfs-01-v1"
   language: string,     // python | javascript | go | typescript | java | cpp
   style: string,        // verbose（详细注释版） | standard（标准实现） | concise（精简版）
   step: number,         // 1=函数骨架, 2=核心逻辑, 3=完整实现
@@ -30,9 +30,21 @@ Variant {
 }
 ```
 
+`topic`、题目级 `difficulty`、`variant_id` 与 `text` 是 v2 唯一规范字段；
+新题目不得再使用旧字段 `category`、变体级 `difficulty` 或 `code`。
+
+课程列表读取自动生成的 `src/lessons/manifest.json`，其中不包含 `text` 和 `note`；
+进入具体课程后，`src/lessons/index.ts` 才按 `source_file` 动态加载正文。新增或修改课程后运行：
+
+```bash
+npm run lessons:manifest
+```
+
+构建与测试会执行 `lessons:manifest:check`，阻止格式不合法或 manifest 过期的课程进入仓库。
+
 ### 旧格式（v1，自动向前兼容）
 
-`src/lib/lessons.js` 的加载器会自动将旧格式包装为单变体新格式：
+`src/lib/application/lessons.ts` 的加载器会自动将旧格式包装为单变体新格式：
 
 ```json
 {
