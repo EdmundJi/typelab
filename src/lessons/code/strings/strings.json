@@ -1,0 +1,132 @@
+[
+  {
+    "id": "string-palindrome-01",
+    "title": "忽略符号的回文判断",
+    "topic": "strings",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "string-palindrome-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 双指针",
+        "text": "def is_palindrome(text):\n    left, right = 0, len(text) - 1\n    while left < right:\n        while left < right and not text[left].isalnum():\n            left += 1\n        while left < right and not text[right].isalnum():\n            right -= 1\n        if text[left].lower() != text[right].lower():\n            return False\n        left += 1\n        right -= 1\n    return True",
+        "note": "双指针从两端向中间移动，并在比较前跳过非字母数字字符。"
+      },
+      {
+        "variant_id": "string-palindrome-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 双指针",
+        "text": "function isPalindrome(text) {\n  let left = 0\n  let right = text.length - 1\n  const valid = char => /[a-z0-9]/i.test(char)\n  while (left < right) {\n    while (left < right && !valid(text[left])) left++\n    while (left < right && !valid(text[right])) right--\n    if (text[left].toLowerCase() !== text[right].toLowerCase()) return false\n    left++\n    right--\n  }\n  return true\n}",
+        "note": "正则只负责单字符过滤，主体仍保持清晰的双指针结构。"
+      }
+    ]
+  },
+  {
+    "id": "string-frequency-01",
+    "title": "字符频次统计",
+    "topic": "strings",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "string-frequency-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 字典计数",
+        "text": "def character_frequency(text):\n    frequency = {}\n    for character in text:\n        if character.isspace():\n            continue\n        key = character.lower()\n        frequency[key] = frequency.get(key, 0) + 1\n    return frequency",
+        "note": "dict.get 提供默认值，适合实现紧凑的计数器。"
+      },
+      {
+        "variant_id": "string-frequency-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 对象计数",
+        "text": "function characterFrequency(text) {\n  const frequency = {}\n  for (const character of text) {\n    if (/\\s/.test(character)) continue\n    const key = character.toLowerCase()\n    frequency[key] = (frequency[key] ?? 0) + 1\n  }\n  return frequency\n}",
+        "note": "空值合并运算符可以为首次出现的字符提供初始计数。"
+      }
+    ]
+  },
+  {
+    "id": "string-longest-prefix-01",
+    "title": "最长公共前缀",
+    "topic": "strings",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "string-longest-prefix-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 纵向扫描",
+        "text": "def longest_common_prefix(words):\n    if not words:\n        return \"\"\n    for index, character in enumerate(words[0]):\n        for word in words[1:]:\n            if index >= len(word) or word[index] != character:\n                return words[0][:index]\n    return words[0]",
+        "note": "以第一个单词为基准纵向比较，遇到首个差异立即返回。"
+      },
+      {
+        "variant_id": "string-longest-prefix-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 纵向扫描",
+        "text": "function longestCommonPrefix(words) {\n  if (words.length === 0) return ''\n  for (let index = 0; index < words[0].length; index++) {\n    const character = words[0][index]\n    for (const word of words.slice(1)) {\n      if (index >= word.length || word[index] !== character) {\n        return words[0].slice(0, index)\n      }\n    }\n  }\n  return words[0]\n}",
+        "note": "最短单词或首个不同字符会自然终止前缀扩展。"
+      }
+    ]
+  },
+  {
+    "id": "string-reverse-words-01",
+    "title": "反转单词顺序",
+    "topic": "strings",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "string-reverse-words-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def reverse_words(sentence):\n    words = sentence.split()\n    words.reverse()\n    return \" \".join(words)",
+        "note": "不带参数的 split 会自动合并连续空白并忽略两端空白。"
+      },
+      {
+        "variant_id": "string-reverse-words-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function reverseWords(sentence) {\n  return sentence\n    .trim()\n    .split(/\\s+/)\n    .reverse()\n    .join(' ')\n}",
+        "note": "先 trim 再按连续空白分割，避免结果中出现空单词。"
+      }
+    ]
+  },
+  {
+    "id": "string-run-length-01",
+    "title": "游程编码压缩",
+    "topic": "strings",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "string-run-length-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def run_length_encode(text):\n    if not text:\n        return \"\"\n    encoded = []\n    count = 1\n    for index in range(1, len(text)):\n        if text[index] == text[index - 1]:\n            count += 1\n        else:\n            encoded.append(text[index - 1] + str(count))\n            count = 1\n    encoded.append(text[-1] + str(count))\n    return \"\".join(encoded)",
+        "note": "循环结束后要单独写入最后一组，这是分组扫描常见的收尾步骤。"
+      },
+      {
+        "variant_id": "string-run-length-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function runLengthEncode(text) {\n  if (text.length === 0) return ''\n  const encoded = []\n  let count = 1\n  for (let index = 1; index < text.length; index++) {\n    if (text[index] === text[index - 1]) count++\n    else {\n      encoded.push(text[index - 1] + count)\n      count = 1\n    }\n  }\n  encoded.push(text[text.length - 1] + count)\n  return encoded.join('')\n}",
+        "note": "数组收集片段后统一 join，避免循环中频繁创建长字符串。"
+      }
+    ]
+  }
+]

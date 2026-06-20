@@ -1,0 +1,132 @@
+[
+  {
+    "id": "recursion-factorial-01",
+    "title": "递归阶乘",
+    "topic": "recursion",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "recursion-factorial-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 递归实现",
+        "text": "def factorial(number):\n    if number < 0:\n        raise ValueError(\"number must be non-negative\")\n    if number <= 1:\n        return 1\n    return number * factorial(number - 1)",
+        "note": "递归函数必须包含能终止调用链的基本情况。"
+      },
+      {
+        "variant_id": "recursion-factorial-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 递归实现",
+        "text": "function factorial(number) {\n  if (number < 0) throw new RangeError('number must be non-negative')\n  if (number <= 1) return 1\n  return number * factorial(number - 1)\n}",
+        "note": "每次调用缩小问题规模，直到 number 到达 1。"
+      }
+    ]
+  },
+  {
+    "id": "backtracking-permutations-01",
+    "title": "全排列",
+    "topic": "recursion",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "backtracking-permutations-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 回溯",
+        "text": "def permutations(items):\n    result = []\n    used = [False] * len(items)\n\n    def backtrack(path):\n        if len(path) == len(items):\n            result.append(path.copy())\n            return\n        for index, item in enumerate(items):\n            if used[index]:\n                continue\n            used[index] = True\n            path.append(item)\n            backtrack(path)\n            path.pop()\n            used[index] = False\n\n    backtrack([])\n    return result",
+        "note": "回溯在递归返回后撤销选择，使其他分支能够复用当前状态。"
+      },
+      {
+        "variant_id": "backtracking-permutations-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 回溯",
+        "text": "function permutations(items) {\n  const result = []\n  const used = new Array(items.length).fill(false)\n\n  function backtrack(path) {\n    if (path.length === items.length) {\n      result.push([...path])\n      return\n    }\n    for (let index = 0; index < items.length; index++) {\n      if (used[index]) continue\n      used[index] = true\n      path.push(items[index])\n      backtrack(path)\n      path.pop()\n      used[index] = false\n    }\n  }\n\n  backtrack([])\n  return result\n}",
+        "note": "used 数组避免同一个位置在一条排列路径中被重复选择。"
+      }
+    ]
+  },
+  {
+    "id": "backtracking-combinations-01",
+    "title": "组合枚举",
+    "topic": "recursion",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "backtracking-combinations-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 回溯",
+        "text": "def combinations(items, size):\n    result = []\n\n    def backtrack(start, path):\n        if len(path) == size:\n            result.append(path.copy())\n            return\n        remaining = size - len(path)\n        for index in range(start, len(items) - remaining + 1):\n            path.append(items[index])\n            backtrack(index + 1, path)\n            path.pop()\n\n    backtrack(0, [])\n    return result",
+        "note": "start 保证下标递增，从而避免生成顺序不同但元素相同的重复组合。"
+      },
+      {
+        "variant_id": "backtracking-combinations-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 回溯",
+        "text": "function combinations(items, size) {\n  const result = []\n\n  function backtrack(start, path) {\n    if (path.length === size) {\n      result.push([...path])\n      return\n    }\n    const remaining = size - path.length\n    for (let index = start; index <= items.length - remaining; index++) {\n      path.push(items[index])\n      backtrack(index + 1, path)\n      path.pop()\n    }\n  }\n\n  backtrack(0, [])\n  return result\n}",
+        "note": "根据剩余槽位缩小循环上界，可以提前剪掉不可能完成的分支。"
+      }
+    ]
+  },
+  {
+    "id": "backtracking-subsets-01",
+    "title": "子集生成",
+    "topic": "recursion",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "backtracking-subsets-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 回溯",
+        "text": "def subsets(items):\n    result = []\n\n    def backtrack(start, path):\n        result.append(path.copy())\n        for index in range(start, len(items)):\n            path.append(items[index])\n            backtrack(index + 1, path)\n            path.pop()\n\n    backtrack(0, [])\n    return result",
+        "note": "每个递归节点本身就是一个有效子集，因此进入函数时立即记录。"
+      },
+      {
+        "variant_id": "backtracking-subsets-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 回溯",
+        "text": "function subsets(items) {\n  const result = []\n\n  function backtrack(start, path) {\n    result.push([...path])\n    for (let index = start; index < items.length; index++) {\n      path.push(items[index])\n      backtrack(index + 1, path)\n      path.pop()\n    }\n  }\n\n  backtrack(0, [])\n  return result\n}",
+        "note": "n 个元素共有 2ⁿ 个子集，输出规模决定了算法的时间复杂度下界。"
+      }
+    ]
+  },
+  {
+    "id": "backtracking-n-queens-01",
+    "title": "N 皇后计数",
+    "topic": "recursion",
+    "difficulty": 5,
+    "variants": [
+      {
+        "variant_id": "backtracking-n-queens-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 集合剪枝",
+        "text": "def count_n_queens(size):\n    columns = set()\n    diagonals_down = set()\n    diagonals_up = set()\n\n    def place(row):\n        if row == size:\n            return 1\n        solutions = 0\n        for column in range(size):\n            down = row - column\n            up = row + column\n            if column in columns or down in diagonals_down or up in diagonals_up:\n                continue\n            columns.add(column)\n            diagonals_down.add(down)\n            diagonals_up.add(up)\n            solutions += place(row + 1)\n            columns.remove(column)\n            diagonals_down.remove(down)\n            diagonals_up.remove(up)\n        return solutions\n\n    return place(0)",
+        "note": "同一条斜线上的格子具有相同的 row-column 或 row+column。"
+      },
+      {
+        "variant_id": "backtracking-n-queens-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · Set 剪枝",
+        "text": "function countNQueens(size) {\n  const columns = new Set()\n  const diagonalsDown = new Set()\n  const diagonalsUp = new Set()\n\n  function place(row) {\n    if (row === size) return 1\n    let solutions = 0\n    for (let column = 0; column < size; column++) {\n      const down = row - column\n      const up = row + column\n      if (columns.has(column) || diagonalsDown.has(down) || diagonalsUp.has(up)) continue\n      columns.add(column)\n      diagonalsDown.add(down)\n      diagonalsUp.add(up)\n      solutions += place(row + 1)\n      columns.delete(column)\n      diagonalsDown.delete(down)\n      diagonalsUp.delete(up)\n    }\n    return solutions\n  }\n\n  return place(0)\n}",
+        "note": "三个集合让列冲突和两类对角线冲突都能在 O(1) 时间判断。"
+      }
+    ]
+  }
+]

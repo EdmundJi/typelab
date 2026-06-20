@@ -16,6 +16,12 @@ const userStore = useUserStore()
 
 const categoryLabel = {
   warmup: '热身',
+  basics: '基础',
+  arrays: '数组',
+  strings: '字符串',
+  searching: '查找',
+  'stack-queue': '栈与队列',
+  recursion: '递归回溯',
   sorting: '排序',
   trees: '树',
   dp: 'DP',
