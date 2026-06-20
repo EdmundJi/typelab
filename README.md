@@ -111,7 +111,7 @@ npm run build
 
 | 排名 | 贡献者 | 提交数 | 新增行 | 删除行 | 贡献指数 |
 |:----:|--------|-------:|-------:|-------:|-------:|
-| 🥇 | [Edmund Ji](https://github.com/EdmundJi) | 92 | 37,729 | 8,826 | **43,062** |
+| 🥇 | [Edmund Ji](https://github.com/EdmundJi) | 94 | 42,817 | 9,788 | **48,651** |
 | 🥈 | Frank | 12 | 1,047 | 337 | **1,335** |
 | 🥉 | Kalin | 2 | 522 | 34 | **559** |
 | 4 | Yang | 4 | 390 | 35 | **447** |
@@ -119,9 +119,9 @@ npm run build
 | 6 | ping668 | 1 | 267 | 8 | **281** |
 | 7 | Alin | 1 | 176 | 88 | **230** |
 | 8 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
-| 9 | Wang Ruimin | 1 | 83 | 23 | **104** |
-| 10 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
-| 11 | 陈诗韵 | 1 | 30 | 15 | **47** |
+| 9 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
+| 10 | 陈诗韵 | 1 | 30 | 15 | **47** |
+| 11 | github-actions[bot] | 1 | 19 | 12 | **35** |
 | 12 | copilot-swe-agent[bot] | 2 | 9 | 7 | **32** |
 | 13 | Copilot | 1 | 9 | 7 | **22** |
 | 14 | [Frank-StarsChild](https://github.com/Frank-StarsChild) | 1 | 0 | 0 | **10** |
