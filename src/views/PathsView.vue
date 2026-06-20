@@ -84,7 +84,7 @@ watch(
 </script>
 
 <template>
-  <div class="mx-auto max-w-3xl px-6 py-10">
+  <div class="mx-auto max-w-3xl">
     <!-- Header -->
     <div class="mb-8">
       <button
@@ -96,17 +96,18 @@ watch(
         ‹ 返回路径列表
       </button>
 
-      <h1 class="text-mt-fg font-bold text-sm tracking-[0.2em] uppercase">
+      <p class="eyebrow mb-2">// learning paths</p>
+      <h1 class="text-mt-text text-2xl font-bold tracking-tight">
         {{ selectedPath ? selectedPath.name : '学习路径' }}
       </h1>
-      <p v-if="!selectedPath" class="text-mt-sub text-xs mt-1">
+      <p v-if="!selectedPath" class="text-mt-sub text-sm mt-2">
         按序练习，系统掌握算法与数据结构
       </p>
     </div>
 
     <!-- Loading state -->
     <div v-if="loading" class="space-y-3" aria-label="正在加载学习路径">
-      <div v-for="i in 3" :key="i" class="h-20 border border-mt-border bg-mt-card animate-pulse rounded" />
+      <div v-for="i in 3" :key="i" class="h-24 border border-mt-border bg-mt-card animate-pulse" />
     </div>
 
     <!-- Error state -->
