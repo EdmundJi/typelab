@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { getLessonMetaById } from '@/lessons'
+import { computed, onMounted, ref } from 'vue'
+import { listLessons } from '@/lib/application/lessons'
+import { toLessonRef } from '@/lib/domain/lessonRef'
 
 const props = defineProps({
   results: {
@@ -23,8 +24,15 @@ function formatDuration(secs) {
   return `${Math.floor(secs / 60)}m${secs % 60 > 0 ? ` ${secs % 60}s` : ''}`
 }
 
+const lessonTitles = ref(new Map<string, string>())
+
+onMounted(async () => {
+  const lessons = await listLessons()
+  lessonTitles.value = new Map(lessons.map((lesson) => [toLessonRef(lesson.id), lesson.title]))
+})
+
 function getLessonTitle(lessonId) {
-  return getLessonMetaById(lessonId)?.title ?? lessonId
+  return lessonTitles.value.get(toLessonRef(lessonId)) ?? lessonId
 }
 
 const stats = computed(() => {

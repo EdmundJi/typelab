@@ -161,10 +161,10 @@ community:<communityLessonId>
 | 项目 | 内容 |
 |---|---|
 | 位置 | `src/lib/application/lessons.ts` |
-| 职责 | 从轻量 manifest 合并内置课程元数据与审核通过的社区课程；进入题目时按需加载 JSON 正文；兼容 v1；按搜索/主题/语言支持上层过滤。 |
+| 职责 | 优先从 Supabase 读取内置课程元数据与审核通过的社区课程；进入题目时按 ID 读取正文；数据库不可用时降级为本地 manifest/JSON；兼容 v1；按搜索/主题/语言支持上层过滤。 |
 | 输入 | `listLessons(filters = {}, adapter = db)`、`getLessonById(ref, adapter = db)`；过滤条件可含 `topic/language/search`，旧调用的 `category` 仅作为兼容别名。 |
 | 输出 | 列表返回不含正文的 `Promise<LessonMeta[]>`；详情返回 `Promise<NormalizedLesson | null>`。 |
-| 依赖 | `src/lessons/index.ts`、`DbAdapter.queryCommunityLessons`、`lessonRef`、共享类型。 |
+| 依赖 | `src/lessons/index.ts`、`DbAdapter.listBuiltinLessonMetas/getBuiltinLesson/queryCommunityLessons`、`lessonRef`、共享类型。 |
 | 错误处理 | 社区查询失败时降级为只返回内置课程并记录警告；未审核/拒绝社区课程不得进入首页；未知 ref 返回 `null`。 |
 
 关键要求：
@@ -174,6 +174,7 @@ community:<communityLessonId>
 - 语言列表来自 `lesson.variants.map(v => v.language)` 聚合。
 - `src/lessons/manifest.json` 由 `npm run lessons:manifest` 生成，禁止手工维护。
 - 内置课程正文不得通过 eager glob 进入课程列表包；只能在 `getLessonById()` 中动态加载。
+- 线上列表读取 `builtin_lesson_metas` 视图，详情读取 `builtin_lessons`；视图未迁移时可临时从基础表读取并在客户端剥离正文。
 
 ---
 

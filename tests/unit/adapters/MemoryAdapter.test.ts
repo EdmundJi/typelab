@@ -1,6 +1,24 @@
 import { describe, expect, it } from 'vitest'
 import { MemoryAdapter } from '@/lib/adapters/MemoryAdapter'
 
+const remoteLesson = {
+  id: 'remote-only-01',
+  title: 'Remote only',
+  topic: 'basics',
+  difficulty: 1 as const,
+  variants: [
+    {
+      variant_id: 'remote-only-01-python-standard',
+      language: 'python',
+      style: 'standard' as const,
+      step: 3 as const,
+      label: 'Python · 标准实现',
+      text: 'print("remote")',
+      note: 'remote note',
+    },
+  ],
+}
+
 describe('MemoryAdapter', () => {
   it('auth signs in, signs up, emits subscription shape, and signs out', async () => {
     const db = new MemoryAdapter()
@@ -63,6 +81,14 @@ describe('MemoryAdapter', () => {
     await db.reviewLesson(data!.id, { approved: false, rejectReason: 'duplicate' })
     expect((await db.queryCommunityLessons({ status: 'rejected' })).data[0].reject_reason).toBe(
       'duplicate',
+    )
+  })
+  it('lists builtin metadata separately from lesson bodies', async () => {
+    const db = new MemoryAdapter({ builtinLessons: [remoteLesson] })
+    const metas = await db.listBuiltinLessonMetas()
+    expect(metas.data[0].variants[0]).not.toHaveProperty('text')
+    expect((await db.getBuiltinLesson('remote-only-01')).data?.variants[0].text).toBe(
+      'print("remote")',
     )
   })
   it('handles collections including counts, duplicates, remove, and delete', async () => {

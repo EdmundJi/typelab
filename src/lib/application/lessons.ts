@@ -120,6 +120,13 @@ export async function listLessons(filters: LessonFilters = {}, adapter: DbAdapte
   let lessons: LessonMeta[] = [...lessonMetas]
 
   try {
+    const { data } = await adapter.listBuiltinLessonMetas()
+    if (data.length > 0) lessons = data
+  } catch {
+    // 数据库不可用或尚未迁移时降级为随应用发布的 manifest。
+  }
+
+  try {
     const communityResult = await adapter.queryCommunityLessons({ status: 'approved' })
     const communityData = communityResult?.data ?? communityResult ?? []
     if (Array.isArray(communityData)) {
@@ -158,8 +165,14 @@ export async function getLessonById(
   }
 
   if (parsed.type === 'builtin') {
-    const lesson = await getBuiltinLessonById(parsed.id)
-    return lesson ? normalizeToV2(lesson) : null
+    try {
+      const { data } = await adapter.getBuiltinLesson(parsed.id)
+      if (data) return normalizeToV2(data)
+    } catch {
+      // 数据库不可用时继续尝试本地按需加载。
+    }
+    const fallback = await getBuiltinLessonById(parsed.id)
+    return fallback ? normalizeToV2(fallback) : null
   }
 
   if (parsed.type === 'community') {
