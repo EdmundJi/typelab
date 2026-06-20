@@ -5,6 +5,8 @@ import type {
   CommunityLesson,
   DbResult,
   LeaderboardEntry,
+  LessonMeta,
+  NormalizedLesson,
   Path,
   Session,
   SubmitLessonInput,
@@ -29,6 +31,8 @@ export interface DbAdapter {
   listLeaderboard(): DbResult<LeaderboardEntry[]>
   listUserAchievements(userId: string): Promise<string[]>
   unlockAchievement(userId: string, achievementId: string): Promise<void>
+  listBuiltinLessonMetas(): Promise<{ data: LessonMeta[] }>
+  getBuiltinLesson(id: string): Promise<{ data: NormalizedLesson | null }>
   queryCommunityLessons(filters?: {
     status?: string
     id?: string

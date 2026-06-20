@@ -1,32 +1,18 @@
 <script setup lang="ts">
-const props = defineProps({
-  variants: {
-    type: Array,
-    required: true,
-  },
-  modelValue: {
-    type: String,
-    required: true,
-  },
-})
+import type { Variant } from '@/types'
+
+const props = defineProps<{ variants: Variant[]; modelValue: string }>()
 
 const emit = defineEmits(['update:modelValue'])
 
-function select(variantId) {
+function select(variantId: string) {
   if (variantId !== props.modelValue) {
     emit('update:modelValue', variantId)
   }
 }
 
-function variantLabel(variant) {
-  const parts = [variant.language]
-  if (variant.style && variant.style !== 'standard') {
-    parts.push(variant.style)
-  }
-  if (variant.difficulty) {
-    parts.push(variant.difficulty)
-  }
-  return parts.join(' · ')
+function variantLabel(variant: Variant) {
+  return variant.label
 }
 </script>
 

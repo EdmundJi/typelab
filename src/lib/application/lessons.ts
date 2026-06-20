@@ -1,105 +1,163 @@
 /**
- * lessons.js — LessonLoader
- *
- * 负责：
- * - 加载内置 JSON 课程（src/lessons/index.js）
- * - 加载已审核社区课程（通过 adapters/db.js）
- * - 将 v1 旧格式自动标准化为 v2 多变体格式
- * - 按 lesson_ref 格式（builtin:<id> / community:<uuid>）解析单条课程
- * - 提供按 language 筛选的列表接口
- *
- * 不直接导入 adapters/supabase.js，只使用 adapters/db.js。
+ * 合并内置课程 manifest 与已审核社区课程，并在进入题目时加载正文。
  */
-
-import { lessons as builtinLessons } from '@/lessons'
+import { getLessonById as getBuiltinLessonById, lessonMetas } from '@/lessons'
 import { db } from '@/lib/adapters/db'
 import type { DbAdapter } from '@/lib/adapters/types'
 import { parse } from '@/lib/domain/lessonRef'
+import type {
+  CommunityLesson,
+  LessonDifficulty,
+  LessonMeta,
+  NormalizedLesson,
+  RawLesson,
+  Variant,
+} from '@/types'
 
-/**
- * 将 v1 格式（无 variants）标准化为 v2 多变体格式
- * @param {Object} lesson
- * @returns {Object} NormalizedLesson（含 variants[]）
- */
-function normalizeToV2(lesson) {
-  // 已是 v2 格式
-  if (Array.isArray(lesson.variants)) {
-    return lesson
+interface CompatibleVariant {
+  variant_id?: string
+  id?: string
+  language?: string
+  style?: string
+  difficulty?: string | number
+  step?: number
+  label?: string
+  text?: string
+  code?: string
+  note?: string | null
+}
+
+interface CompatibleLesson {
+  id: string
+  title: string
+  topic?: string
+  category?: string
+  difficulty?: string | number
+  language?: string
+  text?: string
+  code?: string
+  note?: string | null
+  variants?: CompatibleVariant[]
+}
+
+interface LessonFilters {
+  topic?: string
+  category?: string
+  language?: string
+  search?: string
+}
+
+function normalizeDifficulty(value: unknown): LessonDifficulty {
+  if (typeof value === 'number' && Number.isInteger(value)) {
+    return Math.max(1, Math.min(5, value)) as LessonDifficulty
   }
+  return ({ beginner: 1, intermediate: 3, advanced: 5 }[String(value)] ?? 3) as LessonDifficulty
+}
 
-  // v1 格式：推断语言
-  const language = lesson.language ?? inferLanguage(lesson)
-
-  const variant = {
-    variant_id: `${lesson.id}-${language}-standard`,
+function normalizeVariant(
+  raw: CompatibleVariant,
+  lesson: CompatibleLesson,
+  index: number,
+): Variant {
+  const language = raw.language ?? lesson.language ?? inferLanguage(lesson)
+  const style: Variant['style'] = ['verbose', 'standard', 'concise'].includes(raw.style ?? '')
+    ? (raw.style as Variant['style'])
+    : 'standard'
+  const step: Variant['step'] = [1, 2, 3].includes(raw.step ?? 0)
+    ? (raw.step as Variant['step'])
+    : 3
+  return {
+    variant_id: raw.variant_id ?? raw.id ?? `${lesson.id}-${language}-${style}-${index + 1}`,
     language,
-    style: 'standard',
-    difficulty: lesson.difficulty ?? 'intermediate',
-    code: lesson.text ?? lesson.code ?? '',
-    note: lesson.note,
+    style,
+    step,
+    label: raw.label ?? `${language} · ${style}`,
+    text: raw.text ?? raw.code ?? '',
+    note: raw.note ?? lesson.note ?? '',
   }
+}
 
-  const { text, code, language: _lang, note: _note, ...rest } = lesson
+/** 兼容旧 v1 数据与早期使用 category/code 的 v2 数据。 */
+export function normalizeToV2(lesson: RawLesson | CompatibleLesson): NormalizedLesson {
+  const rawVariants = Array.isArray(lesson.variants)
+    ? lesson.variants
+    : [
+        {
+          language: lesson.language,
+          text: lesson.text,
+          code: lesson.code,
+          note: lesson.note,
+        },
+      ]
 
   return {
-    ...rest,
-    variants: [variant],
+    id: lesson.id,
+    title: lesson.title,
+    topic: lesson.topic ?? lesson.category ?? 'other',
+    difficulty: normalizeDifficulty(lesson.difficulty ?? rawVariants[0]?.difficulty),
+    variants: rawVariants.map((variant, index) => normalizeVariant(variant, lesson, index)),
   }
 }
 
-/**
- * 当 v1 课程缺少 language 字段时，按 category 推断语言
- * @param {Object} lesson
- * @returns {string}
- */
-function inferLanguage(lesson) {
-  const cat = lesson.category ?? ''
-  if (cat === 'warmup' || cat === 'concepts') return 'text'
-  return 'python'
+function inferLanguage(lesson: CompatibleLesson) {
+  const topic = lesson.topic ?? lesson.category ?? ''
+  return topic === 'warmup' || topic === 'concepts' ? 'text' : 'python'
 }
 
-/**
- * 列出课程元数据（含 variants 列表）
- * @param {{ language?: string }} [filters]
- * @returns {Promise<Object[]>}
- */
-export async function listLessons(filters: any = {}, adapter: DbAdapter = db) {
-  const { language, category, search } = filters
+function toLessonMeta(lesson: NormalizedLesson): LessonMeta {
+  return {
+    id: lesson.id,
+    title: lesson.title,
+    topic: lesson.topic,
+    difficulty: lesson.difficulty,
+    variants: lesson.variants.map(({ text: _text, note: _note, ...variant }) => variant),
+  }
+}
 
-  // 加载内置课程（已标准化）
-  let lessons = builtinLessons.map(normalizeToV2)
+export async function listLessons(filters: LessonFilters = {}, adapter: DbAdapter = db) {
+  const { language, search } = filters
+  const topic = filters.topic ?? filters.category
+  let lessons: LessonMeta[] = [...lessonMetas]
 
-  // 尝试加载社区课程（降级处理）
+  try {
+    const { data } = await adapter.listBuiltinLessonMetas()
+    if (data.length > 0) lessons = data
+  } catch {
+    // 数据库不可用或尚未迁移时降级为随应用发布的 manifest。
+  }
+
   try {
     const communityResult = await adapter.queryCommunityLessons({ status: 'approved' })
     const communityData = communityResult?.data ?? communityResult ?? []
     if (Array.isArray(communityData)) {
-      const communityLessons = communityData.map((cl) => normalizeCommunityLesson(cl))
-      lessons = [...lessons, ...communityLessons]
+      lessons = [
+        ...lessons,
+        ...communityData.map((lesson) => toLessonMeta(normalizeCommunityLesson(lesson))),
+      ]
     }
   } catch {
-    // Supabase 查询失败 → 降级为纯内置，不 throw
+    // Supabase 查询失败时仍可使用内置题库。
   }
 
-  if (category && category !== 'all')
-    lessons = lessons.filter((lesson) => lesson.category === category || lesson.topic === category)
-  if (language && language !== 'all')
-    lessons = lessons.filter((lesson) => lesson.variants.some((v) => v.language === language))
-  if (search)
+  if (topic && topic !== 'all') lessons = lessons.filter((lesson) => lesson.topic === topic)
+  if (language && language !== 'all') {
     lessons = lessons.filter((lesson) =>
-      lesson.title?.toLowerCase().includes(String(search).toLowerCase()),
+      lesson.variants.some((variant) => variant.language === language),
     )
+  }
+  if (search) {
+    const query = String(search).toLowerCase()
+    lessons = lessons.filter((lesson) => lesson.title.toLowerCase().includes(query))
+  }
 
   return lessons
 }
 
-/**
- * 按 lesson_ref 获取单条课程
- * @param {string} ref — 'builtin:<id>' 或 'community:<uuid>'
- * @returns {Promise<Object|null>}
- */
-export async function getLessonById(ref: string, adapter: DbAdapter = db) {
-  let parsed: { type: string; id: string } | null
+export async function getLessonById(
+  ref: string,
+  adapter: DbAdapter = db,
+): Promise<NormalizedLesson | null> {
+  let parsed: { type: string; id: string }
   try {
     parsed = parse(ref)
   } catch {
@@ -107,9 +165,14 @@ export async function getLessonById(ref: string, adapter: DbAdapter = db) {
   }
 
   if (parsed.type === 'builtin') {
-    const lesson = builtinLessons.find((l) => l.id === parsed.id)
-    if (!lesson) return null
-    return normalizeToV2(lesson)
+    try {
+      const { data } = await adapter.getBuiltinLesson(parsed.id)
+      if (data) return normalizeToV2(data)
+    } catch {
+      // 数据库不可用时继续尝试本地按需加载。
+    }
+    const fallback = await getBuiltinLessonById(parsed.id)
+    return fallback ? normalizeToV2(fallback) : null
   }
 
   if (parsed.type === 'community') {
@@ -117,8 +180,7 @@ export async function getLessonById(ref: string, adapter: DbAdapter = db) {
       const result = await adapter.queryCommunityLessons({ id: parsed.id, status: 'approved' })
       const data = result?.data ?? result
       const item = Array.isArray(data) ? data[0] : data
-      if (!item) return null
-      return normalizeCommunityLesson(item)
+      return item ? normalizeCommunityLesson(item) : null
     } catch {
       return null
     }
@@ -127,25 +189,21 @@ export async function getLessonById(ref: string, adapter: DbAdapter = db) {
   return null
 }
 
-/**
- * 将社区课程记录转换为 NormalizedLesson 格式
- * @param {Object} cl — community_lessons 行
- * @returns {Object}
- */
-function normalizeCommunityLesson(cl) {
-  const variant = {
-    variant_id: `${cl.id}-${cl.language}-${cl.style ?? 'standard'}`,
-    language: cl.language ?? 'python',
-    style: cl.style ?? 'standard',
-    difficulty: cl.step ? `step${cl.step}` : 'intermediate',
-    code: cl.text ?? '',
-    note: cl.note,
-  }
-
-  return {
-    id: `community:${cl.id}`,
-    title: cl.title ?? '',
-    category: cl.topic,
-    variants: [variant],
-  }
+function normalizeCommunityLesson(lesson: CommunityLesson): NormalizedLesson {
+  return normalizeToV2({
+    id: `community:${lesson.id}`,
+    title: lesson.title ?? '',
+    topic: lesson.topic ?? 'community',
+    difficulty: lesson.step ?? 3,
+    variants: [
+      {
+        variant_id: `${lesson.id}-${lesson.language}-${lesson.style ?? 'standard'}`,
+        language: lesson.language ?? 'python',
+        style: lesson.style ?? 'standard',
+        step: lesson.step ?? 3,
+        text: lesson.text ?? lesson.code ?? '',
+        note: lesson.note ?? '',
+      },
+    ],
+  })
 }

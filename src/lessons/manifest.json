@@ -1,0 +1,873 @@
+[
+  {
+    "id": "array-two-sum-01",
+    "title": "两数之和",
+    "topic": "arrays",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "array-two-sum-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 哈希表"
+      },
+      {
+        "variant_id": "array-two-sum-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · Map"
+      }
+    ],
+    "source_file": "./code/arrays/arrays.json"
+  },
+  {
+    "id": "array-prefix-sum-01",
+    "title": "前缀和区间查询",
+    "topic": "arrays",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "array-prefix-sum-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "array-prefix-sum-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/arrays/arrays.json"
+  },
+  {
+    "id": "array-rotate-01",
+    "title": "数组循环右移",
+    "topic": "arrays",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "array-rotate-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 切片实现"
+      },
+      {
+        "variant_id": "array-rotate-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · slice 实现"
+      }
+    ],
+    "source_file": "./code/arrays/arrays.json"
+  },
+  {
+    "id": "array-sliding-window-01",
+    "title": "固定窗口最大和",
+    "topic": "arrays",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "array-sliding-window-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 滑动窗口"
+      },
+      {
+        "variant_id": "array-sliding-window-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 滑动窗口"
+      }
+    ],
+    "source_file": "./code/arrays/arrays.json"
+  },
+  {
+    "id": "array-deduplicate-sorted-01",
+    "title": "有序数组原地去重",
+    "topic": "arrays",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "array-deduplicate-sorted-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 双指针"
+      },
+      {
+        "variant_id": "array-deduplicate-sorted-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 双指针"
+      }
+    ],
+    "source_file": "./code/arrays/arrays.json"
+  },
+  {
+    "id": "basic-clamp-01",
+    "title": "限制数值范围",
+    "topic": "basics",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "basic-clamp-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "basic-clamp-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/basics/foundations.json"
+  },
+  {
+    "id": "basic-fizzbuzz-01",
+    "title": "FizzBuzz 条件循环",
+    "topic": "basics",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "basic-fizzbuzz-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "basic-fizzbuzz-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/basics/foundations.json"
+  },
+  {
+    "id": "basic-sum-range-01",
+    "title": "区间整数求和",
+    "topic": "basics",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "basic-sum-range-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "basic-sum-range-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/basics/foundations.json"
+  },
+  {
+    "id": "basic-group-parity-01",
+    "title": "按奇偶分组",
+    "topic": "basics",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "basic-group-parity-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "basic-group-parity-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/basics/foundations.json"
+  },
+  {
+    "id": "basic-chunk-list-01",
+    "title": "列表分块",
+    "topic": "basics",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "basic-chunk-list-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "basic-chunk-list-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/basics/foundations.json"
+  },
+  {
+    "id": "js-array-methods-01",
+    "title": "JavaScript 数组常用方法",
+    "topic": "js",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "js-array-methods-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/js/js-basics.json"
+  },
+  {
+    "id": "py-fibonacci-01",
+    "title": "斐波那契数列 — 动态规划",
+    "topic": "dp",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "py-fibonacci-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "py-fibonacci-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/dp.json"
+  },
+  {
+    "id": "py-dijkstra-01",
+    "title": "Dijkstra 最短路径",
+    "topic": "graph",
+    "difficulty": 5,
+    "variants": [
+      {
+        "variant_id": "py-dijkstra-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "py-dijkstra-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/graph.json"
+  },
+  {
+    "id": "py-quicksort-01",
+    "title": "快速排序",
+    "topic": "sorting",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "py-quicksort-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "py-quicksort-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/sorting.json"
+  },
+  {
+    "id": "py-mergesort-01",
+    "title": "归并排序",
+    "topic": "sorting",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "py-mergesort-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/sorting.json"
+  },
+  {
+    "id": "py-bfs-01",
+    "title": "BFS 广度优先遍历",
+    "topic": "trees",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "py-bfs-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/trees.json"
+  },
+  {
+    "id": "py-dfs-01",
+    "title": "DFS 深度优先遍历",
+    "topic": "trees",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "py-dfs-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      }
+    ],
+    "source_file": "./code/python/trees.json"
+  },
+  {
+    "id": "recursion-factorial-01",
+    "title": "递归阶乘",
+    "topic": "recursion",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "recursion-factorial-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 递归实现"
+      },
+      {
+        "variant_id": "recursion-factorial-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 递归实现"
+      }
+    ],
+    "source_file": "./code/recursion/backtracking.json"
+  },
+  {
+    "id": "backtracking-permutations-01",
+    "title": "全排列",
+    "topic": "recursion",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "backtracking-permutations-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 回溯"
+      },
+      {
+        "variant_id": "backtracking-permutations-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 回溯"
+      }
+    ],
+    "source_file": "./code/recursion/backtracking.json"
+  },
+  {
+    "id": "backtracking-combinations-01",
+    "title": "组合枚举",
+    "topic": "recursion",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "backtracking-combinations-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 回溯"
+      },
+      {
+        "variant_id": "backtracking-combinations-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 回溯"
+      }
+    ],
+    "source_file": "./code/recursion/backtracking.json"
+  },
+  {
+    "id": "backtracking-subsets-01",
+    "title": "子集生成",
+    "topic": "recursion",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "backtracking-subsets-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 回溯"
+      },
+      {
+        "variant_id": "backtracking-subsets-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 回溯"
+      }
+    ],
+    "source_file": "./code/recursion/backtracking.json"
+  },
+  {
+    "id": "backtracking-n-queens-01",
+    "title": "N 皇后计数",
+    "topic": "recursion",
+    "difficulty": 5,
+    "variants": [
+      {
+        "variant_id": "backtracking-n-queens-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 集合剪枝"
+      },
+      {
+        "variant_id": "backtracking-n-queens-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · Set 剪枝"
+      }
+    ],
+    "source_file": "./code/recursion/backtracking.json"
+  },
+  {
+    "id": "search-linear-01",
+    "title": "线性查找",
+    "topic": "searching",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "search-linear-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "search-linear-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/searching/searching.json"
+  },
+  {
+    "id": "search-binary-01",
+    "title": "二分查找",
+    "topic": "searching",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "search-binary-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 迭代实现"
+      },
+      {
+        "variant_id": "search-binary-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 迭代实现"
+      }
+    ],
+    "source_file": "./code/searching/searching.json"
+  },
+  {
+    "id": "search-lower-bound-01",
+    "title": "二分查找左边界",
+    "topic": "searching",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "search-lower-bound-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 左闭右开区间"
+      },
+      {
+        "variant_id": "search-lower-bound-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 左闭右开区间"
+      }
+    ],
+    "source_file": "./code/searching/searching.json"
+  },
+  {
+    "id": "search-matrix-01",
+    "title": "有序矩阵查找",
+    "topic": "searching",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "search-matrix-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 右上角扫描"
+      },
+      {
+        "variant_id": "search-matrix-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 右上角扫描"
+      }
+    ],
+    "source_file": "./code/searching/searching.json"
+  },
+  {
+    "id": "search-quickselect-01",
+    "title": "快速选择第 K 小元素",
+    "topic": "searching",
+    "difficulty": 4,
+    "variants": [
+      {
+        "variant_id": "search-quickselect-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 原地分区"
+      },
+      {
+        "variant_id": "search-quickselect-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 原地分区"
+      }
+    ],
+    "source_file": "./code/searching/searching.json"
+  },
+  {
+    "id": "stack-balanced-brackets-01",
+    "title": "括号匹配",
+    "topic": "stack-queue",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "stack-balanced-brackets-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 栈"
+      },
+      {
+        "variant_id": "stack-balanced-brackets-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 栈"
+      }
+    ],
+    "source_file": "./code/stack-queue/stack-queue.json"
+  },
+  {
+    "id": "stack-postfix-evaluation-01",
+    "title": "逆波兰表达式求值",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "stack-postfix-evaluation-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 栈"
+      },
+      {
+        "variant_id": "stack-postfix-evaluation-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 栈"
+      }
+    ],
+    "source_file": "./code/stack-queue/stack-queue.json"
+  },
+  {
+    "id": "stack-next-greater-01",
+    "title": "下一个更大元素",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "stack-next-greater-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 单调栈"
+      },
+      {
+        "variant_id": "stack-next-greater-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 单调栈"
+      }
+    ],
+    "source_file": "./code/stack-queue/stack-queue.json"
+  },
+  {
+    "id": "queue-two-stacks-01",
+    "title": "用两个栈实现队列",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "queue-two-stacks-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 类实现"
+      },
+      {
+        "variant_id": "queue-two-stacks-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 类实现"
+      }
+    ],
+    "source_file": "./code/stack-queue/stack-queue.json"
+  },
+  {
+    "id": "stack-minimum-01",
+    "title": "支持常数时间取最小值的栈",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "stack-minimum-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 辅助栈"
+      },
+      {
+        "variant_id": "stack-minimum-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 辅助栈"
+      }
+    ],
+    "source_file": "./code/stack-queue/stack-queue.json"
+  },
+  {
+    "id": "string-palindrome-01",
+    "title": "忽略符号的回文判断",
+    "topic": "strings",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "string-palindrome-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 双指针"
+      },
+      {
+        "variant_id": "string-palindrome-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 双指针"
+      }
+    ],
+    "source_file": "./code/strings/strings.json"
+  },
+  {
+    "id": "string-frequency-01",
+    "title": "字符频次统计",
+    "topic": "strings",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "string-frequency-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 字典计数"
+      },
+      {
+        "variant_id": "string-frequency-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 对象计数"
+      }
+    ],
+    "source_file": "./code/strings/strings.json"
+  },
+  {
+    "id": "string-longest-prefix-01",
+    "title": "最长公共前缀",
+    "topic": "strings",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "string-longest-prefix-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 纵向扫描"
+      },
+      {
+        "variant_id": "string-longest-prefix-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 纵向扫描"
+      }
+    ],
+    "source_file": "./code/strings/strings.json"
+  },
+  {
+    "id": "string-reverse-words-01",
+    "title": "反转单词顺序",
+    "topic": "strings",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "string-reverse-words-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "string-reverse-words-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/strings/strings.json"
+  },
+  {
+    "id": "string-run-length-01",
+    "title": "游程编码压缩",
+    "topic": "strings",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "string-run-length-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现"
+      },
+      {
+        "variant_id": "string-run-length-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现"
+      }
+    ],
+    "source_file": "./code/strings/strings.json"
+  },
+  {
+    "id": "concept-big-o-01",
+    "title": "大 O 记号基础概念",
+    "topic": "concepts",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "concept-big-o-01-text-standard",
+        "language": "text",
+        "style": "standard",
+        "step": 1,
+        "label": "文本 · 标准练习"
+      }
+    ],
+    "source_file": "./concepts/complexity.json"
+  },
+  {
+    "id": "warmup-home-row-01",
+    "title": "Home Row 基础练习",
+    "topic": "warmup",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "warmup-home-row-01-text-standard",
+        "language": "text",
+        "style": "standard",
+        "step": 1,
+        "label": "文本 · 标准练习"
+      }
+    ],
+    "source_file": "./warmup/01-home-row.json"
+  },
+  {
+    "id": "warmup-home-row-02",
+    "title": "Home Row 进阶练习",
+    "topic": "warmup",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "warmup-home-row-02-text-standard",
+        "language": "text",
+        "style": "standard",
+        "step": 1,
+        "label": "文本 · 标准练习"
+      }
+    ],
+    "source_file": "./warmup/01-home-row.json"
+  }
+]

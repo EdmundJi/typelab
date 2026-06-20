@@ -1,0 +1,132 @@
+[
+  {
+    "id": "stack-balanced-brackets-01",
+    "title": "括号匹配",
+    "topic": "stack-queue",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "stack-balanced-brackets-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 栈",
+        "text": "def brackets_are_balanced(text):\n    pairs = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n    stack = []\n    for character in text:\n        if character in pairs.values():\n            stack.append(character)\n        elif character in pairs:\n            if not stack or stack.pop() != pairs[character]:\n                return False\n    return not stack",
+        "note": "遇到左括号入栈，遇到右括号时检查并弹出最近的左括号。"
+      },
+      {
+        "variant_id": "stack-balanced-brackets-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 栈",
+        "text": "function bracketsAreBalanced(text) {\n  const pairs = { ')': '(', ']': '[', '}': '{' }\n  const openings = new Set(Object.values(pairs))\n  const stack = []\n  for (const character of text) {\n    if (openings.has(character)) stack.push(character)\n    else if (character in pairs && stack.pop() !== pairs[character]) return false\n  }\n  return stack.length === 0\n}",
+        "note": "数组末尾的 push 和 pop 可以高效地模拟栈。"
+      }
+    ]
+  },
+  {
+    "id": "stack-postfix-evaluation-01",
+    "title": "逆波兰表达式求值",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "stack-postfix-evaluation-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 栈",
+        "text": "def evaluate_postfix(tokens):\n    operations = {\n        \"+\": lambda a, b: a + b,\n        \"-\": lambda a, b: a - b,\n        \"*\": lambda a, b: a * b,\n        \"/\": lambda a, b: int(a / b),\n    }\n    stack = []\n    for token in tokens:\n        if token not in operations:\n            stack.append(int(token))\n            continue\n        right = stack.pop()\n        left = stack.pop()\n        stack.append(operations[token](left, right))\n    return stack.pop()",
+        "note": "运算符出现时，后弹出的操作数位于表达式左侧。"
+      },
+      {
+        "variant_id": "stack-postfix-evaluation-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 栈",
+        "text": "function evaluatePostfix(tokens) {\n  const operations = {\n    '+': (a, b) => a + b,\n    '-': (a, b) => a - b,\n    '*': (a, b) => a * b,\n    '/': (a, b) => Math.trunc(a / b)\n  }\n  const stack = []\n  for (const token of tokens) {\n    if (!(token in operations)) {\n      stack.push(Number(token))\n      continue\n    }\n    const right = stack.pop()\n    const left = stack.pop()\n    stack.push(operations[token](left, right))\n  }\n  return stack.pop()\n}",
+        "note": "后缀表达式不需要括号，栈保存尚未参与运算的中间值。"
+      }
+    ]
+  },
+  {
+    "id": "stack-next-greater-01",
+    "title": "下一个更大元素",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "stack-next-greater-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 单调栈",
+        "text": "def next_greater_elements(numbers):\n    result = [-1] * len(numbers)\n    stack = []\n    for index, number in enumerate(numbers):\n        while stack and numbers[stack[-1]] < number:\n            previous = stack.pop()\n            result[previous] = number\n        stack.append(index)\n    return result",
+        "note": "栈中下标对应的数值保持单调递减，每个下标最多进出栈一次。"
+      },
+      {
+        "variant_id": "stack-next-greater-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 单调栈",
+        "text": "function nextGreaterElements(numbers) {\n  const result = new Array(numbers.length).fill(-1)\n  const stack = []\n  for (let index = 0; index < numbers.length; index++) {\n    while (stack.length && numbers[stack[stack.length - 1]] < numbers[index]) {\n      const previous = stack.pop()\n      result[previous] = numbers[index]\n    }\n    stack.push(index)\n  }\n  return result\n}",
+        "note": "单调栈把暴力比较的 O(n²) 降为 O(n)。"
+      }
+    ]
+  },
+  {
+    "id": "queue-two-stacks-01",
+    "title": "用两个栈实现队列",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "queue-two-stacks-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 类实现",
+        "text": "class QueueWithStacks:\n    def __init__(self):\n        self.input = []\n        self.output = []\n\n    def enqueue(self, value):\n        self.input.append(value)\n\n    def dequeue(self):\n        if not self.output:\n            while self.input:\n                self.output.append(self.input.pop())\n        if not self.output:\n            raise IndexError(\"dequeue from empty queue\")\n        return self.output.pop()",
+        "note": "只有输出栈为空时才搬运元素，因此每个元素的均摊操作复杂度为 O(1)。"
+      },
+      {
+        "variant_id": "queue-two-stacks-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 类实现",
+        "text": "class QueueWithStacks {\n  constructor() {\n    this.input = []\n    this.output = []\n  }\n\n  enqueue(value) {\n    this.input.push(value)\n  }\n\n  dequeue() {\n    if (this.output.length === 0) {\n      while (this.input.length) this.output.push(this.input.pop())\n    }\n    if (this.output.length === 0) throw new Error('dequeue from empty queue')\n    return this.output.pop()\n  }\n}",
+        "note": "两次后进先出可以恢复队列的先进先出顺序。"
+      }
+    ]
+  },
+  {
+    "id": "stack-minimum-01",
+    "title": "支持常数时间取最小值的栈",
+    "topic": "stack-queue",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "stack-minimum-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 辅助栈",
+        "text": "class MinStack:\n    def __init__(self):\n        self.values = []\n        self.minimums = []\n\n    def push(self, value):\n        self.values.append(value)\n        current = value if not self.minimums else min(value, self.minimums[-1])\n        self.minimums.append(current)\n\n    def pop(self):\n        self.minimums.pop()\n        return self.values.pop()\n\n    def get_minimum(self):\n        return self.minimums[-1]",
+        "note": "辅助栈在每一层保存当前最小值，使查询复杂度保持 O(1)。"
+      },
+      {
+        "variant_id": "stack-minimum-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 辅助栈",
+        "text": "class MinStack {\n  constructor() {\n    this.values = []\n    this.minimums = []\n  }\n\n  push(value) {\n    this.values.push(value)\n    const previous = this.minimums[this.minimums.length - 1]\n    this.minimums.push(previous === undefined ? value : Math.min(value, previous))\n  }\n\n  pop() {\n    this.minimums.pop()\n    return this.values.pop()\n  }\n\n  getMinimum() {\n    return this.minimums[this.minimums.length - 1]\n  }\n}",
+        "note": "值栈与最小值栈始终保持相同长度，弹出时同步更新。"
+      }
+    ]
+  }
+]

@@ -1,3 +1,4 @@
+import type { NormalizedLesson, Variant } from '@/types'
 import type { DbAdapter } from './types'
 
 export class SupabaseAdapter implements DbAdapter {
@@ -62,6 +63,43 @@ export class SupabaseAdapter implements DbAdapter {
       unlocked_at: new Date().toISOString(),
     })
     if (error && error.code !== '23505') throw error
+  }
+  async listBuiltinLessonMetas() {
+    const columns = 'id, title, topic, difficulty, variants'
+    const metadataResult = await this.supabase
+      .from('builtin_lesson_metas')
+      .select(columns)
+      .order('topic')
+      .order('difficulty')
+      .order('id')
+
+    if (!metadataResult.error) return { data: metadataResult.data ?? [] }
+
+    // 新视图尚未迁移时兼容读取原表；部署迁移后列表不再下载正文。
+    const fallbackResult = await this.supabase
+      .from('builtin_lessons')
+      .select(columns)
+      .order('topic')
+      .order('difficulty')
+      .order('id')
+    if (fallbackResult.error) throw fallbackResult.error
+    return {
+      data: (fallbackResult.data ?? []).map((lesson: NormalizedLesson) => ({
+        ...lesson,
+        variants: lesson.variants.map(
+          ({ text: _text, note: _note, ...variant }: Variant) => variant,
+        ),
+      })),
+    }
+  }
+  async getBuiltinLesson(id: string) {
+    const { data, error } = await this.supabase
+      .from('builtin_lessons')
+      .select('id, title, topic, difficulty, variants')
+      .eq('id', id)
+      .maybeSingle()
+    if (error) throw error
+    return { data: data ?? null }
   }
   async queryCommunityLessons(filters: { status?: string; id?: string } = {}) {
     let query = this.supabase.from('community_lessons').select('*')

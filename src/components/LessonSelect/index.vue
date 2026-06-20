@@ -4,11 +4,12 @@ import SkeletonCard from '@/components/ui/SkeletonCard.vue'
 import { listUserResults } from '@/lib/adapters/db'
 import { listLessons } from '@/lib/application/lessons'
 import { useUserStore } from '@/stores/user'
+import type { LessonMeta } from '@/types'
 import LessonFilter from './LessonFilter.vue'
 import LessonList from './LessonList.vue'
 
 const userStore = useUserStore()
-const lessons = ref<any[]>([])
+const lessons = ref<LessonMeta[]>([])
 const loading = ref(true)
 const error = ref('')
 const activeCategory = ref('all')
@@ -18,23 +19,18 @@ const bestWpmByLesson = ref(new Map<string, number>())
 
 const categories = computed(() => [
   'all',
-  ...new Set(lessons.value.map((l) => l.category ?? l.topic).filter(Boolean)),
+  ...new Set(lessons.value.map((l) => l.topic).filter(Boolean)),
 ])
 const languages = computed(() => [
   'all',
-  ...new Set(
-    lessons.value.flatMap((l) => l.variants?.map((v: any) => v.language) ?? []).filter(Boolean),
-  ),
+  ...new Set(lessons.value.flatMap((l) => l.variants.map((v) => v.language)).filter(Boolean)),
 ])
 
 const filteredLessons = computed(() =>
   lessons.value.filter((lesson) => {
-    const matchesCategory =
-      activeCategory.value === 'all' ||
-      lesson.category === activeCategory.value ||
-      lesson.topic === activeCategory.value
+    const matchesCategory = activeCategory.value === 'all' || lesson.topic === activeCategory.value
     const matchesLanguage =
-      language.value === 'all' || lesson.variants?.some((v: any) => v.language === language.value)
+      language.value === 'all' || lesson.variants.some((v) => v.language === language.value)
     const matchesSearch =
       !search.value || lesson.title?.toLowerCase().includes(search.value.toLowerCase())
     return matchesCategory && matchesLanguage && matchesSearch

@@ -26,6 +26,8 @@ export const listLeaderboard = () => db.listLeaderboard()
 export const listUserAchievements = (userId: string) => db.listUserAchievements(userId)
 export const unlockAchievement = (userId: string, achievementId: string) =>
   db.unlockAchievement(userId, achievementId)
+export const listBuiltinLessonMetas = () => db.listBuiltinLessonMetas()
+export const getBuiltinLesson = (id: string) => db.getBuiltinLesson(id)
 export const queryCommunityLessons = (filters: { status?: string; id?: string } = {}) =>
   db.queryCommunityLessons(filters)
 export const submitLesson = (userId: string, lesson: SubmitLessonInput) =>
@@ -47,8 +49,20 @@ export const listPaths = () => db.listPaths()
 export const getPathById = (pathId: string) => db.getPathById(pathId)
 
 export async function listLessonMetas() {
+  try {
+    const { data } = await db.listBuiltinLessonMetas()
+    if (data.length > 0) return data
+  } catch {
+    // Keep compatibility callers working offline.
+  }
   return lessonMetas
 }
 export async function findLessonById(id: string) {
-  return getBuiltinLessonById(id) ?? null
+  try {
+    const { data } = await db.getBuiltinLesson(id.replace(/^builtin:/, ''))
+    if (data) return data
+  } catch {
+    // Keep compatibility callers working offline.
+  }
+  return (await getBuiltinLessonById(id)) ?? null
 }

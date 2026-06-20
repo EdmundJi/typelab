@@ -3,6 +3,8 @@ import type {
   CollectionItem,
   CommunityLesson,
   LeaderboardEntry,
+  LessonMeta,
+  NormalizedLesson,
   Path,
   Session,
   SubmitLessonInput,
@@ -18,6 +20,7 @@ export class MemoryAdapter implements DbAdapter {
   results: UserResult[] = []
   achievements = new Map<string, Set<string>>()
   communityLessons: CommunityLesson[] = []
+  builtinLessons: NormalizedLesson[] = []
   collections: Collection[] = []
   collectionItems: CollectionItem[] = []
   paths: Path[] = []
@@ -26,11 +29,17 @@ export class MemoryAdapter implements DbAdapter {
     seed: Partial<
       Pick<
         MemoryAdapter,
-        'results' | 'communityLessons' | 'collections' | 'collectionItems' | 'paths'
+        | 'results'
+        | 'builtinLessons'
+        | 'communityLessons'
+        | 'collections'
+        | 'collectionItems'
+        | 'paths'
       >
     > = {},
   ) {
     this.results = [...(seed.results ?? [])]
+    this.builtinLessons = [...(seed.builtinLessons ?? [])]
     this.communityLessons = [...(seed.communityLessons ?? [])]
     this.collections = [...(seed.collections ?? [])]
     this.collectionItems = [...(seed.collectionItems ?? [])]
@@ -42,6 +51,7 @@ export class MemoryAdapter implements DbAdapter {
     this.results = []
     this.achievements.clear()
     this.communityLessons = []
+    this.builtinLessons = []
     this.collections = []
     this.collectionItems = []
     this.paths = []
@@ -103,6 +113,22 @@ export class MemoryAdapter implements DbAdapter {
   async unlockAchievement(userId: string, achievementId: string) {
     if (!this.achievements.has(userId)) this.achievements.set(userId, new Set())
     this.achievements.get(userId)?.add(achievementId)
+  }
+  async listBuiltinLessonMetas() {
+    return {
+      data: this.builtinLessons.map(
+        (lesson): LessonMeta => ({
+          id: lesson.id,
+          title: lesson.title,
+          topic: lesson.topic,
+          difficulty: lesson.difficulty,
+          variants: lesson.variants.map(({ text: _text, note: _note, ...variant }) => variant),
+        }),
+      ),
+    }
+  }
+  async getBuiltinLesson(lessonId: string) {
+    return { data: this.builtinLessons.find((lesson) => lesson.id === lessonId) ?? null }
   }
   async queryCommunityLessons(filters: { status?: string; id?: string } = {}) {
     return {

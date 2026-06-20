@@ -1,0 +1,132 @@
+[
+  {
+    "id": "basic-clamp-01",
+    "title": "限制数值范围",
+    "topic": "basics",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "basic-clamp-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def clamp(value, lower, upper):\n    if lower > upper:\n        raise ValueError(\"lower must not exceed upper\")\n    return max(lower, min(value, upper))",
+        "note": "clamp 将数值限制在闭区间内，同时先检查上下界是否合法。"
+      },
+      {
+        "variant_id": "basic-clamp-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function clamp(value, lower, upper) {\n  if (lower > upper) {\n    throw new RangeError('lower must not exceed upper')\n  }\n  return Math.max(lower, Math.min(value, upper))\n}",
+        "note": "Math.min 与 Math.max 组合可以清晰地表达区间限制。"
+      }
+    ]
+  },
+  {
+    "id": "basic-fizzbuzz-01",
+    "title": "FizzBuzz 条件循环",
+    "topic": "basics",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "basic-fizzbuzz-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def fizz_buzz(limit):\n    result = []\n    for number in range(1, limit + 1):\n        if number % 15 == 0:\n            result.append(\"FizzBuzz\")\n        elif number % 3 == 0:\n            result.append(\"Fizz\")\n        elif number % 5 == 0:\n            result.append(\"Buzz\")\n        else:\n            result.append(str(number))\n    return result",
+        "note": "先判断 15 的倍数，避免它被 3 或 5 的分支提前匹配。"
+      },
+      {
+        "variant_id": "basic-fizzbuzz-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function fizzBuzz(limit) {\n  const result = []\n  for (let number = 1; number <= limit; number++) {\n    if (number % 15 === 0) result.push('FizzBuzz')\n    else if (number % 3 === 0) result.push('Fizz')\n    else if (number % 5 === 0) result.push('Buzz')\n    else result.push(String(number))\n  }\n  return result\n}",
+        "note": "这道题集中练习循环、取模运算与互斥条件分支。"
+      }
+    ]
+  },
+  {
+    "id": "basic-sum-range-01",
+    "title": "区间整数求和",
+    "topic": "basics",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "basic-sum-range-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def sum_range(start, end):\n    if start > end:\n        start, end = end, start\n    total = 0\n    for number in range(start, end + 1):\n        total += number\n    return total",
+        "note": "交换上下界可以让函数同时处理正向与反向输入。"
+      },
+      {
+        "variant_id": "basic-sum-range-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function sumRange(start, end) {\n  if (start > end) [start, end] = [end, start]\n  let total = 0\n  for (let number = start; number <= end; number++) {\n    total += number\n  }\n  return total\n}",
+        "note": "使用解构赋值交换变量，再通过累加器完成区间求和。"
+      }
+    ]
+  },
+  {
+    "id": "basic-group-parity-01",
+    "title": "按奇偶分组",
+    "topic": "basics",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "basic-group-parity-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def group_by_parity(numbers):\n    groups = {\"even\": [], \"odd\": []}\n    for number in numbers:\n        key = \"even\" if number % 2 == 0 else \"odd\"\n        groups[key].append(number)\n    return groups",
+        "note": "根据条件选择字典键，可以在一次遍历中完成稳定分组。"
+      },
+      {
+        "variant_id": "basic-group-parity-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function groupByParity(numbers) {\n  const groups = { even: [], odd: [] }\n  for (const number of numbers) {\n    const key = number % 2 === 0 ? 'even' : 'odd'\n    groups[key].push(number)\n  }\n  return groups\n}",
+        "note": "对象的计算属性访问适合把数据分配到动态选择的分组。"
+      }
+    ]
+  },
+  {
+    "id": "basic-chunk-list-01",
+    "title": "列表分块",
+    "topic": "basics",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "basic-chunk-list-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def chunk_list(items, size):\n    if size <= 0:\n        raise ValueError(\"size must be positive\")\n    chunks = []\n    for index in range(0, len(items), size):\n        chunks.append(items[index:index + size])\n    return chunks",
+        "note": "带步长的 range 与切片组合，是 Python 中常见的分块写法。"
+      },
+      {
+        "variant_id": "basic-chunk-list-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function chunkArray(items, size) {\n  if (size <= 0) throw new RangeError('size must be positive')\n  const chunks = []\n  for (let index = 0; index < items.length; index += size) {\n    chunks.push(items.slice(index, index + size))\n  }\n  return chunks\n}",
+        "note": "按块大小移动索引，并用 slice 截取当前区间。"
+      }
+    ]
+  }
+]

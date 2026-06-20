@@ -37,6 +37,8 @@ describe('db facade compatibility exports', () => {
 
     await facade.unlockAchievement('u', 'first')
     expect(await facade.listUserAchievements('u')).toEqual(['first'])
+    expect((await facade.listBuiltinLessonMetas()).data).toEqual([])
+    expect((await facade.getBuiltinLesson('missing')).data).toBeNull()
 
     const submitted = (
       await facade.submitLesson('u', { title: 'Community', language: 'python', code: 'x' })

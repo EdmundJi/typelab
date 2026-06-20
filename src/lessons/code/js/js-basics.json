@@ -2,14 +2,16 @@
   {
     "id": "js-array-methods-01",
     "title": "JavaScript 数组常用方法",
-    "category": "js",
+    "topic": "js",
+    "difficulty": 2,
     "variants": [
       {
         "variant_id": "js-array-methods-01-javascript-standard",
         "language": "javascript",
         "style": "standard",
-        "difficulty": "beginner",
-        "code": "const numbers = [1, 2, 3, 4, 5];\n\nconst doubled = numbers.map(n => n * 2);\nconst evens = numbers.filter(n => n % 2 === 0);\nconst sum = numbers.reduce((acc, n) => acc + n, 0);\nconst found = numbers.find(n => n > 3);\nconst sorted = [...numbers].sort((a, b) => b - a);",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "const numbers = [1, 2, 3, 4, 5];\n\nconst doubled = numbers.map(n => n * 2);\nconst evens = numbers.filter(n => n % 2 === 0);\nconst sum = numbers.reduce((acc, n) => acc + n, 0);\nconst found = numbers.find(n => n > 3);\nconst sorted = [...numbers].sort((a, b) => b - a);",
         "note": "map、filter、reduce 是函数式编程三大基石，sort 默认按字典序排序。"
       }
     ]

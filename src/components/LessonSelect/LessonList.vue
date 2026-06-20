@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import type { LessonMeta } from '@/types'
 import LessonCard from './LessonCard.vue'
 
-defineProps<{ lessons: any[]; bestWpmByLesson?: Map<string, number> }>()
+defineProps<{ lessons: LessonMeta[]; bestWpmByLesson?: Map<string, number> }>()
 </script>
 
 <template>

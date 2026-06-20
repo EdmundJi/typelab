@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-06-20
+
+### Added
+- Built-in lesson manifest generation and Supabase sync scripts for database-backed lesson publishing.
+- Expanded built-in question bank with arrays, foundations, recursion/backtracking, searching, stack/queue, strings, and refreshed Python/JavaScript lessons.
+- Supabase migrations for built-in lesson content and lesson metadata tables.
+
+### Changed
+- Lesson loading now prefers Supabase-backed lessons with local lesson files as a fallback.
+- Lesson selection, typing, result, profile history, and adapter flows were updated for database-backed lesson metadata.
+- Package version bumped to `1.3.0` for this release.
+
+### Fixed
+- Improved lesson data boundaries and manifest checks to keep bundled content and database sync consistent.
+
 ## [1.2.0] - 2026-06-20
 
 ### Changed

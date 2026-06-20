@@ -1,0 +1,132 @@
+[
+  {
+    "id": "search-linear-01",
+    "title": "线性查找",
+    "topic": "searching",
+    "difficulty": 1,
+    "variants": [
+      {
+        "variant_id": "search-linear-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "def linear_search(items, target):\n    for index, item in enumerate(items):\n        if item == target:\n            return index\n    return -1",
+        "note": "线性查找适用于无序数据，最坏情况下需要检查每个元素。"
+      },
+      {
+        "variant_id": "search-linear-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function linearSearch(items, target) {\n  for (let index = 0; index < items.length; index++) {\n    if (items[index] === target) return index\n  }\n  return -1\n}",
+        "note": "时间复杂度为 O(n)，但无需预先排序。"
+      }
+    ]
+  },
+  {
+    "id": "search-binary-01",
+    "title": "二分查找",
+    "topic": "searching",
+    "difficulty": 2,
+    "variants": [
+      {
+        "variant_id": "search-binary-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 迭代实现",
+        "text": "def binary_search(numbers, target):\n    left, right = 0, len(numbers) - 1\n    while left <= right:\n        middle = left + (right - left) // 2\n        if numbers[middle] == target:\n            return middle\n        if numbers[middle] < target:\n            left = middle + 1\n        else:\n            right = middle - 1\n    return -1",
+        "note": "每轮排除一半搜索区间，时间复杂度为 O(log n)。"
+      },
+      {
+        "variant_id": "search-binary-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 迭代实现",
+        "text": "function binarySearch(numbers, target) {\n  let left = 0\n  let right = numbers.length - 1\n  while (left <= right) {\n    const middle = left + Math.floor((right - left) / 2)\n    if (numbers[middle] === target) return middle\n    if (numbers[middle] < target) left = middle + 1\n    else right = middle - 1\n  }\n  return -1\n}",
+        "note": "二分查找要求输入已经按相同规则排序。"
+      }
+    ]
+  },
+  {
+    "id": "search-lower-bound-01",
+    "title": "二分查找左边界",
+    "topic": "searching",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "search-lower-bound-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 左闭右开区间",
+        "text": "def lower_bound(numbers, target):\n    left, right = 0, len(numbers)\n    while left < right:\n        middle = left + (right - left) // 2\n        if numbers[middle] < target:\n            left = middle + 1\n        else:\n            right = middle\n    return left",
+        "note": "返回第一个大于等于目标值的位置，也可以作为有序插入点。"
+      },
+      {
+        "variant_id": "search-lower-bound-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 左闭右开区间",
+        "text": "function lowerBound(numbers, target) {\n  let left = 0\n  let right = numbers.length\n  while (left < right) {\n    const middle = left + Math.floor((right - left) / 2)\n    if (numbers[middle] < target) left = middle + 1\n    else right = middle\n  }\n  return left\n}",
+        "note": "使用左闭右开区间可以让未找到目标时的插入位置自然落在数组末尾。"
+      }
+    ]
+  },
+  {
+    "id": "search-matrix-01",
+    "title": "有序矩阵查找",
+    "topic": "searching",
+    "difficulty": 3,
+    "variants": [
+      {
+        "variant_id": "search-matrix-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 右上角扫描",
+        "text": "def search_matrix(matrix, target):\n    if not matrix or not matrix[0]:\n        return False\n    row, column = 0, len(matrix[0]) - 1\n    while row < len(matrix) and column >= 0:\n        value = matrix[row][column]\n        if value == target:\n            return True\n        if value > target:\n            column -= 1\n        else:\n            row += 1\n    return False",
+        "note": "从右上角开始，每一步都能排除一整行或一整列。"
+      },
+      {
+        "variant_id": "search-matrix-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 右上角扫描",
+        "text": "function searchMatrix(matrix, target) {\n  if (matrix.length === 0 || matrix[0].length === 0) return false\n  let row = 0\n  let column = matrix[0].length - 1\n  while (row < matrix.length && column >= 0) {\n    const value = matrix[row][column]\n    if (value === target) return true\n    if (value > target) column--\n    else row++\n  }\n  return false\n}",
+        "note": "适用于每行递增且每列递增的矩阵，复杂度为 O(m+n)。"
+      }
+    ]
+  },
+  {
+    "id": "search-quickselect-01",
+    "title": "快速选择第 K 小元素",
+    "topic": "searching",
+    "difficulty": 4,
+    "variants": [
+      {
+        "variant_id": "search-quickselect-01-python-standard",
+        "language": "python",
+        "style": "standard",
+        "step": 3,
+        "label": "Python · 原地分区",
+        "text": "def quickselect(numbers, k):\n    if not 0 <= k < len(numbers):\n        raise IndexError(\"k out of range\")\n    left, right = 0, len(numbers) - 1\n    while True:\n        pivot = numbers[right]\n        store = left\n        for index in range(left, right):\n            if numbers[index] < pivot:\n                numbers[store], numbers[index] = numbers[index], numbers[store]\n                store += 1\n        numbers[store], numbers[right] = numbers[right], numbers[store]\n        if store == k:\n            return numbers[store]\n        if store < k:\n            left = store + 1\n        else:\n            right = store - 1",
+        "note": "快速选择只递归进入包含目标下标的一侧，平均复杂度为 O(n)。"
+      },
+      {
+        "variant_id": "search-quickselect-01-javascript-standard",
+        "language": "javascript",
+        "style": "standard",
+        "step": 3,
+        "label": "JavaScript · 原地分区",
+        "text": "function quickselect(numbers, k) {\n  if (k < 0 || k >= numbers.length) throw new RangeError('k out of range')\n  let left = 0\n  let right = numbers.length - 1\n  while (true) {\n    const pivot = numbers[right]\n    let store = left\n    for (let index = left; index < right; index++) {\n      if (numbers[index] < pivot) {\n        ;[numbers[store], numbers[index]] = [numbers[index], numbers[store]]\n        store++\n      }\n    }\n    ;[numbers[store], numbers[right]] = [numbers[right], numbers[store]]\n    if (store === k) return numbers[store]\n    if (store < k) left = store + 1\n    else right = store - 1\n  }\n}",
+        "note": "分区后枢轴已经处于最终位置，因此可以据此缩小搜索范围。"
+      }
+    ]
+  }
+]

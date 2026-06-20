@@ -14,13 +14,13 @@
 {
   id: string,           // 题目唯一 id，格式：{topic}-{name}-{序号}，如 "py-bfs-01"
   title: string,        // 题目显示名称
-  topic: string,        // warmup | sorting | trees | dp | graph | js | concepts
+  topic: string,        // 如 basics | arrays | strings | searching | sorting | trees | graph | dp
   difficulty: number,   // 1-5 整数，表示整题难度
   variants: Variant[]   // 至少一个变体
 }
 
 Variant {
-  id: string,           // 变体唯一 id，格式：{lesson_id}-v{n}，如 "py-bfs-01-v1"
+  variant_id: string,   // 变体唯一 id，格式：{lesson_id}-v{n}，如 "py-bfs-01-v1"
   language: string,     // python | javascript | go | typescript | java | cpp
   style: string,        // verbose（详细注释版） | standard（标准实现） | concise（精简版）
   step: number,         // 1=函数骨架, 2=核心逻辑, 3=完整实现
@@ -30,9 +30,21 @@ Variant {
 }
 ```
 
+`topic`、题目级 `difficulty`、`variant_id` 与 `text` 是 v2 唯一规范字段；
+新题目不得再使用旧字段 `category`、变体级 `difficulty` 或 `code`。
+
+课程列表读取自动生成的 `src/lessons/manifest.json`，其中不包含 `text` 和 `note`；
+进入具体课程后，`src/lessons/index.ts` 才按 `source_file` 动态加载正文。新增或修改课程后运行：
+
+```bash
+npm run lessons:manifest
+```
+
+构建与测试会执行 `lessons:manifest:check`，阻止格式不合法或 manifest 过期的课程进入仓库。
+
 ### 旧格式（v1，自动向前兼容）
 
-`src/lib/lessons.js` 的加载器会自动将旧格式包装为单变体新格式：
+`src/lib/application/lessons.ts` 的加载器会自动将旧格式包装为单变体新格式：
 
 ```json
 {
@@ -86,7 +98,7 @@ Variant {
         "note": "BFS 使用队列逐层遍历，时间复杂度 O(n)，空间复杂度 O(n)。"
       },
       {
-        "id": "py-bfs-01-v2",
+        "variant_id": "py-bfs-01-v2",
         "language": "javascript",
         "style": "standard",
         "step": 3,
@@ -98,6 +110,21 @@ Variant {
   }
 ]
 ```
+
+### 同步到 Supabase
+
+JSON 是内置题库的唯一编辑源，`public.builtin_lessons` 是服务端镜像。先应用
+`supabase/migrations/20260620000002_create_builtin_lessons.sql`，再使用仅限服务端的
+service-role key 执行：
+
+```bash
+npm run lessons:sync:dry
+npm run lessons:sync
+```
+
+同步脚本按 `id` 执行 upsert，并保存来源文件和内容哈希。只有显式传入 `--prune` 时才删除
+数据库中已不在 JSON 里的旧题目。`SUPABASE_SERVICE_ROLE_KEY` 禁止使用 `VITE_` 前缀，
+也禁止进入前端代码或 Git 仓库。
 
 ---
 

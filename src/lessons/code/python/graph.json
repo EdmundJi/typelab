@@ -1,23 +1,26 @@
 [
   {
     "id": "py-dijkstra-01",
-    "title": "Dijkstra 最短路径（Python）",
-    "category": "graph",
+    "title": "Dijkstra 最短路径",
+    "topic": "graph",
+    "difficulty": 5,
     "variants": [
       {
         "variant_id": "py-dijkstra-01-python-standard",
         "language": "python",
         "style": "standard",
-        "difficulty": "advanced",
-        "code": "import heapq\n\ndef dijkstra(graph, start):\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        cur_dist, cur = heapq.heappop(pq)\n        if cur_dist > distances[cur]:\n            continue\n        for neighbor, weight in graph[cur]:\n            dist = cur_dist + weight\n            if dist < distances[neighbor]:\n                distances[neighbor] = dist\n                heapq.heappush(pq, (dist, neighbor))\n    return distances",
+        "step": 3,
+        "label": "Python · 标准实现",
+        "text": "import heapq\n\ndef dijkstra(graph, start):\n    distances = {node: float('inf') for node in graph}\n    distances[start] = 0\n    pq = [(0, start)]\n    while pq:\n        cur_dist, cur = heapq.heappop(pq)\n        if cur_dist > distances[cur]:\n            continue\n        for neighbor, weight in graph[cur]:\n            dist = cur_dist + weight\n            if dist < distances[neighbor]:\n                distances[neighbor] = dist\n                heapq.heappush(pq, (dist, neighbor))\n    return distances",
         "note": "Dijkstra 算法使用优先队列，时间复杂度 O((V+E) log V)，适用于非负权图。"
       },
       {
         "variant_id": "py-dijkstra-01-javascript-standard",
         "language": "javascript",
         "style": "standard",
-        "difficulty": "advanced",
-        "code": "function dijkstra(graph, start) {\n  const distances = {}\n  for (const node in graph) distances[node] = Infinity\n  distances[start] = 0\n  const visited = new Set()\n  while (true) {\n    let cur = null\n    for (const node in distances) {\n      if (!visited.has(node) && (cur === null || distances[node] < distances[cur])) {\n        cur = node\n      }\n    }\n    if (cur === null || distances[cur] === Infinity) break\n    visited.add(cur)\n    for (const [neighbor, weight] of graph[cur]) {\n      const dist = distances[cur] + weight\n      if (dist < distances[neighbor]) distances[neighbor] = dist\n    }\n  }\n  return distances\n}",
+        "step": 3,
+        "label": "JavaScript · 标准实现",
+        "text": "function dijkstra(graph, start) {\n  const distances = {}\n  for (const node in graph) distances[node] = Infinity\n  distances[start] = 0\n  const visited = new Set()\n  while (true) {\n    let cur = null\n    for (const node in distances) {\n      if (!visited.has(node) && (cur === null || distances[node] < distances[cur])) {\n        cur = node\n      }\n    }\n    if (cur === null || distances[cur] === Infinity) break\n    visited.add(cur)\n    for (const [neighbor, weight] of graph[cur]) {\n      const dist = distances[cur] + weight\n      if (dist < distances[neighbor]) distances[neighbor] = dist\n    }\n  }\n  return distances\n}",
         "note": "JavaScript 版 Dijkstra 使用简单线性扫描替代优先队列，时间复杂度 O(V² + E)，适合稠密图。"
       }
     ]
