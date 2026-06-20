@@ -61,7 +61,29 @@ npm run check        # 使用 Biome 检查格式和代码问题
 npm run check:fix    # 使用 Biome 自动修复可修复问题
 npm run format       # 使用 Biome 格式化代码
 npm run lint         # 使用 Biome 检查 lint 问题
+npm run lessons:manifest  # 校验题库并生成轻量索引
+npm run lessons:sync:dry  # 本地检查待同步题库
 ```
+
+## 内置题库同步
+
+课程正文维护在 `src/lessons/**/*.json`。修改后先生成 manifest：
+
+```bash
+npm run lessons:manifest
+```
+
+需要同步 Supabase 时，先应用 `supabase/migrations` 中的最新迁移，并在本地
+`.env.local` 增加仅供脚本使用的 `SUPABASE_SERVICE_ROLE_KEY`，然后执行：
+
+```bash
+npm run lessons:sync
+```
+
+网站运行时优先读取 Supabase：课程列表读取不含正文的元数据视图，进入课程后再按 ID
+读取完整内容。数据库不可用时自动降级为随应用发布的本地 JSON。
+
+service-role key 拥有后台权限，绝不能添加 `VITE_` 前缀、发送到浏览器或提交到 Git。
 
 提交 PR 前至少执行：
 

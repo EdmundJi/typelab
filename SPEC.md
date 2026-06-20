@@ -14,7 +14,7 @@
 {
   id: string,           // 题目唯一 id，格式：{topic}-{name}-{序号}，如 "py-bfs-01"
   title: string,        // 题目显示名称
-  topic: string,        // warmup | sorting | trees | dp | graph | js | concepts
+  topic: string,        // 如 basics | arrays | strings | searching | sorting | trees | graph | dp
   difficulty: number,   // 1-5 整数，表示整题难度
   variants: Variant[]   // 至少一个变体
 }
@@ -98,7 +98,7 @@ npm run lessons:manifest
         "note": "BFS 使用队列逐层遍历，时间复杂度 O(n)，空间复杂度 O(n)。"
       },
       {
-        "id": "py-bfs-01-v2",
+        "variant_id": "py-bfs-01-v2",
         "language": "javascript",
         "style": "standard",
         "step": 3,
@@ -110,6 +110,21 @@ npm run lessons:manifest
   }
 ]
 ```
+
+### 同步到 Supabase
+
+JSON 是内置题库的唯一编辑源，`public.builtin_lessons` 是服务端镜像。先应用
+`supabase/migrations/20260620000002_create_builtin_lessons.sql`，再使用仅限服务端的
+service-role key 执行：
+
+```bash
+npm run lessons:sync:dry
+npm run lessons:sync
+```
+
+同步脚本按 `id` 执行 upsert，并保存来源文件和内容哈希。只有显式传入 `--prune` 时才删除
+数据库中已不在 JSON 里的旧题目。`SUPABASE_SERVICE_ROLE_KEY` 禁止使用 `VITE_` 前缀，
+也禁止进入前端代码或 Git 仓库。
 
 ---
 

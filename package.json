@@ -7,6 +7,8 @@
     "dev": "vite",
     "lessons:manifest": "node scripts/generate-lesson-manifest.mjs",
     "lessons:manifest:check": "node scripts/generate-lesson-manifest.mjs --check",
+    "lessons:sync:dry": "npm run lessons:manifest:check && node scripts/sync-lessons-to-supabase.mjs --dry-run",
+    "lessons:sync": "npm run lessons:manifest:check && node --env-file-if-exists=.env.local scripts/sync-lessons-to-supabase.mjs",
     "prebuild": "npm run lessons:manifest:check",
     "build": "vite build",
     "preview": "vite preview",
