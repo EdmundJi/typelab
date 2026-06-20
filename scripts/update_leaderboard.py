@@ -7,8 +7,9 @@ from datetime import date
 
 # Map raw git author names to (display_name, github_username)
 IDENTITY_MAP = {
-    "AsherDe":          ("Asher Ji", "AsherDe"),
-    "Asher Ji":         ("Asher Ji", "AsherDe"),
+    "AsherDe":          ("Edmund Ji", "EdmundJi"),
+    "Asher Ji":         ("Edmund Ji", "EdmundJi"),
+    "EdmundJi":         ("Edmund Ji", "EdmundJi"),
     "Edmund Ji":        ("Edmund Ji", "EdmundJi"),
     "ZhangEve":         ("ZhangEve", "Eve993657"),
     "Frank":            ("Frank", None),
