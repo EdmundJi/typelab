@@ -51,6 +51,6 @@ onUnmounted(() => {
       <p v-if="userStore.user && currentRank > 0" class="mb-3 text-xs text-mt-accent">你的排名：第 {{ currentRank }} 名</p>
       <LeaderboardTable :entries="entries" :current-user-id="userStore.user?.id ?? null" />
     </template>
-    <button class="mt-6 text-xs text-mt-sub hover:text-mt-text transition-colors" type="button" @click="load">刷新</button>
+    <button class="control-surface mt-6 px-4 font-mono text-xs text-mt-sub hover:text-mt-text" type="button" @click="load">刷新数据</button>
   </div>
 </template>

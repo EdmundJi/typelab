@@ -21,13 +21,13 @@ const medalSymbol = ['1st', '2nd', '3rd']
 
 <template>
   <div class="panel overflow-x-auto">
-    <table class="w-full text-xs">
+    <table class="w-full min-w-[34rem] text-xs">
       <thead>
         <tr class="border-b border-mt-border">
-          <th class="px-5 py-3 text-left text-mt-sub uppercase tracking-widest font-medium w-14">#</th>
-          <th class="px-5 py-3 text-left text-mt-sub uppercase tracking-widest font-medium">用户</th>
-          <th class="px-5 py-3 text-right text-mt-sub uppercase tracking-widest font-medium">WPM</th>
-          <th class="px-5 py-3 text-right text-mt-sub uppercase tracking-widest font-medium">accuracy</th>
+          <th class="px-5 py-3.5 text-left font-mono text-mt-sub uppercase tracking-widest font-medium w-14">#</th>
+          <th class="px-5 py-3.5 text-left font-mono text-mt-sub uppercase tracking-widest font-medium">用户</th>
+          <th class="px-5 py-3.5 text-right font-mono text-mt-sub uppercase tracking-widest font-medium">WPM</th>
+          <th class="px-5 py-3.5 text-right font-mono text-mt-sub uppercase tracking-widest font-medium">accuracy</th>
         </tr>
       </thead>
       <tbody>
@@ -37,7 +37,7 @@ const medalSymbol = ['1st', '2nd', '3rd']
           class="border-b border-mt-border last:border-0 transition-colors"
           :class="entry.user_id === currentUserId ? 'bg-mt-accent/5' : 'hover:bg-mt-surface/50'"
         >
-          <td class="px-5 py-3">
+          <td class="px-5 py-4">
             <span
               class="text-xs font-bold font-mono"
               :class="i < 3 ? medalColor[i] : 'text-mt-sub'"
@@ -45,11 +45,11 @@ const medalSymbol = ['1st', '2nd', '3rd']
               {{ i < 3 ? medalSymbol[i] : String(i + 1).padStart(2, '0') }}
             </span>
           </td>
-          <td class="px-5 py-3 text-mt-text">{{ getEmailPrefix(entry.email) }}</td>
-          <td class="px-5 py-3 text-right font-bold text-mt-accent font-mono text-sm">
+          <td class="px-5 py-4 text-mt-text">{{ getEmailPrefix(entry.email) }}</td>
+          <td class="px-5 py-4 text-right font-bold text-mt-accent font-mono text-sm">
             {{ entry.best_wpm ?? entry.wpm }}
           </td>
-          <td class="px-5 py-3 text-right text-mt-sub font-mono">
+          <td class="px-5 py-4 text-right text-mt-sub font-mono">
             {{ entry.accuracy != null ? entry.accuracy + '%' : '—' }}
           </td>
         </tr>
