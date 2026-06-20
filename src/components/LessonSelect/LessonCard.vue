@@ -27,6 +27,17 @@ function getLabel(category: string) {
   return categoryLabel[category] ?? category
 }
 
+function getDifficulty(lesson: any) {
+  const raw = lesson.difficulty ?? lesson.variants?.[0]?.difficulty ?? 'intermediate'
+  if (typeof raw === 'number') return Math.max(1, Math.min(5, raw))
+  return { beginner: 1, intermediate: 3, advanced: 5 }[raw] ?? 3
+}
+
+function getDifficultyLabel(lesson: any) {
+  const raw = lesson.difficulty ?? lesson.variants?.[0]?.difficulty ?? 'intermediate'
+  return { beginner: '入门', intermediate: '进阶', advanced: '挑战' }[raw] ?? raw
+}
+
 // ——— 收藏逻辑 ———
 const lessonRef = String(props.lesson.id).startsWith('community:')
   ? props.lesson.id
@@ -90,54 +101,56 @@ const isBookmarked = () => collectedIds.value.length > 0
 
 <template>
   <div class="relative">
+    <button
+      v-if="userStore.user"
+      class="bookmark-button"
+      :class="collectedIds.length > 0 ? 'is-active' : ''"
+      type="button"
+      title="收藏"
+      aria-label="收藏课程"
+      @click="openDropdown"
+    >
+      {{ collectedIds.length > 0 ? '★' : '☆' }}
+    </button>
+
     <RouterLink
       :to="{ name: 'lesson', params: { id: lesson.id } }"
-      class="lesson-card group panel block p-4 transition-colors hover:border-mt-accent/50"
+      class="lesson-card group panel block p-5 transition-all duration-200 hover:border-mt-accent/60 hover:bg-mt-accent/[0.04] hover:-translate-y-0.5 hover:shadow-[var(--card-hover-shadow)]"
     >
-      <div class="flex items-start justify-between gap-2 mb-5">
-        <span class="text-xs text-mt-sub uppercase tracking-widest">
+      <div class="flex items-start justify-between gap-2 mb-5" :class="userStore.user ? 'pr-7' : ''">
+        <span class="font-mono text-[10px] text-mt-sub uppercase tracking-widest">
           {{ getLabel(lesson.category) }}
         </span>
         <div class="flex items-center gap-2">
-          <!-- 收藏按钮（已登录才显示） -->
-          <button
-            v-if="userStore.user"
-            class="text-sm leading-none transition-colors"
-            :class="collectedIds.length > 0 ? 'text-mt-accent' : 'text-mt-border hover:text-mt-sub'"
-            title="收藏"
-            @click="openDropdown"
-          >
-            ★
-          </button>
-          <!-- 难度条 -->
-          <div class="flex items-center gap-0.5" :title="`难度 ${lesson.difficulty ?? lesson.variants?.[0]?.difficulty ?? 'n/a'}`">
+          <span class="font-mono text-[10px] text-mt-sub/80">{{ getDifficultyLabel(lesson) }}</span>
+          <div class="flex items-center gap-0.5" :title="`难度 ${getDifficultyLabel(lesson)}`">
             <span
               v-for="n in 5"
               :key="n"
               class="inline-block w-1 h-3"
-              :class="n <= (Number(lesson.difficulty) || 3) ? 'bg-mt-accent' : 'bg-mt-border'"
+              :class="n <= getDifficulty(lesson) ? 'bg-mt-accent' : 'bg-mt-border'"
             />
           </div>
         </div>
       </div>
 
-      <h3 class="text-sm text-mt-text group-hover:text-mt-accent transition-colors leading-snug">
+      <h3 class="lesson-title text-[15px] font-semibold text-mt-text group-hover:text-mt-accent transition-colors leading-snug">
         {{ lesson.title }}
       </h3>
 
       <div class="mt-3 flex flex-wrap gap-1">
-        <span v-for="lang in [...new Set(lesson.variants?.map((v: any) => v.language) ?? [])]" :key="lang" class="text-[10px] border border-mt-border px-1.5 py-0.5 text-mt-sub">{{ lang }}</span>
+        <span v-for="lang in [...new Set(lesson.variants?.map((v: any) => v.language) ?? [])]" :key="lang" class="font-mono text-[10px] border border-mt-border px-1.5 py-0.5 text-mt-sub">{{ lang }}</span>
       </div>
       <div class="mt-4 flex items-center justify-between">
-        <span class="text-xs text-mt-sub/60 group-hover:text-mt-accent/60 transition-colors">→ 开始练习</span>
-        <span v-if="bestWpm" class="text-xs text-mt-accent">pb: {{ bestWpm }} wpm</span>
+        <span class="font-mono text-xs text-mt-sub group-hover:text-mt-accent transition-colors">开始练习 →</span>
+        <span v-if="bestWpm" class="font-mono text-xs text-mt-accent">PB {{ bestWpm }} WPM</span>
       </div>
     </RouterLink>
 
     <!-- 收藏夹 Dropdown -->
     <div
       v-if="showDropdown"
-      class="absolute right-0 top-0 z-50 w-56 bg-mt-panel border border-mt-border shadow-lg"
+      class="absolute right-0 top-12 z-50 w-56 bg-mt-panel border border-mt-border shadow-lg"
       style="min-width: 200px"
     >
       <!-- 头部 -->
@@ -209,5 +222,27 @@ const isBookmarked = () => collectedIds.value.length > 0
 <style scoped>
 .lesson-card {
   display: block;
+  min-height: 11rem;
+}
+
+.lesson-title {
+  min-height: 2.6rem;
+}
+
+.bookmark-button {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 20;
+  width: 2rem;
+  height: 2rem;
+  color: rgb(var(--mt-sub));
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.bookmark-button:hover,
+.bookmark-button.is-active {
+  color: rgb(var(--mt-accent));
+  background: rgb(var(--mt-accent) / 0.08);
 }
 </style>
