@@ -68,6 +68,17 @@ async function load() {
 
 <template>
   <section id="lessons">
+    <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+      <div>
+        <p class="eyebrow mb-2">// practice library</p>
+        <h2 class="text-xl font-bold tracking-tight text-mt-text sm:text-2xl">选择一项练习</h2>
+        <p class="mt-1 text-sm text-mt-sub">从热身到算法实现，按你的目标开始。</p>
+      </div>
+      <p v-if="!loading" class="font-mono text-xs text-mt-sub/80">
+        {{ filteredLessons.length }} / {{ lessons.length }} lessons
+      </p>
+    </div>
+
     <LessonFilter
       :categories="categories"
       :active-category="activeCategory"
@@ -80,10 +91,10 @@ async function load() {
     />
 
     <p v-if="error" class="mt-4 text-xs text-mt-wrong">{{ error }}</p>
-    <div v-if="loading" class="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div v-if="loading" class="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <SkeletonCard v-for="n in 3" :key="n" />
     </div>
-    <div v-else class="mt-6">
+    <div v-else class="mt-5">
       <LessonList :lessons="filteredLessons" :best-wpm-by-lesson="bestWpmByLesson" />
     </div>
   </section>

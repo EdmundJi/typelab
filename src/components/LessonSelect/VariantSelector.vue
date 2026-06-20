@@ -52,9 +52,10 @@ function variantLabel(variant) {
 }
 
 .variant-btn {
-  padding: 0.25rem 0.75rem;
+  min-height: 2.25rem;
+  padding: 0.35rem 0.8rem;
   font-size: 0.7rem;
-  font-family: inherit;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   border: 1px solid rgb(var(--mt-border));
