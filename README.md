@@ -85,18 +85,24 @@ npm run build
 
 <!-- LEADERBOARD:START -->
 
-> 贡献指数 = 提交数 × 10 + 新增行数 + 删除行数 × 0.5 &nbsp;·&nbsp; 最后更新：2026-06-07
+> 贡献指数 = 提交数 × 10 + 新增行数 + 删除行数 × 0.5 &nbsp;·&nbsp; 最后更新：2026-06-20
 
 | 排名 | 贡献者 | 提交数 | 新增行 | 删除行 | 贡献指数 |
 |:----:|--------|-------:|-------:|-------:|-------:|
-| 🥇 | [Asher Ji](https://github.com/AsherDe) | 19 | 4,711 | 503 | **5,152** |
-| 🥈 | [Edmund Ji](https://github.com/EdmundJi) | 5 | 723 | 56 | **801** |
-| 🥉 | Kalin | 2 | 522 | 34 | **559** |
-| 4 | Frank | 8 | 345 | 221 | **535** |
+| 🥇 | [Asher Ji](https://github.com/AsherDe) | 72 | 21,472 | 4,769 | **24,576** |
+| 🥈 | [Edmund Ji](https://github.com/EdmundJi) | 15 | 16,216 | 4,044 | **18,388** |
+| 🥉 | Frank | 12 | 1,047 | 337 | **1,335** |
+| 4 | Kalin | 2 | 522 | 34 | **559** |
 | 5 | Yang | 4 | 390 | 35 | **447** |
-| 6 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
-| 7 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
-| 8 | [Frank-StarsChild](https://github.com/Frank-StarsChild) | 1 | 0 | 0 | **10** |
+| 6 | Olive-1211 | 2 | 229 | 64 | **281** |
+| 7 | ping668 | 1 | 267 | 8 | **281** |
+| 8 | Alin | 1 | 176 | 88 | **230** |
+| 9 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
+| 10 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
+| 11 | 陈诗韵 | 1 | 30 | 15 | **47** |
+| 12 | copilot-swe-agent[bot] | 2 | 9 | 7 | **32** |
+| 13 | Copilot | 1 | 9 | 7 | **22** |
+| 14 | [Frank-StarsChild](https://github.com/Frank-StarsChild) | 1 | 0 | 0 | **10** |
 
 _由 GitHub Actions 在每次推送到 main 分支时自动更新_
 
