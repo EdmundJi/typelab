@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-06-20
+
+### Changed
+- Refined theme initialization with system preference fallback and responsive layout tokens.
+- Improved home page, lesson discovery, filters, and lesson card presentation.
+- Polished typing session UI with denser controls and focused practice layout.
+- Updated leaderboard and learning path pages for clearer responsive presentation.
+
 ## [1.1.0] - 2026-06-20
 
 ### Added
