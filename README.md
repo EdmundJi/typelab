@@ -81,7 +81,7 @@ npm run build
 
 ## 贡献排行榜
 
-[![Contributors](https://contrib.rocks/image?repo=AsherDe/typelab)](https://github.com/AsherDe/typelab/graphs/contributors)
+[![Contributors](https://contrib.rocks/image?repo=EdmundJi/typelab)](https://github.com/EdmundJi/typelab/graphs/contributors)
 
 <!-- LEADERBOARD:START -->
 
@@ -89,15 +89,15 @@ npm run build
 
 | 排名 | 贡献者 | 提交数 | 新增行 | 删除行 | 贡献指数 |
 |:----:|--------|-------:|-------:|-------:|-------:|
-| 🥇 | [Asher Ji](https://github.com/AsherDe) | 72 | 21,472 | 4,769 | **24,576** |
-| 🥈 | [Edmund Ji](https://github.com/EdmundJi) | 15 | 16,216 | 4,044 | **18,388** |
-| 🥉 | Frank | 12 | 1,047 | 337 | **1,335** |
-| 4 | Kalin | 2 | 522 | 34 | **559** |
-| 5 | Yang | 4 | 390 | 35 | **447** |
-| 6 | Olive-1211 | 2 | 229 | 64 | **281** |
-| 7 | ping668 | 1 | 267 | 8 | **281** |
-| 8 | Alin | 1 | 176 | 88 | **230** |
-| 9 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
+| 🥇 | [Edmund Ji](https://github.com/EdmundJi) | 92 | 37,729 | 8,826 | **43,062** |
+| 🥈 | Frank | 12 | 1,047 | 337 | **1,335** |
+| 🥉 | Kalin | 2 | 522 | 34 | **559** |
+| 4 | Yang | 4 | 390 | 35 | **447** |
+| 5 | Olive-1211 | 2 | 229 | 64 | **281** |
+| 6 | ping668 | 1 | 267 | 8 | **281** |
+| 7 | Alin | 1 | 176 | 88 | **230** |
+| 8 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
+| 9 | Wang Ruimin | 1 | 83 | 23 | **104** |
 | 10 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
 | 11 | 陈诗韵 | 1 | 30 | 15 | **47** |
 | 12 | copilot-swe-agent[bot] | 2 | 9 | 7 | **32** |
