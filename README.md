@@ -107,11 +107,11 @@ npm run build
 
 <!-- LEADERBOARD:START -->
 
-> 贡献指数 = 提交数 × 10 + 新增行数 + 删除行数 × 0.5 &nbsp;·&nbsp; 最后更新：2026-06-20
+> 贡献指数 = 提交数 × 10 + 新增行数 + 删除行数 × 0.5 &nbsp;·&nbsp; 最后更新：2026-08-31
 
 | 排名 | 贡献者 | 提交数 | 新增行 | 删除行 | 贡献指数 |
 |:----:|--------|-------:|-------:|-------:|-------:|
-| 🥇 | [Edmund Ji](https://github.com/EdmundJi) | 94 | 42,817 | 9,788 | **48,651** |
+| 🥇 | [Edmund Ji](https://github.com/EdmundJi) | 93 | 42,793 | 9,771 | **48,608** |
 | 🥈 | Frank | 12 | 1,047 | 337 | **1,335** |
 | 🥉 | Kalin | 2 | 522 | 34 | **559** |
 | 4 | Yang | 4 | 390 | 35 | **447** |
@@ -120,8 +120,8 @@ npm run build
 | 7 | Alin | 1 | 176 | 88 | **230** |
 | 8 | [ZhangEve](https://github.com/Eve993657) | 1 | 163 | 9 | **177** |
 | 9 | [griffty73](https://github.com/griffty73-debug) | 1 | 57 | 8 | **71** |
-| 10 | 陈诗韵 | 1 | 30 | 15 | **47** |
-| 11 | github-actions[bot] | 1 | 19 | 12 | **35** |
+| 10 | github-actions[bot] | 2 | 23 | 16 | **51** |
+| 11 | 陈诗韵 | 1 | 30 | 15 | **47** |
 | 12 | copilot-swe-agent[bot] | 2 | 9 | 7 | **32** |
 | 13 | Copilot | 1 | 9 | 7 | **22** |
 | 14 | [Frank-StarsChild](https://github.com/Frank-StarsChild) | 1 | 0 | 0 | **10** |
